@@ -1,0 +1,324 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { campaigns, categories, formatRupiah, formatRupiahFull, getPercent } from '../../data/campaigns';
+
+export function getStaticPaths() {
+  return campaigns.map(c => ({ params: { slug: c.slug }, props: { campaign: c } }));
+}
+
+const { campaign: c } = Astro.props;
+const pct = getPercent(c.raised, c.target);
+const cat = categories.find(cat => cat.id === c.category);
+
+// Sample donors
+const sampleDonors = [
+  { name: 'Agus S.', amount: 500000, msg: 'Semoga cepat pulih ya 🙏', time: '2 jam lalu', initial: 'AS' },
+  { name: 'Donatur Anonim', amount: 100000, msg: 'Semangat!', time: '4 jam lalu', initial: '👤' },
+  { name: 'Rina W.', amount: 250000, msg: 'Semoga bermanfaat untuk yang membutuhkan.', time: '6 jam lalu', initial: 'RW' },
+  { name: 'Budi P.', amount: 1000000, msg: 'Bismillah, semoga berkah.', time: '1 hari lalu', initial: 'BP' },
+  { name: 'Siti M.', amount: 75000, msg: '', time: '1 hari lalu', initial: 'SM' },
+];
+
+const related = campaigns.filter(x => x.category === c.category && x.slug !== c.slug).slice(0, 3);
+---
+
+<Layout
+  title={`${c.title} — Indonesia Peduli Sesama`}
+  description={c.description}
+  ogImage={c.image}
+>
+
+  <!-- Breadcrumb -->
+  <div style={`padding-top:calc(var(--navbar-h) + 1.5rem);background:var(--color-gray-50);`}>
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">🏠 Beranda</a>
+        <span class="breadcrumb__sep">›</span>
+        <a href="/campaigns">Kampanye</a>
+        <span class="breadcrumb__sep">›</span>
+        <span style="color:var(--color-gray-800);" class="campaign-breadcrumb-title">{c.title}</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main layout -->
+  <div class="campaign-detail-layout">
+
+    <!-- LEFT: Campaign content -->
+    <div>
+      <img src={c.image} alt={c.title} class="campaign-detail__img" width="800" height="450" loading="eager" />
+
+      <div class="campaign-detail__badges">
+        <span class="campaign-detail__badge campaign-detail__cat-badge" id="detail-cat-badge">
+          {cat?.icon} {cat?.labelId}
+        </span>
+        {c.urgent && <span class="campaign-detail__badge" style="background:#fef2f2;color:#ef4444;">🔥 Mendesak</span>}
+        <span class="campaign-detail__badge" style="background:var(--color-primary-pale);color:var(--color-primary);">
+          ✓ Terverifikasi
+        </span>
+      </div>
+
+      <h1 class="campaign-detail__title" id="detail-title">{c.title}</h1>
+
+      <!-- Organizer info -->
+      <div class="campaign-detail__org">
+        <div class="campaign-detail__org-avatar">{c.org[0]}</div>
+        <div>
+          <div class="campaign-detail__org-name">{c.org}</div>
+          <div class="campaign-detail__org-verify">✓ Organisasi Terverifikasi</div>
+        </div>
+        <div style="margin-left:auto;font-size:.85rem;color:var(--color-gray-500);">
+          📅 Diperbarui 2 jam lalu
+        </div>
+      </div>
+
+      <!-- Full description -->
+      <div class="campaign-detail__desc" id="detail-desc" set:html={c.fullDesc}></div>
+
+      <!-- Updates tab -->
+      <div style="border:1px solid var(--color-gray-200);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:2rem;">
+        <div style="background:var(--color-gray-50);padding:1rem 1.5rem;border-bottom:1px solid var(--color-gray-200);">
+          <strong>📰 Update Kampanye</strong>
+        </div>
+        <div style="padding:1.5rem;">
+          <div style="display:flex;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--color-gray-100);">
+            <div style="width:8px;background:var(--color-primary);border-radius:4px;flex-shrink:0;"></div>
+            <div>
+              <p style="font-weight:600;font-size:.9rem;margin-bottom:.25rem;">Dana tahap pertama disalurkan</p>
+              <p style="font-size:.82rem;color:var(--color-gray-500);">Rp 150.000.000 telah disalurkan ke lokasi terdampak. Distribusi sembako untuk 500 KK sudah selesai.</p>
+              <p style="font-size:.78rem;color:var(--color-gray-400);margin-top:.25rem;">2 hari lalu</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:.75rem;padding-top:1rem;">
+            <div style="width:8px;background:var(--color-secondary);border-radius:4px;flex-shrink:0;"></div>
+            <div>
+              <p style="font-weight:600;font-size:.9rem;margin-bottom:.25rem;">Tim relawan tiba di lokasi</p>
+              <p style="font-size:.82rem;color:var(--color-gray-500);">30 relawan dari 5 kota telah tiba dan mulai pendataan korban terdampak.</p>
+              <p style="font-size:.78rem;color:var(--color-gray-400);margin-top:.25rem;">5 hari lalu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donors list -->
+      <div class="donors-list">
+        <h3 id="donors-title">👥 Donatur Terbaru</h3>
+        {sampleDonors.map((d, i) => (
+          <div class="donor-item" id={`donor-${i}`}>
+            <div class="donor-item__avatar">{d.initial}</div>
+            <div>
+              <div class="donor-item__name">{d.name}</div>
+              {d.msg && <div class="donor-item__msg">"{d.msg}"</div>}
+              <div style="font-size:.75rem;color:var(--color-gray-400);margin-top:.2rem;">{d.time}</div>
+            </div>
+            <div class="donor-item__amount">{formatRupiah(d.amount)}</div>
+          </div>
+        ))}
+        <div style="text-align:center;margin-top:1.5rem;">
+          <button class="btn btn--outline" id="btn-load-more-donors">Lihat Semua Donatur</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Donate sidebar -->
+    <aside class="donate-sidebar">
+      <div class="donate-widget">
+        <div class="donate-widget__raised" id="widget-raised">{formatRupiahFull(c.raised)}</div>
+        <div class="donate-widget__target" id="widget-target">terkumpul dari target {formatRupiahFull(c.target)}</div>
+
+        <div class="donate-widget__progress-wrap">
+          <div class="donate-widget__progress-bar" style={`width:${pct}%;`}></div>
+        </div>
+
+        <div class="donate-widget__meta">
+          <span>👥 {c.donors.toLocaleString('id-ID')} donatur</span>
+          <span class="donate-widget__pct">{pct}%</span>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-size:.85rem;color:var(--color-gray-500);margin-bottom:1.5rem;padding:.75rem;background:var(--color-gray-50);border-radius:var(--radius-md);">
+          <span>⏰ <strong style="color:var(--color-gray-800);">{c.daysLeft}</strong> hari lagi</span>
+          <span>🔥 <strong style="color:#ef4444;">Aktif</strong></span>
+        </div>
+
+        <!-- Amount presets -->
+        <p style="font-size:.88rem;font-weight:600;color:var(--color-gray-700);margin-bottom:.6rem;" id="label-amount">Pilih Nominal Donasi</p>
+        <div class="amount-presets" id="amount-presets">
+          <button class="amount-btn" data-amount="25000"  id="amt-25">Rp 25 Rb</button>
+          <button class="amount-btn" data-amount="50000"  id="amt-50">Rp 50 Rb</button>
+          <button class="amount-btn" data-amount="100000" id="amt-100">Rp 100 Rb</button>
+          <button class="amount-btn" data-amount="250000" id="amt-250">Rp 250 Rb</button>
+          <button class="amount-btn" data-amount="500000" id="amt-500">Rp 500 Rb</button>
+          <button class="amount-btn" data-amount="1000000" id="amt-1jt">Rp 1 Jt</button>
+        </div>
+
+        <div class="custom-amount-wrap">
+          <label for="custom-amount" id="label-custom">Atau masukkan nominal lain:</label>
+          <span class="custom-amount-prefix">Rp</span>
+          <input type="number" class="custom-amount-input" id="custom-amount" placeholder="Contoh: 150.000" min="1000" />
+        </div>
+
+        <a href={`/donate/${c.slug}`} class="btn btn--primary btn--full btn--lg" id="btn-donate-now" style="animation: pulse-ring 2s infinite;">
+          💚 Donasi Sekarang
+        </a>
+
+        <p style="font-size:.78rem;color:var(--color-gray-400);text-align:center;margin-top:.75rem;">
+          🔒 Pembayaran aman via Midtrans · Xendit · Xenith
+        </p>
+
+        <!-- Share -->
+        <div style="margin-top:1.25rem;">
+          <p style="font-size:.82rem;font-weight:600;color:var(--color-gray-600);margin-bottom:.5rem;" id="label-share">Bagikan Kampanye:</p>
+          <div class="donate-widget__share">
+            <button class="share-btn share-btn--whatsapp" id="btn-share-wa">WhatsApp</button>
+            <button class="share-btn share-btn--fb"       id="btn-share-fb">Facebook</button>
+            <button class="share-btn share-btn--copy"     id="btn-share-copy">Salin Link</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div style="background:var(--color-white);border:1px solid var(--color-gray-200);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1rem;text-align:center;">
+        <p style="font-size:.82rem;color:var(--color-gray-500);margin-bottom:.75rem;" id="label-trust">Dana Anda dikelola secara transparan</p>
+        <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;">
+          <span style="background:var(--color-primary-pale);color:var(--color-primary);font-size:.75rem;font-weight:600;padding:.25rem .6rem;border-radius:var(--radius-full);">✓ Verified</span>
+          <span style="background:var(--color-accent-pale);color:var(--color-accent);font-size:.75rem;font-weight:600;padding:.25rem .6rem;border-radius:var(--radius-full);">🔒 SSL Secure</span>
+          <span style="background:var(--color-secondary-pale);color:var(--color-secondary-dark);font-size:.75rem;font-weight:600;padding:.25rem .6rem;border-radius:var(--radius-full);">💯 Transparan</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Related campaigns -->
+  {related.length > 0 && (
+    <section class="section" style="background:var(--color-gray-50);">
+      <div class="container">
+        <h2 class="section-title" id="related-title">Kampanye Serupa</h2>
+        <div class="grid grid-3" style="margin-top:2rem;">
+          {related.map((r, i) => {
+            const rPct = getPercent(r.raised, r.target);
+            const rCat = categories.find(cat => cat.id === r.category);
+            return (
+              <article class="campaign-card animate-on-scroll" style={`animation-delay:${i*0.1}s`}>
+                <div class="campaign-card__img-wrap">
+                  <img src={r.image} alt={r.title} class="campaign-card__img" loading="lazy" width="400" height="225" />
+                  <span class="campaign-card__cat-badge">{rCat?.icon} {rCat?.labelId}</span>
+                  <span class="campaign-card__days">⏰ {r.daysLeft} hari</span>
+                </div>
+                <div class="campaign-card__body">
+                  <div class="campaign-card__org"><span class="campaign-card__org-dot"></span>{r.org}</div>
+                  <h3 class="campaign-card__title">{r.title}</h3>
+                  <div class="campaign-card__progress-wrap">
+                    <div class="campaign-card__progress-bar" style={`width:${rPct}%;`}></div>
+                  </div>
+                  <div class="campaign-card__meta">
+                    <div>
+                      <div class="campaign-card__raised">{formatRupiah(r.raised)}</div>
+                      <div class="campaign-card__target">dari {formatRupiah(r.target)}</div>
+                    </div>
+                    <span class="campaign-card__pct">{rPct}%</span>
+                  </div>
+                </div>
+                <div class="campaign-card__footer">
+                  <div class="campaign-card__donors">👥 {r.donors.toLocaleString('id-ID')}</div>
+                  <a href={`/campaigns/${r.slug}`} class="btn btn--primary btn--sm" id={`related-btn-${i}`}>Donasi →</a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+</Layout>
+
+<script>
+  // Amount presets
+  const amountBtns = document.querySelectorAll<HTMLButtonElement>('.amount-btn');
+  const customInput = document.getElementById('custom-amount') as HTMLInputElement;
+  const donateBtn = document.getElementById('btn-donate-now') as HTMLAnchorElement;
+  const baseHref  = donateBtn.href;
+
+  let selectedAmount = 0;
+
+  amountBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      amountBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedAmount = +(btn.dataset.amount || 0);
+      customInput.value = '';
+      updateDonateLink();
+    });
+  });
+
+  customInput.addEventListener('input', () => {
+    amountBtns.forEach(b => b.classList.remove('active'));
+    selectedAmount = +customInput.value || 0;
+    updateDonateLink();
+  });
+
+  const updateDonateLink = () => {
+    donateBtn.href = `${baseHref}?amount=${selectedAmount}`;
+  };
+
+  // Share buttons
+  document.getElementById('btn-share-wa')?.addEventListener('click', () => {
+    const text = encodeURIComponent(`Yuk bantu kampanye ini: ${document.title}\n${window.location.href}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  });
+
+  document.getElementById('btn-share-fb')?.addEventListener('click', () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+  });
+
+  document.getElementById('btn-share-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      (window as any).showToast?.('Link berhasil disalin! 🎉');
+    });
+  });
+
+  document.getElementById('btn-load-more-donors')?.addEventListener('click', () => {
+    const lang = localStorage.getItem('lang') || 'id';
+    (window as any).showToast?.(lang === 'en' ? 'Loading more donors...' : 'Memuat lebih banyak donatur...');
+  });
+
+  // Language
+  const catNamesI18n: Record<string, Record<string,string>> = {
+    kemanusiaan:   { id:'Kemanusiaan', en:'Humanitarian' },
+    pendidikan:    { id:'Pendidikan',  en:'Education' },
+    infrastruktur: { id:'Infrastruktur',en:'Infrastructure' },
+    charity:       { id:'Charity',     en:'Charity' },
+    lingkungan:    { id:'Lingkungan',  en:'Environment' },
+  };
+
+  const applyLang = (lang: string) => {
+    const catBadge = document.getElementById('detail-cat-badge');
+    if (catBadge) {
+      const catRaw = catBadge.textContent?.trim() || '';
+    }
+    const ui: Record<string, Record<string,string>> = {
+      id: { 'label-amount':'Pilih Nominal Donasi','label-custom':'Atau masukkan nominal lain:','label-share':'Bagikan Kampanye:','label-trust':'Dana Anda dikelola secara transparan','btn-donate-now':'💚 Donasi Sekarang','btn-load-more-donors':'Lihat Semua Donatur','donors-title':'👥 Donatur Terbaru','related-title':'Kampanye Serupa' },
+      en: { 'label-amount':'Choose Donation Amount','label-custom':'Or enter a custom amount:','label-share':'Share Campaign:','label-trust':'Your funds are managed transparently','btn-donate-now':'💚 Donate Now','btn-load-more-donors':'See All Donors','donors-title':'👥 Recent Donors','related-title':'Related Campaigns' },
+    };
+    Object.entries(ui[lang]||{}).forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    });
+    document.getElementById('btn-share-copy')!.textContent = lang === 'en' ? 'Copy Link' : 'Salin Link';
+    document.querySelectorAll<HTMLElement>('[id^="related-btn-"]').forEach(el => {
+      el.textContent = lang === 'en' ? 'Donate →' : 'Donasi →';
+    });
+    const widgetTarget = document.getElementById('widget-target');
+    if (widgetTarget) {
+      const targetText = widgetTarget.textContent || '';
+      widgetTarget.textContent = lang === 'en'
+        ? widgetTarget.textContent!.replace('terkumpul dari target', 'raised of target')
+        : widgetTarget.textContent!.replace('raised of target', 'terkumpul dari target');
+    }
+  };
+
+  const saved = localStorage.getItem('lang') || 'id';
+  applyLang(saved);
+  document.addEventListener('langchange', (e) => applyLang((e as CustomEvent).detail));
+</script>

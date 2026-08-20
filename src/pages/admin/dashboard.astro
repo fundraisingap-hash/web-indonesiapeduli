@@ -1,0 +1,2185 @@
+---
+// Admin Dashboard — Indonesia Peduli Sesama
+---
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin — Indonesia Peduli Sesama</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sidebar-w:   260px;
+      --sidebar-bg:  #052a3e;
+      --sidebar-hover: rgba(255,255,255,.07);
+      --sidebar-active: rgba(26,171,228,.22);
+      --green:       #1aabe4;
+      --green-light: #40bfef;
+      --green-pale:  #e0f5fd;
+      --amber:       #f59e0b;
+      --amber-pale:  #fffbeb;
+      --red:         #ef4444;
+      --red-pale:    #fef2f2;
+      --blue:        #3b82f6;
+      --blue-pale:   #eff6ff;
+      --purple:      #8b5cf6;
+      --purple-pale: #f5f3ff;
+      --bg:          #f1f5f9;
+      --white:       #ffffff;
+      --gray-50:     #f8fafc;
+      --gray-100:    #f1f5f9;
+      --gray-200:    #e2e8f0;
+      --gray-300:    #cbd5e1;
+      --gray-400:    #94a3b8;
+      --gray-500:    #64748b;
+      --gray-600:    #475569;
+      --gray-700:    #334155;
+      --gray-800:    #1e293b;
+      --gray-900:    #0f172a;
+      --radius-sm:   6px;
+      --radius-md:   10px;
+      --radius-lg:   14px;
+      --radius-xl:   18px;
+      --radius-full: 9999px;
+      --shadow-sm:   0 1px 4px rgba(0,0,0,.06);
+      --shadow-md:   0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
+      --transition:  .2s ease;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--gray-800);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SIDEBAR
+    ═══════════════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      position: fixed;
+      left: 0; top: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform var(--transition);
+    }
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .sidebar-logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #1aabe4, #40bfef);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .sidebar-logo-text { line-height: 1.2; }
+    .sidebar-logo-title {
+      font-size: .82rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .sidebar-logo-sub {
+      font-size: .7rem;
+      color: rgba(255,255,255,.45);
+    }
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+    .nav-section-label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.3);
+      padding: .75rem 1.25rem .3rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .7rem 1.25rem;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      margin: .15rem .75rem;
+      color: rgba(255,255,255,.65);
+      font-size: .88rem;
+      font-weight: 600;
+      transition: all var(--transition);
+      border: none;
+      background: none;
+      width: calc(100% - 1.5rem);
+      text-align: left;
+    }
+    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+    .nav-item.active { background: var(--sidebar-active); color: #fff; }
+    .nav-item.active .nav-icon { color: var(--green-light); }
+    .nav-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      padding: .1rem .4rem;
+      border-radius: var(--radius-full);
+    }
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: .75rem;
+    }
+    .admin-avatar {
+      width: 36px; height: 36px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: .85rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .admin-name  { font-size: .82rem; font-weight: 700; color: #fff; }
+    .admin-role  { font-size: .7rem; color: rgba(255,255,255,.4); }
+    .btn-logout {
+      width: 100%;
+      padding: .55rem;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.3);
+      color: #fca5a5;
+      border-radius: var(--radius-md);
+      font-size: .8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-logout:hover { background: rgba(239,68,68,.25); }
+
+    /* Mobile toggle */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 99;
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       MAIN CONTENT
+    ═══════════════════════════════════════════════ */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    @media (max-width: 900px) { .main { margin-left: 0; } }
+
+    /* Topbar */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 1.75rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0; z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .topbar-hamburger {
+      display: none;
+      border: none; background: none; cursor: pointer; font-size: 1.3rem;
+      padding: .25rem;
+    }
+    @media (max-width: 900px) { .topbar-hamburger { display: block; } }
+    .topbar-breadcrumb { font-size: .88rem; color: var(--gray-500); }
+    .topbar-breadcrumb strong { color: var(--gray-800); font-weight: 700; }
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+    .topbar-notif {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: .25rem;
+    }
+    .notif-dot {
+      position: absolute;
+      top: 2px; right: 2px;
+      width: 8px; height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+    .topbar-date { font-size: .8rem; color: var(--gray-400); }
+
+    /* Page content */
+    .page-content { padding: 1.75rem; flex: 1; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fade-in .25s ease; }
+    @keyframes fade-in { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title { font-size: 1.4rem; font-weight: 800; color: var(--gray-900); }
+    .page-subtitle { font-size: .85rem; color: var(--gray-500); margin-top: .15rem; }
+
+    /* ═══════════════════════════════════════════════
+       STAT CARDS
+    ═══════════════════════════════════════════════ */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 1100px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px)  { .stat-grid { grid-template-columns: 1fr; } }
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      transition: box-shadow var(--transition);
+    }
+    .stat-card:hover { box-shadow: var(--shadow-md); }
+    .stat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .stat-card-label { font-size: .8rem; color: var(--gray-500); font-weight: 600; }
+    .stat-card-icon {
+      width: 38px; height: 38px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .stat-card-value { font-size: 1.6rem; font-weight: 800; color: var(--gray-900); line-height: 1; }
+    .stat-card-change {
+      font-size: .78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: .2rem;
+    }
+    .change-up   { color: var(--green); }
+    .change-down { color: var(--red); }
+
+    /* ═══════════════════════════════════════════════
+       CHARTS
+    ═══════════════════════════════════════════════ */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+    .chart-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+    }
+    .chart-title {
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: .5rem;
+      height: 120px;
+    }
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .3rem;
+      flex: 1;
+    }
+    .bar {
+      width: 100%;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      background: linear-gradient(to top, var(--green), var(--green-light));
+      transition: height .8s cubic-bezier(.34,1.2,.64,1);
+      min-height: 4px;
+    }
+    .bar-label { font-size: .65rem; color: var(--gray-400); font-weight: 600; }
+    /* Donut chart CSS */
+    .donut-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .donut-svg { width: 120px; height: 120px; }
+    .donut-legend { width: 100%; display: flex; flex-direction: column; gap: .4rem; }
+    .legend-item { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--gray-600); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ═══════════════════════════════════════════════
+       TABLES
+    ═══════════════════════════════════════════════ */
+    .table-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .table-card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+    .table-card-title { font-size: .92rem; font-weight: 700; color: var(--gray-800); }
+    .table-tools { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+    .search-input {
+      padding: .5rem .85rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: .82rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition);
+      background: var(--gray-50);
+      min-width: 180px;
+    }
+    .search-input:focus { border-color: var(--green); }
+    .filter-select {
+      padding: .5rem .75rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: .82rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      background: var(--gray-50);
+      transition: border-color var(--transition);
+    }
+    .filter-select:focus { border-color: var(--green); }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--gray-50); }
+    th {
+      padding: .7rem 1rem;
+      text-align: left;
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--gray-500);
+      white-space: nowrap;
+    }
+    td {
+      padding: .8rem 1rem;
+      font-size: .85rem;
+      color: var(--gray-700);
+      border-top: 1px solid var(--gray-100);
+    }
+    tbody tr:hover { background: var(--gray-50); }
+    .table-empty { text-align:center; padding: 3rem; color: var(--gray-400); font-size: .9rem; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: .25rem .6rem;
+      border-radius: var(--radius-full);
+      font-size: .72rem;
+      font-weight: 700;
+    }
+    .badge-green  { background: var(--green-pale); color: var(--green); }
+    .badge-amber  { background: var(--amber-pale); color: #92400e; }
+    .badge-red    { background: var(--red-pale); color: #dc2626; }
+    .badge-blue   { background: var(--blue-pale); color: #1d4ed8; }
+    .badge-purple { background: var(--purple-pale); color: #6d28d9; }
+    .badge-gray   { background: var(--gray-100); color: var(--gray-600); }
+
+    /* Action buttons */
+    .btn-action {
+      padding: .3rem .7rem;
+      border-radius: var(--radius-sm);
+      font-size: .78rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+    }
+    .btn-edit   { background: var(--blue-pale); color: #1d4ed8; }
+    .btn-edit:hover { background: #dbeafe; }
+    .btn-delete { background: var(--red-pale); color: #dc2626; }
+    .btn-delete:hover { background: #fee2e2; }
+    .btn-approve { background: var(--green-pale); color: var(--green); }
+    .btn-approve:hover { background: #e0f5fd; }
+    .btn-reject  { background: var(--red-pale); color: #dc2626; }
+    .btn-reject:hover  { background: #fee2e2; }
+    .btn-view   { background: var(--gray-100); color: var(--gray-600); }
+    .btn-view:hover { background: var(--gray-200); }
+
+    /* Progress mini */
+    .mini-progress { width: 80px; height: 6px; background: var(--gray-200); border-radius: var(--radius-full); overflow:hidden; }
+    .mini-progress-bar { height: 100%; background: var(--green); border-radius: var(--radius-full); }
+
+    /* ═══════════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════════ */
+    .btn-primary {
+      padding: .6rem 1.2rem;
+      background: linear-gradient(135deg, #052a3e, var(--green));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: .85rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 4px 12px rgba(26,171,228,.25);
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(26,171,228,.35); }
+    .btn-outline {
+      padding: .6rem 1.2rem;
+      background: transparent;
+      color: var(--gray-600);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: .85rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .btn-outline:hover { border-color: var(--gray-400); color: var(--gray-800); }
+    .btn-success {
+      padding: .6rem 1.2rem;
+      background: var(--green-pale);
+      color: var(--green);
+      border: 2px solid var(--green);
+      border-radius: var(--radius-full);
+      font-size: .85rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .btn-success:hover { background: var(--green); color: #fff; }
+
+    /* ═══════════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.6);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,.2);
+      animation: modal-in .3s cubic-bezier(.34,1.4,.64,1) both;
+    }
+    @keyframes modal-in { from { opacity:0; transform:scale(.9) translateY(20px); } to { opacity:1; transform:none; } }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; top: 0; background: #fff; z-index: 1;
+    }
+    .modal-title { font-size: 1.05rem; font-weight: 800; color: var(--gray-900); }
+    .modal-close {
+      width: 32px; height: 32px;
+      border: none; background: var(--gray-100);
+      border-radius: 50%; cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition);
+    }
+    .modal-close:hover { background: var(--gray-200); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      justify-content: flex-end;
+      gap: .75rem;
+    }
+
+    /* Form elements */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: .35rem; margin-bottom: .85rem; }
+    .form-label { font-size: .82rem; font-weight: 600; color: var(--gray-600); }
+    .form-input, .form-select, .form-textarea {
+      padding: .65rem .9rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      font-size: .88rem;
+      font-family: inherit;
+      color: var(--gray-800);
+      outline: none;
+      transition: border-color var(--transition);
+      background: var(--gray-50);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--green);
+      background: #fff;
+    }
+    .form-textarea { resize: vertical; min-height: 80px; }
+
+    /* ═══════════════════════════════════════════════
+       SETTINGS
+    ═══════════════════════════════════════════════ */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 800px) { .settings-grid { grid-template-columns: 1fr; } }
+    .settings-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+    }
+    .settings-card-title {
+      font-size: .95rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .6rem 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: .85rem; font-weight: 600; color: var(--gray-700); }
+    .toggle-sub   { font-size: .75rem; color: var(--gray-400); }
+    .toggle {
+      position: relative;
+      width: 44px; height: 24px;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--gray-300);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px; left: 3px;
+      transition: transform .2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .toggle input:checked + .toggle-slider { background: var(--green); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    /* Category tags */
+    .cat-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; }
+    .cat-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .35rem .75rem;
+      background: var(--green-pale);
+      color: var(--green);
+      border-radius: var(--radius-full);
+      font-size: .8rem;
+      font-weight: 600;
+    }
+    .cat-tag-remove {
+      background: none; border: none; cursor: pointer;
+      color: inherit; font-size: .8rem; padding: 0; line-height: 1;
+      opacity: .6;
+    }
+    .cat-tag-remove:hover { opacity: 1; }
+
+    /* ═══════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════ */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+    .toast {
+      background: var(--gray-900);
+      color: #fff;
+      padding: .75rem 1.25rem;
+      border-radius: var(--radius-lg);
+      font-size: .88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      animation: toast-in .3s ease;
+      max-width: 320px;
+    }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--red); }
+    @keyframes toast-in { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:none; } }
+
+    /* ═══════════════════════════════════════════════
+       CONFIRM DIALOG
+    ═══════════════════════════════════════════════ */
+    .confirm-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,23,42,.6);
+      backdrop-filter: blur(4px);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .confirm-overlay.open { display: flex; }
+    .confirm-box {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0,0,0,.2);
+      animation: modal-in .3s cubic-bezier(.34,1.4,.64,1) both;
+    }
+    .confirm-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+    .confirm-title { font-size: 1.1rem; font-weight: 800; color: var(--gray-900); margin-bottom: .5rem; }
+    .confirm-desc  { font-size: .88rem; color: var(--gray-500); margin-bottom: 1.5rem; line-height: 1.5; }
+    .confirm-actions { display: flex; gap: .75rem; justify-content: center; }
+
+    /* Misc */
+    .section-divider { height: 1px; background: var(--gray-200); margin: 1.5rem 0; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .fw-bold { font-weight: 700; }
+    .text-green { color: var(--green); }
+    .text-red   { color: var(--red); }
+    .text-muted { color: var(--gray-400); }
+    .flex-between { display:flex; justify-content:space-between; align-items:center; }
+    .gap-sm { gap: .5rem; }
+    .donor-initial {
+      width: 32px; height: 32px;
+      background: var(--green-pale);
+      color: var(--green);
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 800; flex-shrink: 0;
+    }
+    .donor-cell { display: flex; align-items: center; gap: .6rem; }
+    .campaign-thumb {
+      width: 40px; height: 28px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="/images/logo-indonesia-peduli.png" alt="Indonesia Peduli"
+      style="height:36px;width:auto;max-width:160px;object-fit:contain;filter:brightness(0) invert(1);" />
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Menu Utama</div>
+    <button class="nav-item active" data-tab="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </button>
+    <button class="nav-item" data-tab="campaigns">
+      <span class="nav-icon">📋</span> Kampanye
+    </button>
+    <button class="nav-item" data-tab="donations">
+      <span class="nav-icon">💰</span> Donasi
+    </button>
+    <button class="nav-item" data-tab="donors">
+      <span class="nav-icon">👥</span> Donatur
+    </button>
+    <button class="nav-item" data-tab="withdrawals">
+      <span class="nav-icon">🏦</span> Penarikan Dana
+      <span class="nav-badge" id="withdrawal-badge">3</span>
+    </button>
+    <div class="nav-section-label" style="margin-top:.5rem;">Sistem</div>
+    <button class="nav-item" data-tab="settings">
+      <span class="nav-icon">⚙️</span> Pengaturan
+    </button>
+    <a href="/" target="_blank" style="text-decoration:none;">
+      <div class="nav-item">
+        <span class="nav-icon">🌐</span> Lihat Website
+      </div>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-info">
+      <div class="admin-avatar" id="admin-avatar-initial">A</div>
+      <div>
+        <div class="admin-name" id="admin-display-name">Admin</div>
+        <div class="admin-role">Super Administrator</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btn-logout">🚪 Keluar</button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="topbar-hamburger" id="topbar-hamburger">☰</button>
+      <div class="topbar-breadcrumb">Admin / <strong id="topbar-page-title">Dashboard</strong></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-notif" title="Notifikasi">
+        🔔<span class="notif-dot"></span>
+      </div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="page-content">
+
+    <!-- ════════════════════════════════
+         TAB: DASHBOARD
+    ════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-subtitle">Selamat datang kembali! Berikut ringkasan aktivitas hari ini.</div>
+        </div>
+        <button class="btn-primary" onclick="exportReport()">📥 Export Laporan</button>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Total Dana Terkumpul</div>
+            <div class="stat-card-icon" style="background:#e0f5fd;">💰</div>
+          </div>
+          <div class="stat-card-value" id="stat-total-raised">Rp 0</div>
+          <div class="stat-card-change change-up">▲ 12.4% dari bulan lalu</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Kampanye Aktif</div>
+            <div class="stat-card-icon" style="background:#eff6ff;">📋</div>
+          </div>
+          <div class="stat-card-value" id="stat-active-campaigns">0</div>
+          <div class="stat-card-change change-up">▲ 2 baru minggu ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Total Donatur</div>
+            <div class="stat-card-icon" style="background:#f5f3ff;">👥</div>
+          </div>
+          <div class="stat-card-value" id="stat-total-donors">0</div>
+          <div class="stat-card-change change-up">▲ 8.2% dari bulan lalu</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Donasi Hari Ini</div>
+            <div class="stat-card-icon" style="background:#fffbeb;">⚡</div>
+          </div>
+          <div class="stat-card-value" id="stat-today-donations">0</div>
+          <div class="stat-card-change change-down">▼ 3 transaksi pending</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-title">
+            📈 Donasi 7 Hari Terakhir
+            <span style="font-size:.75rem;color:var(--gray-400);font-weight:500;">dalam jutaan Rp</span>
+          </div>
+          <div class="bar-chart" id="bar-chart"></div>
+          <div style="display:flex;justify-content:center;gap:1rem;margin-top:.75rem;">
+            <span style="font-size:.72rem;color:var(--gray-400);">Total minggu ini: <strong style="color:var(--green);">Rp 28.5 Jt</strong></span>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🥧 Donasi per Kategori</div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#f1f5f9" stroke-width="4"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#1aabe4" stroke-width="4"
+                stroke-dasharray="38 62" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#3b82f6" stroke-width="4"
+                stroke-dasharray="24 76" stroke-dashoffset="-13" transform="rotate(-90 21 21)"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#f59e0b" stroke-width="4"
+                stroke-dasharray="18 82" stroke-dashoffset="-37" transform="rotate(-90 21 21)"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#8b5cf6" stroke-width="4"
+                stroke-dasharray="12 88" stroke-dashoffset="-55" transform="rotate(-90 21 21)"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#40bfef" stroke-width="4"
+                stroke-dasharray="8 92" stroke-dashoffset="-67" transform="rotate(-90 21 21)"/>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#1aabe4;"></div> Kemanusiaan 38%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div> Pendidikan 24%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div> Infrastruktur 18%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6;"></div> Charity 12%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#40bfef;"></div> Lingkungan 8%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent donations table -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-card-title">💳 Donasi Terbaru</div>
+          <button class="btn-outline" onclick="switchTab('donations')">Lihat Semua →</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="recent-donations-table">
+            <thead><tr>
+              <th>Donatur</th><th>Kampanye</th><th>Nominal</th>
+              <th>Metode</th><th>Waktu</th><th>Status</th>
+            </tr></thead>
+            <tbody id="recent-donations-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tab-dashboard -->
+
+    <!-- ════════════════════════════════
+         TAB: CAMPAIGNS
+    ════════════════════════════════ -->
+    <div class="tab-panel" id="tab-campaigns">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Kelola Kampanye</div>
+          <div class="page-subtitle">Tambah, edit, dan atur status kampanye donasi</div>
+        </div>
+        <button class="btn-primary" id="btn-add-campaign">➕ Tambah Kampanye</button>
+      </div>
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-card-title" id="camp-count">Semua Kampanye</div>
+          <div class="table-tools">
+            <input type="search" class="search-input" id="camp-search" placeholder="🔍 Cari kampanye..." />
+            <select class="filter-select" id="camp-cat-filter">
+              <option value="">Semua Kategori</option>
+              <option value="kemanusiaan">❤️ Kemanusiaan</option>
+              <option value="pendidikan">📚 Pendidikan</option>
+              <option value="infrastruktur">🏗️ Infrastruktur</option>
+              <option value="charity">🤲 Charity</option>
+              <option value="lingkungan">🌿 Lingkungan</option>
+            </select>
+            <select class="filter-select" id="camp-status-filter">
+              <option value="">Semua Status</option>
+              <option value="aktif">Aktif</option>
+              <option value="draft">Draft</option>
+              <option value="selesai">Selesai</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>Kampanye</th><th>Kategori</th><th>Target</th>
+              <th>Terkumpul</th><th>Progress</th><th>Donatur</th>
+              <th>Status</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="campaigns-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tab-campaigns -->
+
+    <!-- ════════════════════════════════
+         TAB: DONATIONS
+    ════════════════════════════════ -->
+    <div class="tab-panel" id="tab-donations">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Riwayat Donasi</div>
+          <div class="page-subtitle">Semua transaksi donasi yang masuk ke platform</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <button class="btn-outline" onclick="openModal('col-modal')">⊞ Customize Columns</button>
+          <button class="btn-outline" onclick="openModal('filter-modal')">⚙️ Customize Filters</button>
+          <button class="btn-success" onclick="exportCSV()">📊 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Active filter chips -->
+      <div id="active-filter-chips" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;"></div>
+
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-card-title" id="don-count">Semua Donasi</div>
+          <div class="table-tools">
+            <input type="search" class="search-input" id="don-search" placeholder="🔍 Cari donatur / kampanye..." />
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="don-table">
+            <thead id="don-thead"><tr></tr></thead>
+            <tbody id="donations-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tab-donations -->
+
+    <!-- ════════════════════════════════
+         TAB: DONORS
+    ════════════════════════════════ -->
+    <div class="tab-panel" id="tab-donors">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Data Donatur</div>
+          <div class="page-subtitle">Kelola dan pantau aktivitas donatur</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-card-title" id="donor-count">Semua Donatur</div>
+          <div class="table-tools">
+            <input type="search" class="search-input" id="donor-search" placeholder="🔍 Cari nama / email..." />
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>Donatur</th><th>Email</th><th>Total Donasi</th>
+              <th>Transaksi</th><th>Donasi Terakhir</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="donors-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tab-donors -->
+
+    <!-- ════════════════════════════════
+         TAB: WITHDRAWALS
+    ════════════════════════════════ -->
+    <div class="tab-panel" id="tab-withdrawals">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Penarikan Dana</div>
+          <div class="page-subtitle">Review dan setujui permintaan penarikan dana kampanye</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-card-title">Permintaan Penarikan</div>
+          <div class="table-tools">
+            <select class="filter-select" id="wd-status-filter">
+              <option value="">Semua Status</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>Kampanye</th><th>Penggalang</th><th>Jumlah</th>
+              <th>Rekening</th><th>Tanggal</th><th>Status</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="withdrawals-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tab-withdrawals -->
+
+    <!-- ════════════════════════════════
+         TAB: SETTINGS
+    ════════════════════════════════ -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Pengaturan</div>
+          <div class="page-subtitle">Konfigurasi website, payment gateway, dan akun admin</div>
+        </div>
+        <button class="btn-primary" onclick="saveSettings()">💾 Simpan Semua</button>
+      </div>
+      <div class="settings-grid">
+
+        <!-- Site Config -->
+        <div class="settings-card">
+          <div class="settings-card-title">🌐 Konfigurasi Website</div>
+          <div class="form-group">
+            <label class="form-label">Nama Website</label>
+            <input type="text" class="form-input" id="cfg-site-name" value="Indonesia Peduli Sesama" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tagline</label>
+            <input type="text" class="form-input" id="cfg-tagline" value="Bersama Kita Bisa Membuat Perubahan" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Kontak</label>
+            <input type="email" class="form-input" id="cfg-email" value="hello@indonesiapedulisesama.org" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">No. WhatsApp</label>
+            <input type="text" class="form-input" id="cfg-whatsapp" value="+62 812-3456-7890" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alamat</label>
+            <textarea class="form-textarea" id="cfg-address">Jl. Sudirman No. 123, Jakarta Pusat 10220</textarea>
+          </div>
+        </div>
+
+        <!-- Payment Gateway -->
+        <div class="settings-card">
+          <div class="settings-card-title">💳 Payment Gateway</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Midtrans</div>
+              <div class="toggle-sub">Transfer Bank, GoPay, OVO, QRIS</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="pg-midtrans" checked /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-group" style="margin-top:.75rem;">
+            <label class="form-label">Midtrans Server Key</label>
+            <input type="password" class="form-input" id="cfg-midtrans-key" placeholder="SB-Mid-server-xxxx" />
+          </div>
+          <div class="section-divider"></div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Xendit</div>
+              <div class="toggle-sub">Virtual Account, Dana, LinkAja</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="pg-xendit" checked /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-group" style="margin-top:.75rem;">
+            <label class="form-label">Xendit API Key</label>
+            <input type="password" class="form-input" id="cfg-xendit-key" placeholder="xnd_development_xxxx" />
+          </div>
+          <div class="section-divider"></div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Xenith</div>
+              <div class="toggle-sub">Crypto, E-Wallet, Direct</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="pg-xenith" /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-group" style="margin-top:.75rem;">
+            <label class="form-label">Xenith API Key</label>
+            <input type="password" class="form-input" id="cfg-xenith-key" placeholder="xt_live_xxxx" />
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="settings-card">
+          <div class="settings-card-title">🏷️ Kategori Kampanye</div>
+          <div class="cat-tags" id="cat-tags-container"></div>
+          <div style="display:flex;gap:.5rem;">
+            <input type="text" class="form-input" id="cat-new-emoji" placeholder="🆕" style="width:60px;" />
+            <input type="text" class="form-input" id="cat-new-name" placeholder="Nama kategori baru" style="flex:1;" />
+            <button class="btn-primary" onclick="addCategory()" style="flex-shrink:0;">+ Tambah</button>
+          </div>
+        </div>
+
+        <!-- Admin Security -->
+        <div class="settings-card">
+          <div class="settings-card-title">🔐 Keamanan Admin</div>
+          <div class="form-group">
+            <label class="form-label">Username Admin</label>
+            <input type="text" class="form-input" id="cfg-admin-user" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password Lama</label>
+            <input type="password" class="form-input" id="cfg-old-pass" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password Baru</label>
+            <input type="password" class="form-input" id="cfg-new-pass" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konfirmasi Password Baru</label>
+            <input type="password" class="form-input" id="cfg-confirm-pass" placeholder="••••••••" />
+          </div>
+          <button class="btn-primary" onclick="changePassword()" style="width:100%;justify-content:center;">🔑 Ubah Password</button>
+          <div class="section-divider"></div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Mode Maintenance</div>
+              <div class="toggle-sub">Website tampilkan halaman maintenance</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="cfg-maintenance" /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Donasi Baru</div>
+              <div class="toggle-sub">Terima donasi baru dari publik</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="cfg-accept-donations" checked /><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+
+      </div><!-- /settings-grid -->
+    </div><!-- /tab-settings -->
+
+  </div><!-- /page-content -->
+</div><!-- /main -->
+
+<!-- ═══════════ CUSTOMIZE COLUMNS MODAL ═══════════ -->
+<div class="modal-overlay" id="col-modal">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-header">
+      <div class="modal-title">⊞ Customize Columns</div>
+      <button class="modal-close" onclick="closeModal('col-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="col-modal-body" style="padding:1.25rem 1.5rem;">
+      <!-- rendered by JS -->
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn-action btn-delete" style="padding:.5rem 1rem;font-size:.82rem;" onclick="resetCols()">↺ Reset Columns</button>
+      <div style="display:flex;gap:.5rem;">
+        <button class="btn-outline" onclick="selectAllCols()">Select All</button>
+        <button class="btn-outline" onclick="closeModal('col-modal')">Cancel</button>
+        <button class="btn-primary" onclick="applyColumns()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CUSTOMIZE FILTERS MODAL ═══════════ -->
+<div class="modal-overlay" id="filter-modal">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ Customize Filters</div>
+      <button class="modal-close" onclick="closeModal('filter-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.25rem 1.5rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+        <!-- Left column -->
+        <div>
+          <div class="form-group">
+            <label class="form-label">Status Donasi</label>
+            <select class="form-select" id="ff-status">
+              <option value="">Semua Status</option>
+              <option value="sukses">✅ Sukses</option>
+              <option value="pending">⏳ Pending</option>
+              <option value="gagal">❌ Gagal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Metode Pembayaran</label>
+            <select class="form-select" id="ff-method">
+              <option value="">Semua Metode</option>
+              <option value="qris">⬛ QRIS</option>
+              <option value="va">🏦 Virtual Account</option>
+              <option value="gopay">GoPay</option>
+              <option value="ovo">OVO</option>
+              <option value="shopeepay">🛒 ShopeePay</option>
+              <option value="transfer">💳 Bank Transfer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori Kampanye</label>
+            <select class="form-select" id="ff-kategori">
+              <option value="">Semua Kategori</option>
+              <option value="kemanusiaan">❤️ Kemanusiaan</option>
+              <option value="pendidikan">📚 Pendidikan</option>
+              <option value="infrastruktur">🏗️ Infrastruktur</option>
+              <option value="charity">🤲 Charity</option>
+              <option value="lingkungan">🌿 Lingkungan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipe Donatur</label>
+            <select class="form-select" id="ff-anonim">
+              <option value="">Semua Tipe</option>
+              <option value="publik">👤 Publik / Terdaftar</option>
+              <option value="anonim">🎭 Anonim</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cari Kampanye</label>
+            <input type="text" class="form-input" id="ff-kampanye" placeholder="Nama kampanye..." />
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <div class="form-group">
+            <label class="form-label">📅 Tanggal Dibuat — Dari</label>
+            <input type="date" class="form-input" id="ff-date-from" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">📅 Tanggal Dibuat — Sampai</label>
+            <input type="date" class="form-input" id="ff-date-to" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nominal Minimum (Rp)</label>
+            <input type="number" class="form-input" id="ff-min" placeholder="0" min="0" step="10000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nominal Maksimum (Rp)</label>
+            <input type="number" class="form-input" id="ff-max" placeholder="10.000.000" min="0" step="10000" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn-action btn-delete" style="padding:.5rem 1rem;font-size:.82rem;" onclick="resetFilters()">↺ Reset Filters</button>
+      <div style="display:flex;gap:.5rem;">
+        <button class="btn-outline" onclick="closeModal('filter-modal')">Cancel</button>
+        <button class="btn-primary" onclick="applyFilters()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CAMPAIGN MODAL ═══════════ -->
+<div class="modal-overlay" id="campaign-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="campaign-modal-title">➕ Tambah Kampanye Baru</div>
+      <button class="modal-close" onclick="closeModal('campaign-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="modal-campaign-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Judul Kampanye (ID)</label>
+          <input type="text" class="form-input" id="modal-title-id" placeholder="Judul dalam Bahasa Indonesia" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Judul Kampanye (EN)</label>
+          <input type="text" class="form-input" id="modal-title-en" placeholder="Title in English" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deskripsi (ID)</label>
+        <textarea class="form-textarea" id="modal-desc-id" placeholder="Deskripsi singkat kampanye..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Kategori</label>
+          <select class="form-select" id="modal-category">
+            <option value="kemanusiaan">❤️ Kemanusiaan</option>
+            <option value="pendidikan">📚 Pendidikan</option>
+            <option value="infrastruktur">🏗️ Infrastruktur</option>
+            <option value="charity">🤲 Charity</option>
+            <option value="lingkungan">🌿 Lingkungan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="modal-status">
+            <option value="aktif">✅ Aktif</option>
+            <option value="draft">📝 Draft</option>
+            <option value="selesai">🏁 Selesai</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Target Dana (Rp)</label>
+          <input type="number" class="form-input" id="modal-target" placeholder="500000000" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hari Tersisa</label>
+          <input type="number" class="form-input" id="modal-days" placeholder="30" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Penyelenggara / Organisasi</label>
+        <input type="text" class="form-input" id="modal-org" placeholder="Nama organisasi / penggalang dana" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL Gambar</label>
+        <input type="url" class="form-input" id="modal-image" placeholder="https://..." />
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:.5rem;">
+          <input type="checkbox" id="modal-urgent" /> Tandai sebagai Mendesak 🔥
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeModal('campaign-modal')">Batal</button>
+      <button class="btn-primary" onclick="saveCampaign()">💾 Simpan Kampanye</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONFIRM DIALOG ═══════════ -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Konfirmasi</div>
+    <div class="confirm-desc" id="confirm-desc">Apakah Anda yakin?</div>
+    <div class="confirm-actions">
+      <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+      <button class="btn-primary" id="confirm-ok-btn" style="background:linear-gradient(135deg,#dc2626,#ef4444);">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+// ── Auth check ──────────────────────────────────────
+if (localStorage.getItem('ips_admin_auth') !== 'true') {
+  window.location.replace('/admin');
+}
+
+// ── Mock Data ───────────────────────────────────────
+const CAMPAIGNS_DEFAULT = [
+  { id:1, slug:'bantu-korban-banjir-kalimantan', titleId:'Bantu Korban Banjir Kalimantan Tengah', titleEn:'Help Flood Victims in Central Kalimantan', category:'kemanusiaan', target:500000000, raised:363000000, donors:4218, daysLeft:12, org:'Yayasan Indonesia Peduli', status:'aktif', urgent:true, image:'/images/campaign-kemanusiaan.jpg' },
+  { id:2, slug:'beasiswa-anak-pedalaman-papua', titleId:'Beasiswa Anak Pedalaman Papua', titleEn:'Scholarship for Papua Children', category:'pendidikan', target:300000000, raised:215000000, donors:2891, daysLeft:45, org:'Gerakan Pendidikan Nusantara', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg' },
+  { id:3, slug:'jembatan-desa-terpencil-NTT', titleId:'Jembatan Desa Terpencil NTT', titleEn:'Bridge for Remote Village in NTT', category:'infrastruktur', target:800000000, raised:452000000, donors:3102, daysLeft:60, org:'Komunitas Infrastruktur Nusantara', status:'aktif', urgent:false, image:'/images/hero-banner.jpg' },
+  { id:4, slug:'panti-asuhan-yatim-sulawesi', titleId:'Panti Asuhan Yatim Sulawesi', titleEn:'Orphanage in Sulawesi', category:'charity', target:200000000, raised:187000000, donors:5430, daysLeft:8, org:'Rumah Kasih Sulawesi', status:'aktif', urgent:true, image:'/images/campaign-kemanusiaan.jpg' },
+  { id:5, slug:'tanam-pohon-hutan-borneo', titleId:'10.000 Pohon untuk Hutan Borneo', titleEn:'10,000 Trees for Borneo Forest', category:'lingkungan', target:150000000, raised:89000000, donors:1876, daysLeft:30, org:'Green Borneo Foundation', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg' },
+  { id:6, slug:'air-bersih-desa-lombok', titleId:'Air Bersih untuk Desa Lombok', titleEn:'Clean Water for Lombok Village', category:'kemanusiaan', target:120000000, raised:95000000, donors:2340, daysLeft:20, org:'Lombok Bersih Foundation', status:'aktif', urgent:false, image:'/images/campaign-kemanusiaan.jpg' },
+  { id:7, slug:'beasiswa-sma-aceh', titleId:'Beasiswa SMA untuk Siswa Aceh', titleEn:'High School Scholarships for Aceh', category:'pendidikan', target:80000000, raised:72000000, donors:1234, daysLeft:15, org:'Aceh Cerdas Foundation', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg' },
+  { id:8, slug:'bank-sampah-surabaya', titleId:'Bank Sampah Digital Surabaya', titleEn:'Digital Waste Bank Surabaya', category:'lingkungan', target:100000000, raised:43000000, donors:987, daysLeft:50, org:'Eco Surabaya Community', status:'draft', urgent:false, image:'/images/campaign-pendidikan.jpg' },
+];
+
+const DONATIONS_DEFAULT = [
+  { id:1, name:'Ahmad Rizal', email:'ahmad@email.com', campaign:'Bantu Korban Banjir Kalimantan Tengah', amount:500000, method:'gopay', status:'sukses', date:'2025-08-20 10:23' },
+  { id:2, name:'Donatur Anonim', email:'-', campaign:'Beasiswa Anak Pedalaman Papua', amount:100000, method:'qris', status:'sukses', date:'2025-08-20 09:15' },
+  { id:3, name:'Siti Rahayu', email:'siti@email.com', campaign:'Jembatan Desa Terpencil NTT', amount:250000, method:'va', status:'sukses', date:'2025-08-20 08:44' },
+  { id:4, name:'Budi Santoso', email:'budi@email.com', campaign:'Panti Asuhan Yatim Sulawesi', amount:1000000, method:'transfer', status:'sukses', date:'2025-08-19 22:10' },
+  { id:5, name:'Maya Lestari', email:'maya@email.com', campaign:'Air Bersih untuk Desa Lombok', amount:75000, method:'ovo', status:'pending', date:'2025-08-19 21:05' },
+  { id:6, name:'Hendra P.', email:'hendra@email.com', campaign:'10.000 Pohon untuk Hutan Borneo', amount:200000, method:'shopeepay', status:'sukses', date:'2025-08-19 19:30' },
+  { id:7, name:'Dewi Anggraini', email:'dewi@email.com', campaign:'Beasiswa SMA untuk Siswa Aceh', amount:150000, method:'qris', status:'gagal', date:'2025-08-19 17:12' },
+  { id:8, name:'Rudi Hermawan', email:'rudi@email.com', campaign:'Bantu Korban Banjir Kalimantan Tengah', amount:500000, method:'gopay', status:'sukses', date:'2025-08-19 15:45' },
+  { id:9, name:'Rina Wijaya', email:'rina@email.com', campaign:'Bank Sampah Digital Surabaya', amount:50000, method:'qris', status:'sukses', date:'2025-08-19 14:20' },
+  { id:10, name:'Donatur Anonim', email:'-', campaign:'Beasiswa Anak Pedalaman Papua', amount:300000, method:'va', status:'pending', date:'2025-08-19 12:00' },
+];
+
+const WITHDRAWALS_DEFAULT = [
+  { id:1, campaign:'Bantu Korban Banjir Kalimantan Tengah', org:'Yayasan Indonesia Peduli', amount:150000000, bank:'BCA - 1234567890', date:'2025-08-18', status:'pending' },
+  { id:2, campaign:'Beasiswa Anak Pedalaman Papua', org:'Gerakan Pendidikan Nusantara', amount:80000000, bank:'Mandiri - 0987654321', date:'2025-08-17', status:'pending' },
+  { id:3, campaign:'Panti Asuhan Yatim Sulawesi', org:'Rumah Kasih Sulawesi', amount:120000000, bank:'BNI - 1122334455', date:'2025-08-15', status:'pending' },
+  { id:4, campaign:'Jembatan Desa Terpencil NTT', org:'Komunitas Infrastruktur Nusantara', amount:200000000, bank:'BRI - 9988776655', date:'2025-08-10', status:'approved' },
+  { id:5, campaign:'Air Bersih untuk Desa Lombok', org:'Lombok Bersih Foundation', amount:50000000, bank:'BCA - 5544332211', date:'2025-08-05', status:'rejected' },
+];
+
+const DONORS_DEFAULT = [
+  { id:1, name:'Ahmad Rizal', email:'ahmad@email.com', totalDonated:2500000, txCount:5, lastDate:'2025-08-20' },
+  { id:2, name:'Siti Rahayu', email:'siti@email.com', totalDonated:750000, txCount:3, lastDate:'2025-08-20' },
+  { id:3, name:'Budi Santoso', email:'budi@email.com', totalDonated:3500000, txCount:7, lastDate:'2025-08-19' },
+  { id:4, name:'Maya Lestari', email:'maya@email.com', totalDonated:425000, txCount:4, lastDate:'2025-08-19' },
+  { id:5, name:'Hendra Pratama', email:'hendra@email.com', totalDonated:1200000, txCount:6, lastDate:'2025-08-19' },
+  { id:6, name:'Dewi Anggraini', email:'dewi@email.com', totalDonated:850000, txCount:4, lastDate:'2025-08-19' },
+  { id:7, name:'Rudi Hermawan', email:'rudi@email.com', totalDonated:2750000, txCount:9, lastDate:'2025-08-19' },
+  { id:8, name:'Rina Wijaya', email:'rina@email.com', totalDonated:300000, txCount:2, lastDate:'2025-08-19' },
+];
+
+const CATEGORIES_DEFAULT = [
+  { emoji:'❤️', name:'Kemanusiaan' },
+  { emoji:'📚', name:'Pendidikan' },
+  { emoji:'🏗️', name:'Infrastruktur' },
+  { emoji:'🤲', name:'Charity' },
+  { emoji:'🌿', name:'Lingkungan' },
+];
+
+// Load or initialize data
+let campaigns   = JSON.parse(localStorage.getItem('ips_campaigns')   || 'null') || CAMPAIGNS_DEFAULT;
+let donations   = JSON.parse(localStorage.getItem('ips_donations')   || 'null') || DONATIONS_DEFAULT;
+let withdrawals = JSON.parse(localStorage.getItem('ips_withdrawals') || 'null') || WITHDRAWALS_DEFAULT;
+let donors      = JSON.parse(localStorage.getItem('ips_donors')      || 'null') || DONORS_DEFAULT;
+let categories  = JSON.parse(localStorage.getItem('ips_categories')  || 'null') || CATEGORIES_DEFAULT;
+
+function saveData() {
+  localStorage.setItem('ips_campaigns',   JSON.stringify(campaigns));
+  localStorage.setItem('ips_donations',   JSON.stringify(donations));
+  localStorage.setItem('ips_withdrawals', JSON.stringify(withdrawals));
+  localStorage.setItem('ips_donors',      JSON.stringify(donors));
+  localStorage.setItem('ips_categories',  JSON.stringify(categories));
+}
+
+// ── Helpers ─────────────────────────────────────────
+const fmtRp = n => n >= 1e9
+  ? `Rp ${(n/1e9).toFixed(1)} M`
+  : n >= 1e6
+  ? `Rp ${(n/1e6).toFixed(0)} Jt`
+  : `Rp ${n.toLocaleString('id-ID')}`;
+const fmtRpFull = n => `Rp ${n.toLocaleString('id-ID')}`;
+const pct = (r, t) => t ? Math.min(100, Math.round(r/t*100)) : 0;
+
+const statusBadge = (s) => ({
+  sukses:   '<span class="badge badge-green">✅ Sukses</span>',
+  pending:  '<span class="badge badge-amber">⏳ Pending</span>',
+  gagal:    '<span class="badge badge-red">❌ Gagal</span>',
+  aktif:    '<span class="badge badge-green">✅ Aktif</span>',
+  draft:    '<span class="badge badge-gray">📝 Draft</span>',
+  selesai:  '<span class="badge badge-blue">🏁 Selesai</span>',
+  approved: '<span class="badge badge-green">✅ Disetujui</span>',
+  rejected: '<span class="badge badge-red">❌ Ditolak</span>',
+}[s] || `<span class="badge badge-gray">${s}</span>`);
+
+const methodBadge = (m) => ({
+  qris:      '<span class="badge badge-purple">⬛ QRIS</span>',
+  va:        '<span class="badge badge-blue">🏦 VA</span>',
+  gopay:     '<span class="badge badge-green">GP GoPay</span>',
+  ovo:       '<span class="badge badge-purple">OVO</span>',
+  shopeepay: '<span class="badge badge-amber">🛒 ShopeePay</span>',
+  transfer:  '<span class="badge badge-gray">💳 Transfer</span>',
+}[m] || `<span class="badge badge-gray">${m}</span>`);
+
+const catBadge = (c) => ({
+  kemanusiaan:   '<span class="badge badge-red">❤️ Kemanusiaan</span>',
+  pendidikan:    '<span class="badge badge-blue">📚 Pendidikan</span>',
+  infrastruktur: '<span class="badge badge-amber">🏗️ Infrastruktur</span>',
+  charity:       '<span class="badge badge-purple">🤲 Charity</span>',
+  lingkungan:    '<span class="badge badge-green">🌿 Lingkungan</span>',
+}[c] || `<span class="badge badge-gray">${c}</span>`);
+
+// ── Toast ───────────────────────────────────────────
+function showToast(msg, type = 'default') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ── Confirm dialog ──────────────────────────────────
+let confirmCallback = null;
+function showConfirm(icon, title, desc, okLabel, callback) {
+  document.getElementById('confirm-icon').textContent = icon;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-desc').textContent = desc;
+  const btn = document.getElementById('confirm-ok-btn');
+  btn.textContent = okLabel;
+  confirmCallback = callback;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('open');
+  confirmCallback = null;
+}
+document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+  if (confirmCallback) confirmCallback();
+  closeConfirm();
+});
+
+// ── Modals ──────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── Tab navigation ──────────────────────────────────
+const pageTitles = {
+  dashboard:'Dashboard', campaigns:'Kampanye', donations:'Donasi',
+  donors:'Donatur', withdrawals:'Penarikan Dana', settings:'Pengaturan'
+};
+function switchTab(tab) {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tab);
+  });
+  document.querySelectorAll('.tab-panel').forEach(el => {
+    el.classList.toggle('active', el.id === `tab-${tab}`);
+  });
+  document.getElementById('topbar-page-title').textContent = pageTitles[tab] || tab;
+  closeSidebar();
+}
+document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
+  el.addEventListener('click', () => switchTab(el.dataset.tab));
+});
+
+// Sidebar mobile
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebar-overlay');
+function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+document.getElementById('topbar-hamburger').addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+overlay.addEventListener('click', closeSidebar);
+
+// Logout
+document.getElementById('btn-logout').addEventListener('click', () => {
+  showConfirm('🚪','Keluar dari Admin','Anda akan keluar dari panel admin.','Ya, Keluar', () => {
+    localStorage.removeItem('ips_admin_auth');
+    window.location.replace('/admin');
+  });
+});
+
+// Topbar date
+document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('id-ID',{
+  weekday:'short', day:'numeric', month:'short', year:'numeric'
+});
+
+// Admin name
+const adminUser = localStorage.getItem('ips_admin_user') || 'Admin';
+document.getElementById('admin-display-name').textContent = adminUser;
+document.getElementById('admin-avatar-initial').textContent = adminUser[0].toUpperCase();
+
+// ── DASHBOARD ────────────────────────────────────────
+function renderDashboard() {
+  const totalRaised   = campaigns.reduce((s,c) => s+c.raised, 0);
+  const activeCamps   = campaigns.filter(c => c.status === 'aktif').length;
+  const totalDonors   = campaigns.reduce((s,c) => s+c.donors, 0);
+  const todayDons     = donations.filter(d => d.date.startsWith('2025-08-20')).length;
+
+  document.getElementById('stat-total-raised').textContent = fmtRp(totalRaised);
+  document.getElementById('stat-active-campaigns').textContent = activeCamps;
+  document.getElementById('stat-total-donors').textContent = totalDonors.toLocaleString('id-ID');
+  document.getElementById('stat-today-donations').textContent = todayDons + ' Donasi';
+
+  // Bar chart
+  const days = ['Sel','Rab','Kam','Jum','Sab','Min','Sen'];
+  const vals = [18.2, 24.5, 15.8, 32.1, 28.7, 12.3, 35.6];
+  const maxV = Math.max(...vals);
+  const bc   = document.getElementById('bar-chart');
+  bc.innerHTML = days.map((d, i) => `
+    <div class="bar-group">
+      <div class="bar" style="height:${(vals[i]/maxV)*110}px;" title="Rp ${vals[i]} Jt"></div>
+      <div class="bar-label">${d}</div>
+    </div>`).join('');
+
+  // Recent donations
+  const tbody = document.getElementById('recent-donations-body');
+  tbody.innerHTML = donations.slice(0,5).map(d => `
+    <tr>
+      <td><div class="donor-cell"><div class="donor-initial">${d.name[0]}</div><div><div style="font-weight:600;">${d.name}</div><div style="font-size:.75rem;color:var(--gray-400);">${d.email}</div></div></div></td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.campaign}</td>
+      <td class="fw-bold text-green">${fmtRpFull(d.amount)}</td>
+      <td>${methodBadge(d.method)}</td>
+      <td class="text-muted" style="font-size:.8rem;">${d.date}</td>
+      <td>${statusBadge(d.status)}</td>
+    </tr>`).join('');
+
+  // Withdrawal badge
+  const pending = withdrawals.filter(w => w.status === 'pending').length;
+  document.getElementById('withdrawal-badge').textContent = pending;
+  document.getElementById('withdrawal-badge').style.display = pending ? 'inline' : 'none';
+}
+
+// ── CAMPAIGNS TABLE ──────────────────────────────────
+function renderCampaigns() {
+  const search = document.getElementById('camp-search').value.toLowerCase();
+  const cat    = document.getElementById('camp-cat-filter').value;
+  const status = document.getElementById('camp-status-filter').value;
+
+  let list = campaigns.filter(c =>
+    (!search || c.titleId.toLowerCase().includes(search)) &&
+    (!cat    || c.category === cat) &&
+    (!status || c.status   === status)
+  );
+
+  document.getElementById('camp-count').textContent = `${list.length} Kampanye`;
+
+  const tbody = document.getElementById('campaigns-table-body');
+  tbody.innerHTML = list.length === 0
+    ? `<tr><td colspan="8" class="table-empty">Tidak ada kampanye ditemukan</td></tr>`
+    : list.map(c => {
+      const p = pct(c.raised, c.target);
+      return `<tr>
+        <td style="max-width:180px;">
+          <div style="font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.titleId}</div>
+          <div style="font-size:.75rem;color:var(--gray-400);">${c.org}</div>
+        </td>
+        <td>${catBadge(c.category)}</td>
+        <td style="font-size:.82rem;">${fmtRp(c.target)}</td>
+        <td class="fw-bold text-green" style="font-size:.88rem;">${fmtRp(c.raised)}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <div class="mini-progress"><div class="mini-progress-bar" style="width:${p}%;"></div></div>
+            <span style="font-size:.78rem;font-weight:700;color:var(--green);">${p}%</span>
+          </div>
+        </td>
+        <td style="font-size:.82rem;">${c.donors.toLocaleString('id-ID')}</td>
+        <td>${statusBadge(c.status)}</td>
+        <td>
+          <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+            <button class="btn-action btn-edit" onclick="editCampaign(${c.id})">✏️ Edit</button>
+            <button class="btn-action btn-delete" onclick="deleteCampaign(${c.id})">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+}
+
+['camp-search','camp-cat-filter','camp-status-filter'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderCampaigns);
+  document.getElementById(id).addEventListener('change', renderCampaigns);
+});
+
+// Add campaign
+document.getElementById('btn-add-campaign').addEventListener('click', () => {
+  document.getElementById('campaign-modal-title').textContent = '➕ Tambah Kampanye Baru';
+  document.getElementById('modal-campaign-id').value = '';
+  ['modal-title-id','modal-title-en','modal-desc-id','modal-org','modal-image'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('modal-target').value = '';
+  document.getElementById('modal-days').value = '30';
+  document.getElementById('modal-category').value = 'kemanusiaan';
+  document.getElementById('modal-status').value = 'draft';
+  document.getElementById('modal-urgent').checked = false;
+  openModal('campaign-modal');
+});
+
+function editCampaign(id) {
+  const c = campaigns.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('campaign-modal-title').textContent = '✏️ Edit Kampanye';
+  document.getElementById('modal-campaign-id').value = id;
+  document.getElementById('modal-title-id').value   = c.titleId;
+  document.getElementById('modal-title-en').value   = c.titleEn || '';
+  document.getElementById('modal-desc-id').value    = c.descId || '';
+  document.getElementById('modal-target').value     = c.target;
+  document.getElementById('modal-days').value       = c.daysLeft;
+  document.getElementById('modal-org').value        = c.org;
+  document.getElementById('modal-image').value      = c.image || '';
+  document.getElementById('modal-category').value   = c.category;
+  document.getElementById('modal-status').value     = c.status;
+  document.getElementById('modal-urgent').checked   = c.urgent || false;
+  openModal('campaign-modal');
+}
+
+function saveCampaign() {
+  const id     = document.getElementById('modal-campaign-id').value;
+  const titleId = document.getElementById('modal-title-id').value.trim();
+  if (!titleId) { showToast('Judul kampanye wajib diisi', 'error'); return; }
+
+  const data = {
+    titleId, titleEn: document.getElementById('modal-title-en').value,
+    descId: document.getElementById('modal-desc-id').value,
+    category: document.getElementById('modal-category').value,
+    status:   document.getElementById('modal-status').value,
+    target:   +document.getElementById('modal-target').value || 0,
+    daysLeft: +document.getElementById('modal-days').value  || 30,
+    org:      document.getElementById('modal-org').value,
+    image:    document.getElementById('modal-image').value,
+    urgent:   document.getElementById('modal-urgent').checked,
+  };
+
+  if (id) {
+    const idx = campaigns.findIndex(c => c.id === +id);
+    if (idx > -1) { campaigns[idx] = {...campaigns[idx], ...data}; }
+    showToast('✅ Kampanye berhasil diperbarui', 'success');
+  } else {
+    const newId = Math.max(0, ...campaigns.map(c => c.id)) + 1;
+    campaigns.push({ id: newId, slug: titleId.toLowerCase().replace(/\s+/g,'-'), raised: 0, donors: 0, ...data });
+    showToast('✅ Kampanye baru berhasil ditambahkan', 'success');
+  }
+  saveData(); closeModal('campaign-modal'); renderCampaigns(); renderDashboard();
+}
+
+function deleteCampaign(id) {
+  const c = campaigns.find(x => x.id === id);
+  showConfirm('🗑️','Hapus Kampanye',`"${c.titleId}" akan dihapus secara permanen.`,'Ya, Hapus', () => {
+    campaigns = campaigns.filter(x => x.id !== id);
+    saveData(); renderCampaigns(); renderDashboard();
+    showToast('Kampanye berhasil dihapus', 'error');
+  });
+}
+
+// ── DONATIONS TABLE ──────────────────────────────────
+// ── DONATIONS: Column & Filter definitions ────────────────
+const DON_COL_GROUPS = [
+  { group: 'General', cols: [
+    { id:'donatur',    label:'Donatur',           default:true  },
+    { id:'status',     label:'Status Donasi',     default:true  },
+    { id:'pay_status', label:'Status Pembayaran', default:false },
+    { id:'kampanye',   label:'Kampanye',          default:true  },
+    { id:'kategori',   label:'Kategori',          default:false },
+    { id:'org',        label:'Organisasi',        default:false },
+    { id:'pesan',      label:'Pesan / Doa',       default:false },
+    { id:'anonim',     label:'Anonim',            default:false },
+  ]},
+  { group: 'Timestamps', cols: [
+    { id:'tgl_dibuat',      label:'Tanggal Dibuat',      default:true  },
+    { id:'tgl_dikonfirmasi',label:'Dikonfirmasi',        default:false },
+    { id:'tgl_selesai',     label:'Selesai',             default:false },
+    { id:'tgl_dibatalkan',  label:'Dibatalkan',          default:false },
+  ]},
+  { group: 'Pembayaran', cols: [
+    { id:'metode',    label:'Metode Pembayaran', default:true  },
+    { id:'nominal',   label:'Nominal',           default:true  },
+    { id:'id_trx',    label:'ID Transaksi',      default:false },
+    { id:'gateway',   label:'Gateway',           default:false },
+    { id:'bukti',     label:'Bukti Bayar',       default:false },
+  ]},
+  { group: 'Keuangan', cols: [
+    { id:'gross',     label:'Nominal Kotor',     default:false },
+    { id:'fee_admin', label:'Biaya Admin',       default:false },
+    { id:'nett',      label:'Nominal Bersih',    default:false },
+  ]},
+];
+
+const ALL_COLS = DON_COL_GROUPS.flatMap(g => g.cols);
+let activeCols = JSON.parse(localStorage.getItem('ips_don_cols') || 'null')
+  || ALL_COLS.filter(c => c.default).map(c => c.id);
+
+// Advanced filter state
+let donFilters = JSON.parse(localStorage.getItem('ips_don_filters') || 'null') || {
+  search:'', method:'', status:'', kampanye:'',
+  kategori:'', anonim:'', nominalMin:'', nominalMax:'',
+  dateFrom:'', dateTo:'',
+};
+
+function saveDonCols() { localStorage.setItem('ips_don_cols', JSON.stringify(activeCols)); }
+function saveDonFilters() { localStorage.setItem('ips_don_filters', JSON.stringify(donFilters)); }
+
+// ── cell value for a column ──────────────────────────────
+function donCellVal(d, colId) {
+  const catMap = { kemanusiaan:'❤️ Kemanusiaan', pendidikan:'📚 Pendidikan',
+    infrastruktur:'🏗️ Infrastruktur', charity:'🤲 Charity', lingkungan:'🌿 Lingkungan' };
+  const camp = campaigns.find(c => c.titleId === d.campaign);
+  switch(colId) {
+    case 'donatur':    return `<td><div class="donor-cell"><div class="donor-initial">${d.name[0]}</div><div><div style="font-weight:600;">${d.name}</div><div style="font-size:.75rem;color:var(--gray-400);">${d.email}</div></div></div></td>`;
+    case 'status':     return `<td>${statusBadge(d.status)}</td>`;
+    case 'pay_status': return `<td>${d.payStatus ? statusBadge(d.payStatus) : '<span class="text-muted">—</span>'}</td>`;
+    case 'kampanye':   return `<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.83rem;">${d.campaign}</td>`;
+    case 'kategori':   return `<td>${camp ? catBadge(camp.category) : '<span class="text-muted">—</span>'}</td>`;
+    case 'org':        return `<td style="font-size:.82rem;">${camp ? camp.org : '—'}</td>`;
+    case 'pesan':      return `<td style="font-size:.8rem;color:var(--gray-500);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.pesan || '<span class="text-muted">—</span>'}</td>`;
+    case 'anonim':     return `<td>${d.name==='Donatur Anonim'?'<span class="badge badge-gray">Anonim</span>':'<span class="badge badge-green">Publik</span>'}</td>`;
+    case 'tgl_dibuat':       return `<td class="text-muted" style="font-size:.8rem;">${d.date}</td>`;
+    case 'tgl_dikonfirmasi': return `<td class="text-muted" style="font-size:.8rem;">${d.status==='sukses'?d.date:'—'}</td>`;
+    case 'tgl_selesai':      return `<td class="text-muted" style="font-size:.8rem;">${d.status==='sukses'?d.date:'—'}</td>`;
+    case 'tgl_dibatalkan':   return `<td class="text-muted" style="font-size:.8rem;">${d.status==='gagal'?d.date:'—'}</td>`;
+    case 'metode':     return `<td>${methodBadge(d.method)}</td>`;
+    case 'nominal':    return `<td class="fw-bold text-green">${fmtRpFull(d.amount)}</td>`;
+    case 'id_trx':     return `<td style="font-size:.75rem;font-family:monospace;">#TRX${String(d.id).padStart(6,'0')}</td>`;
+    case 'gateway':    return `<td style="font-size:.82rem;">${{qris:'Midtrans',va:'Xendit',gopay:'Midtrans',ovo:'Xendit',shopeepay:'Midtrans',transfer:'Xenith'}[d.method]||'—'}</td>`;
+    case 'bukti':      return `<td><span class="badge badge-gray" style="cursor:pointer;">📎 Lihat</span></td>`;
+    case 'gross':      return `<td class="fw-bold">${fmtRpFull(d.amount)}</td>`;
+    case 'fee_admin':  return `<td class="text-muted" style="font-size:.82rem;">${fmtRpFull({qris:0,gopay:0,shopeepay:0,va:1500,ovo:1000,transfer:2000}[d.method]||0)}</td>`;
+    case 'nett':       return `<td class="fw-bold text-green">${fmtRpFull(d.amount-({qris:0,gopay:0,shopeepay:0,va:1500,ovo:1000,transfer:2000}[d.method]||0))}</td>`;
+    default: return '<td>—</td>';
+  }
+}
+
+function colLabel(id) { return ALL_COLS.find(c=>c.id===id)?.label || id; }
+
+// ── render active filter chips ──────────────────────────
+function renderFilterChips() {
+  const wrap = document.getElementById('active-filter-chips');
+  const chips = [];
+  if (donFilters.method)     chips.push(['Metode: '+donFilters.method,    'method']);
+  if (donFilters.status)     chips.push(['Status: '+donFilters.status,    'status']);
+  if (donFilters.kampanye)   chips.push(['Kampanye: '+donFilters.kampanye,'kampanye']);
+  if (donFilters.kategori)   chips.push(['Kategori: '+donFilters.kategori,'kategori']);
+  if (donFilters.anonim)     chips.push(['Tipe: '+donFilters.anonim,      'anonim']);
+  if (donFilters.nominalMin) chips.push([`Min: Rp ${(+donFilters.nominalMin).toLocaleString('id-ID')}`,'nominalMin']);
+  if (donFilters.nominalMax) chips.push([`Max: Rp ${(+donFilters.nominalMax).toLocaleString('id-ID')}`,'nominalMax']);
+  if (donFilters.dateFrom)   chips.push(['Dari: '+donFilters.dateFrom,    'dateFrom']);
+  if (donFilters.dateTo)     chips.push(['Sampai: '+donFilters.dateTo,    'dateTo']);
+  wrap.innerHTML = chips.map(([label,key]) =>
+    `<span style="display:inline-flex;align-items:center;gap:.3rem;background:var(--blue-pale);color:#1d4ed8;border-radius:9999px;padding:.2rem .65rem;font-size:.75rem;font-weight:600;">
+      ${label}
+      <button onclick="clearChip('${key}')" style="background:none;border:none;cursor:pointer;font-size:.8rem;color:#1d4ed8;padding:0;line-height:1;">✕</button>
+    </span>`
+  ).join('');
+}
+
+function clearChip(key) {
+  donFilters[key] = '';
+  saveDonFilters();
+  renderFilterChips();
+  renderDonations();
+}
+
+// ── main render ──────────────────────────────────────────
+function renderDonations() {
+  const search = document.getElementById('don-search').value.toLowerCase();
+  donFilters.search = search;
+
+  let list = donations.filter(d => {
+    if (search && !d.name.toLowerCase().includes(search) && !d.campaign.toLowerCase().includes(search) && !d.email.toLowerCase().includes(search)) return false;
+    if (donFilters.method   && d.method   !== donFilters.method)   return false;
+    if (donFilters.status   && d.status   !== donFilters.status)   return false;
+    if (donFilters.kampanye && !d.campaign.toLowerCase().includes(donFilters.kampanye.toLowerCase())) return false;
+    if (donFilters.anonim === 'anonim'  && d.name !== 'Donatur Anonim') return false;
+    if (donFilters.anonim === 'publik'  && d.name === 'Donatur Anonim') return false;
+    if (donFilters.nominalMin && d.amount < +donFilters.nominalMin) return false;
+    if (donFilters.nominalMax && d.amount > +donFilters.nominalMax) return false;
+    if (donFilters.dateFrom && d.date < donFilters.dateFrom) return false;
+    if (donFilters.dateTo   && d.date > donFilters.dateTo + ' 99') return false;
+    const camp = campaigns.find(c => c.titleId === d.campaign);
+    if (donFilters.kategori && (!camp || camp.category !== donFilters.kategori)) return false;
+    return true;
+  });
+
+  document.getElementById('don-count').textContent = `${list.length} Donasi`;
+
+  // Render thead
+  const thead = document.querySelector('#don-thead tr');
+  thead.innerHTML = activeCols.map(id => `<th>${colLabel(id)}</th>`).join('');
+
+  const tbody = document.getElementById('donations-table-body');
+  const cols = activeCols.length || 1;
+  tbody.innerHTML = list.length === 0
+    ? `<tr><td colspan="${cols}" class="table-empty">Tidak ada donasi ditemukan</td></tr>`
+    : list.map(d => `<tr>${activeCols.map(col => donCellVal(d, col)).join('')}</tr>`).join('');
+
+  renderFilterChips();
+}
+
+document.getElementById('don-search').addEventListener('input', renderDonations);
+
+// ── CUSTOMIZE COLUMNS modal logic ────────────────────────
+function openColModal() {
+  // Render checkboxes grouped by category
+  const body = document.getElementById('col-modal-body');
+  body.innerHTML = DON_COL_GROUPS.map(g => `
+    <div style="margin-bottom:1rem;">
+      <div style="font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);">${g.group}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem .75rem;">
+        ${g.cols.map(c => `
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.84rem;padding:.3rem .4rem;border-radius:6px;transition:background .15s;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''">
+            <input type="checkbox" id="chk-${c.id}" value="${c.id}" ${activeCols.includes(c.id)?'checked':''} style="width:15px;height:15px;accent-color:#1aabe4;cursor:pointer;" />
+            <span>${c.label}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+  openModal('col-modal');
+}
+
+function selectAllCols() {
+  document.querySelectorAll('#col-modal-body input[type=checkbox]').forEach(cb => cb.checked = true);
+}
+
+function applyColumns() {
+  activeCols = [...document.querySelectorAll('#col-modal-body input[type=checkbox]:checked')].map(cb => cb.value);
+  if (activeCols.length === 0) activeCols = ['donatur','nominal','status'];
+  saveDonCols();
+  closeModal('col-modal');
+  renderDonations();
+  showToast('Kolom diperbarui ✅');
+}
+
+function resetCols() {
+  activeCols = ALL_COLS.filter(c => c.default).map(c => c.id);
+  saveDonCols();
+  closeModal('col-modal');
+  renderDonations();
+  showToast('Kolom direset ke default');
+}
+
+// Override openModal to populate col-modal dynamically
+const _origOpen = openModal;
+window.openModal = function(id) {
+  if (id === 'col-modal') { openColModal(); return; }
+  if (id === 'filter-modal') { populateFilterModal(); _origOpen(id); return; }
+  _origOpen(id);
+};
+
+// ── CUSTOMIZE FILTERS modal logic ────────────────────────
+function populateFilterModal() {
+  document.getElementById('ff-status').value    = donFilters.status    || '';
+  document.getElementById('ff-method').value    = donFilters.method    || '';
+  document.getElementById('ff-kategori').value  = donFilters.kategori  || '';
+  document.getElementById('ff-anonim').value    = donFilters.anonim    || '';
+  document.getElementById('ff-kampanye').value  = donFilters.kampanye  || '';
+  document.getElementById('ff-date-from').value = donFilters.dateFrom  || '';
+  document.getElementById('ff-date-to').value   = donFilters.dateTo    || '';
+  document.getElementById('ff-min').value       = donFilters.nominalMin|| '';
+  document.getElementById('ff-max').value       = donFilters.nominalMax|| '';
+}
+
+function applyFilters() {
+  donFilters.status     = document.getElementById('ff-status').value;
+  donFilters.method     = document.getElementById('ff-method').value;
+  donFilters.kategori   = document.getElementById('ff-kategori').value;
+  donFilters.anonim     = document.getElementById('ff-anonim').value;
+  donFilters.kampanye   = document.getElementById('ff-kampanye').value;
+  donFilters.dateFrom   = document.getElementById('ff-date-from').value;
+  donFilters.dateTo     = document.getElementById('ff-date-to').value;
+  donFilters.nominalMin = document.getElementById('ff-min').value;
+  donFilters.nominalMax = document.getElementById('ff-max').value;
+  saveDonFilters();
+  closeModal('filter-modal');
+  renderDonations();
+  showToast('Filter diperbarui ✅');
+}
+
+function resetFilters() {
+  donFilters = { search:'', method:'', status:'', kampanye:'', kategori:'', anonim:'', nominalMin:'', nominalMax:'', dateFrom:'', dateTo:'' };
+  saveDonFilters();
+  document.getElementById('don-search').value = '';
+  closeModal('filter-modal');
+  renderDonations();
+  showToast('Filter direset');
+}
+
+// ── Add blue-pale CSS var if missing ─────────────────────
+document.documentElement.style.setProperty('--blue-pale', '#dbeafe');
+
+// ── DONORS TABLE ─────────────────────────────────────
+function renderDonors() {
+  const search = document.getElementById('donor-search').value.toLowerCase();
+  let list = donors.filter(d =>
+    !search || d.name.toLowerCase().includes(search) || d.email.toLowerCase().includes(search)
+  );
+
+  document.getElementById('donor-count').textContent = `${list.length} Donatur`;
+
+  const tbody = document.getElementById('donors-table-body');
+  tbody.innerHTML = list.length === 0
+    ? `<tr><td colspan="6" class="table-empty">Tidak ada donatur ditemukan</td></tr>`
+    : list.map(d => `<tr>
+        <td><div class="donor-cell"><div class="donor-initial">${d.name[0]}</div><span style="font-weight:600;">${d.name}</span></div></td>
+        <td style="font-size:.82rem;color:var(--gray-500);">${d.email}</td>
+        <td class="fw-bold text-green">${fmtRpFull(d.totalDonated)}</td>
+        <td style="text-align:center;">${d.txCount}x</td>
+        <td class="text-muted" style="font-size:.82rem;">${d.lastDate}</td>
+        <td><button class="btn-action btn-view" onclick="showToast('Fitur riwayat donatur segera hadir', 'default')">👁️ Detail</button></td>
+      </tr>`).join('');
+}
+
+document.getElementById('donor-search').addEventListener('input', renderDonors);
+
+// ── WITHDRAWALS TABLE ────────────────────────────────
+function renderWithdrawals() {
+  const status = document.getElementById('wd-status-filter').value;
+  let list = withdrawals.filter(w => !status || w.status === status);
+
+  const tbody = document.getElementById('withdrawals-table-body');
+  tbody.innerHTML = list.length === 0
+    ? `<tr><td colspan="7" class="table-empty">Tidak ada permintaan penarikan</td></tr>`
+    : list.map(w => `<tr>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:.88rem;">${w.campaign}</td>
+        <td style="font-size:.82rem;color:var(--gray-500);">${w.org}</td>
+        <td class="fw-bold text-green">${fmtRpFull(w.amount)}</td>
+        <td style="font-size:.8rem;">${w.bank}</td>
+        <td class="text-muted" style="font-size:.82rem;">${w.date}</td>
+        <td>${statusBadge(w.status)}</td>
+        <td>
+          ${w.status === 'pending' ? `
+            <button class="btn-action btn-approve" onclick="approveWithdrawal(${w.id})">✅ Approve</button>
+            <button class="btn-action btn-reject"  onclick="rejectWithdrawal(${w.id})">❌ Tolak</button>
+          ` : '<span style="color:var(--gray-400);font-size:.8rem;">—</span>'}
+        </td>
+      </tr>`).join('');
+
+  // Update badge count
+  const pending = withdrawals.filter(w => w.status === 'pending').length;
+  document.getElementById('withdrawal-badge').textContent = pending;
+  document.getElementById('withdrawal-badge').style.display = pending ? 'inline' : 'none';
+}
+
+document.getElementById('wd-status-filter').addEventListener('change', renderWithdrawals);
+
+function approveWithdrawal(id) {
+  const w = withdrawals.find(x => x.id === id);
+  showConfirm('✅','Setujui Penarikan',`Penarikan sebesar ${fmtRpFull(w.amount)} untuk "${w.campaign}" akan disetujui.`,'Ya, Setujui', () => {
+    const idx = withdrawals.findIndex(x => x.id === id);
+    withdrawals[idx].status = 'approved';
+    saveData(); renderWithdrawals();
+    showToast('✅ Penarikan dana disetujui', 'success');
+  });
+}
+
+function rejectWithdrawal(id) {
+  const w = withdrawals.find(x => x.id === id);
+  showConfirm('❌','Tolak Penarikan',`Penarikan sebesar ${fmtRpFull(w.amount)} untuk "${w.campaign}" akan ditolak.`,'Ya, Tolak', () => {
+    const idx = withdrawals.findIndex(x => x.id === id);
+    withdrawals[idx].status = 'rejected';
+    saveData(); renderWithdrawals();
+    showToast('Penarikan ditolak', 'error');
+  });
+}
+
+// ── CATEGORIES ───────────────────────────────────────
+function renderCategories() {
+  const container = document.getElementById('cat-tags-container');
+  container.innerHTML = categories.map((c, i) => `
+    <div class="cat-tag">
+      ${c.emoji} ${c.name}
+      <button class="cat-tag-remove" onclick="removeCategory(${i})" title="Hapus">✕</button>
+    </div>`).join('');
+}
+
+function addCategory() {
+  const emoji = document.getElementById('cat-new-emoji').value.trim() || '📌';
+  const name  = document.getElementById('cat-new-name').value.trim();
+  if (!name) { showToast('Isi nama kategori', 'error'); return; }
+  categories.push({ emoji, name });
+  document.getElementById('cat-new-emoji').value = '';
+  document.getElementById('cat-new-name').value  = '';
+  saveData(); renderCategories();
+  showToast(`Kategori "${name}" ditambahkan`, 'success');
+}
+
+function removeCategory(i) {
+  showConfirm('🗑️','Hapus Kategori',`"${categories[i].name}" akan dihapus.`,'Ya, Hapus', () => {
+    categories.splice(i, 1);
+    saveData(); renderCategories();
+    showToast('Kategori dihapus', 'error');
+  });
+}
+
+// ── SETTINGS ─────────────────────────────────────────
+function saveSettings() {
+  const settings = {
+    siteName: document.getElementById('cfg-site-name').value,
+    tagline:  document.getElementById('cfg-tagline').value,
+    email:    document.getElementById('cfg-email').value,
+    whatsapp: document.getElementById('cfg-whatsapp').value,
+    address:  document.getElementById('cfg-address').value,
+  };
+  localStorage.setItem('ips_settings', JSON.stringify(settings));
+  showToast('✅ Pengaturan berhasil disimpan', 'success');
+}
+
+function changePassword() {
+  const u       = document.getElementById('cfg-admin-user').value.trim();
+  const oldPass = document.getElementById('cfg-old-pass').value;
+  const newPass = document.getElementById('cfg-new-pass').value;
+  const confirm = document.getElementById('cfg-confirm-pass').value;
+
+  const storedPass = localStorage.getItem('ips_admin_pass') || 'admin123';
+
+  if (oldPass !== storedPass) { showToast('Password lama salah', 'error'); return; }
+  if (newPass.length < 6)     { showToast('Password baru minimal 6 karakter', 'error'); return; }
+  if (newPass !== confirm)    { showToast('Konfirmasi password tidak cocok', 'error'); return; }
+
+  localStorage.setItem('ips_admin_user', u || 'admin');
+  localStorage.setItem('ips_admin_pass', newPass);
+  document.getElementById('cfg-old-pass').value = '';
+  document.getElementById('cfg-new-pass').value = '';
+  document.getElementById('cfg-confirm-pass').value = '';
+  showToast('✅ Password berhasil diubah', 'success');
+}
+
+// ── EXPORT ───────────────────────────────────────────
+function exportCSV() {
+  const header = ['ID','Donatur','Email','Kampanye','Nominal','Metode','Status','Tanggal'];
+  const rows   = donations.map(d => [d.id, d.name, d.email, d.campaign, d.amount, d.method, d.status, d.date]);
+  const csv    = [header, ...rows].map(r => r.join(',')).join('\n');
+  const blob   = new Blob([csv], { type:'text/csv' });
+  const a      = document.createElement('a');
+  a.href       = URL.createObjectURL(blob);
+  a.download   = `donasi-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('✅ CSV berhasil diexport', 'success');
+}
+
+function exportReport() {
+  showToast('📥 Laporan sedang diproses...', 'default');
+  setTimeout(() => showToast('✅ Laporan berhasil didownload', 'success'), 1500);
+}
+
+// ── Init ─────────────────────────────────────────────
+function init() {
+  // Load saved settings
+  const saved = JSON.parse(localStorage.getItem('ips_settings') || '{}');
+  if (saved.siteName) document.getElementById('cfg-site-name').value = saved.siteName;
+  if (saved.tagline)  document.getElementById('cfg-tagline').value   = saved.tagline;
+  if (saved.email)    document.getElementById('cfg-email').value     = saved.email;
+  if (saved.whatsapp) document.getElementById('cfg-whatsapp').value  = saved.whatsapp;
+  if (saved.address)  document.getElementById('cfg-address').value   = saved.address;
+
+  document.getElementById('cfg-admin-user').value = localStorage.getItem('ips_admin_user') || 'admin';
+
+  renderDashboard();
+  renderCampaigns();
+  renderDonations();
+  renderDonors();
+  renderWithdrawals();
+  renderCategories();
+}
+init();
+</script>
+</body>
+</html>

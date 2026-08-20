@@ -1,0 +1,277 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { campaigns, categories, formatRupiah, getPercent } from '../../data/campaigns';
+---
+
+<Layout
+  title="Semua Kampanye — Indonesia Peduli Sesama"
+  description="Temukan ratusan kampanye donasi terpercaya. Filter berdasarkan kategori kemanusiaan, pendidikan, infrastruktur, charity, dan lingkungan."
+>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <h1 data-i18n-p="title">Semua Kampanye</h1>
+    <p data-i18n-p="subtitle">Temukan kampanye yang menyentuh hatimu dan mulai berdonasi sekarang</p>
+  </section>
+
+  <!-- Filter Bar -->
+  <div class="container">
+    <div class="filter-bar" id="filter-bar">
+      <div class="filter-bar__search">
+        <span>🔍</span>
+        <input type="search" id="search-input" placeholder="Cari kampanye..." aria-label="Cari kampanye" />
+      </div>
+      <select class="filter-select" id="cat-filter" aria-label="Filter kategori">
+        <option value="">Semua Kategori</option>
+        {categories.map(c => (
+          <option value={c.id}>{c.icon} {c.labelId}</option>
+        ))}
+      </select>
+      <select class="filter-select" id="sort-filter" aria-label="Urutkan">
+        <option value="newest">Terbaru</option>
+        <option value="popular">Terpopuler</option>
+        <option value="urgent">Paling Mendesak</option>
+        <option value="pct">Progress Tertinggi</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Campaigns Grid -->
+  <section class="section--sm">
+    <div class="container">
+      <!-- Result count -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <p id="result-count" style="color:var(--color-gray-500);font-size:.9rem;">
+          Menampilkan <strong id="count-num">{campaigns.length}</strong> kampanye
+        </p>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <button class="view-btn active" id="view-grid" aria-label="Grid view" title="Grid View">⊞</button>
+          <button class="view-btn" id="view-list" aria-label="List view" title="List View">☰</button>
+        </div>
+      </div>
+
+      <div class="grid grid-3" id="campaigns-grid">
+        {campaigns.map((c, i) => {
+          const pct = getPercent(c.raised, c.target);
+          const cat = categories.find(cat => cat.id === c.category);
+          return (
+            <article
+              class="campaign-card animate-on-scroll"
+              style={`animation-delay:${i*0.07}s`}
+              data-cat={c.category}
+              data-donors={c.donors}
+              data-days={c.daysLeft}
+              data-pct={pct}
+              data-title-id={c.title}
+              data-title-en={c.titleEn}
+              data-desc-id={c.description}
+              data-desc-en={c.descriptionEn}
+            >
+              <div class="campaign-card__img-wrap">
+                <img src={c.image} alt={c.title} class="campaign-card__img" loading="lazy" width="400" height="225" />
+                {c.urgent && <span class="campaign-card__badge campaign-card__urgent">🔥 Mendesak</span>}
+                <span class="campaign-card__cat-badge" data-cat-label={c.category}>
+                  {cat?.icon} {cat?.labelId}
+                </span>
+                <span class="campaign-card__days">⏰ {c.daysLeft} hari lagi</span>
+              </div>
+              <div class="campaign-card__body">
+                <div class="campaign-card__org">
+                  <span class="campaign-card__org-dot"></span>
+                  {c.org}
+                </div>
+                {/* Invisible overlay link covers whole card */}
+                <a href={`/campaigns/${c.slug}`} class="campaign-card__link" aria-label={c.title} tabindex="-1"></a>
+                <h2 class="campaign-card__title campaign-title" data-title-en={c.titleEn}>
+                  {c.title}
+                </h2>
+                <p class="campaign-desc" style="font-size:.85rem;color:var(--color-gray-500);margin-bottom:.75rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;" data-desc-en={c.descriptionEn}>
+                  {c.description}
+                </p>
+                <div class="campaign-card__progress-wrap">
+                  <div class="campaign-card__progress-bar" style={`width:${pct}%;`}></div>
+                </div>
+                <div class="campaign-card__meta">
+                  <div>
+                    <div class="campaign-card__raised">{formatRupiah(c.raised)}</div>
+                    <div class="campaign-card__target">dari {formatRupiah(c.target)}</div>
+                  </div>
+                  <span class="campaign-card__pct">{pct}%</span>
+                </div>
+              </div>
+              <div class="campaign-card__footer">
+                <div class="campaign-card__donors">👥 {c.donors.toLocaleString('id-ID')}</div>
+                <a href={`/campaigns/${c.slug}`} class="btn btn--primary btn--sm" id={`cam-btn-${i}`}>
+                  Donasi →
+                </a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty-state" style="display:none;text-align:center;padding:4rem 0;">
+        <div style="font-size:3rem;margin-bottom:1rem;">🔍</div>
+        <h3 id="empty-title">Kampanye tidak ditemukan</h3>
+        <p style="color:var(--color-gray-500);margin-top:.5rem;" id="empty-desc">Coba kata kunci atau filter lain.</p>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .view-btn {
+    width: 34px; height: 34px;
+    border: 2px solid var(--color-gray-200);
+    border-radius: var(--color-radius-md, 8px);
+    background: white;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .view-btn.active { border-color: var(--color-primary); color: var(--color-primary); }
+  #campaigns-grid.list-view {
+    grid-template-columns: 1fr;
+  }
+  #campaigns-grid.list-view .campaign-card {
+    flex-direction: row;
+  }
+  #campaigns-grid.list-view .campaign-card__img-wrap {
+    width: 240px;
+    flex-shrink: 0;
+    aspect-ratio: unset;
+    height: 180px;
+  }
+  @media (max-width: 600px) {
+    #campaigns-grid.list-view .campaign-card { flex-direction: column; }
+    #campaigns-grid.list-view .campaign-card__img-wrap { width: 100%; height: auto; }
+  }
+</style>
+
+<script>
+  import type { Campaign } from '../../data/campaigns';
+  const allCards = Array.from(document.querySelectorAll<HTMLElement>('#campaigns-grid .campaign-card'));
+  const searchInput  = document.getElementById('search-input')  as HTMLInputElement;
+  const catFilter    = document.getElementById('cat-filter')    as HTMLSelectElement;
+  const sortFilter   = document.getElementById('sort-filter')   as HTMLSelectElement;
+  const countNum     = document.getElementById('count-num')!;
+  const emptyState   = document.getElementById('empty-state')!;
+  const grid         = document.getElementById('campaigns-grid')!;
+
+  // Read URL params on load
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('cat')) catFilter.value = params.get('cat')!;
+
+  const filterAndSort = () => {
+    const query = searchInput.value.toLowerCase();
+    const cat   = catFilter.value;
+    const sort  = sortFilter.value;
+    const lang  = localStorage.getItem('lang') || 'id';
+
+    let visible = allCards.filter(card => {
+      const cardCat    = card.dataset.cat || '';
+      const titleId    = (card.dataset.titleId || '').toLowerCase();
+      const titleEn    = (card.dataset.titleEn || '').toLowerCase();
+      const descId     = (card.dataset.descId  || '').toLowerCase();
+      const descEn     = (card.dataset.descEn  || '').toLowerCase();
+      const searchStr  = lang === 'en' ? titleEn + ' ' + descEn : titleId + ' ' + descId;
+      const matchCat   = !cat || cardCat === cat;
+      const matchQuery = !query || searchStr.includes(query);
+      return matchCat && matchQuery;
+    });
+
+    // Sort
+    visible.sort((a, b) => {
+      if (sort === 'popular') return +(b.dataset.donors||0) - +(a.dataset.donors||0);
+      if (sort === 'urgent')  return +(a.dataset.days||999) - +(b.dataset.days||999);
+      if (sort === 'pct')     return +(b.dataset.pct||0) - +(a.dataset.pct||0);
+      return 0; // newest — default order
+    });
+
+    // Show/hide
+    allCards.forEach(c => { c.style.display = 'none'; });
+    visible.forEach((c, i) => {
+      c.style.display = '';
+      c.style.animationDelay = `${i * 0.05}s`;
+      c.classList.remove('visible');
+      setTimeout(() => c.classList.add('visible'), i * 50);
+    });
+
+    countNum.textContent = String(visible.length);
+    emptyState.style.display = visible.length === 0 ? 'block' : 'none';
+  };
+
+  searchInput.addEventListener('input', filterAndSort);
+  catFilter.addEventListener('change', filterAndSort);
+  sortFilter.addEventListener('change', filterAndSort);
+  filterAndSort();
+
+  // View toggle
+  const viewGrid = document.getElementById('view-grid')!;
+  const viewList = document.getElementById('view-list')!;
+  viewGrid.addEventListener('click', () => {
+    grid.classList.remove('list-view');
+    viewGrid.classList.add('active');
+    viewList.classList.remove('active');
+  });
+  viewList.addEventListener('click', () => {
+    grid.classList.add('list-view');
+    viewList.classList.add('active');
+    viewGrid.classList.remove('active');
+  });
+
+  // Language support
+  const catNamesI18n: Record<string, Record<string, string>> = {
+    kemanusiaan:   { id:'Kemanusiaan',  en:'Humanitarian' },
+    pendidikan:    { id:'Pendidikan',   en:'Education' },
+    infrastruktur: { id:'Infrastruktur',en:'Infrastructure' },
+    charity:       { id:'Charity',      en:'Charity' },
+    lingkungan:    { id:'Lingkungan',   en:'Environment' },
+  };
+  const catIcons: Record<string,string> = { kemanusiaan:'❤️', pendidikan:'📚', infrastruktur:'🏗️', charity:'🤲', lingkungan:'🌿' };
+
+  const applyLang = (lang: string) => {
+    document.querySelectorAll<HTMLElement>('.campaign-title').forEach(el => {
+      const card = el.closest<HTMLElement>('.campaign-card');
+      el.textContent = lang === 'en'
+        ? el.dataset.titleEn!
+        : (card?.dataset.titleId ?? el.textContent ?? '');
+    });
+    document.querySelectorAll<HTMLElement>('.campaign-desc').forEach(el => {
+      el.textContent = lang === 'en' ? el.dataset.descEn! : el.dataset.descId!;
+    });
+    document.querySelectorAll<HTMLElement>('[data-cat-label]').forEach(el => {
+      const cat = el.dataset.catLabel!;
+      el.textContent = `${catIcons[cat]??''} ${catNamesI18n[cat]?.[lang]??cat}`;
+    });
+    // select options
+    document.querySelectorAll<HTMLOptionElement>('#cat-filter option[value]').forEach(opt => {
+      const cat = opt.value;
+      if (cat && catNamesI18n[cat]) opt.textContent = `${catIcons[cat]} ${catNamesI18n[cat][lang]}`;
+    });
+    // Page hero
+    const heroText: Record<string, Record<string,string>> = {
+      id: { title:'Semua Kampanye', subtitle:'Temukan kampanye yang menyentuh hatimu dan mulai berdonasi sekarang' },
+      en: { title:'All Campaigns', subtitle:'Find campaigns that touch your heart and start donating now' },
+    };
+    const h1 = document.querySelector<HTMLElement>('[data-i18n-p="title"]');
+    const sub = document.querySelector<HTMLElement>('[data-i18n-p="subtitle"]');
+    if (h1)  h1.textContent  = heroText[lang].title;
+    if (sub) sub.textContent = heroText[lang].subtitle;
+    const emptyT = document.getElementById('empty-title');
+    const emptyD = document.getElementById('empty-desc');
+    if (emptyT) emptyT.textContent = lang === 'en' ? 'No campaigns found' : 'Kampanye tidak ditemukan';
+    if (emptyD) emptyD.textContent = lang === 'en' ? 'Try a different keyword or filter.' : 'Coba kata kunci atau filter lain.';
+    searchInput.placeholder = lang === 'en' ? 'Search campaigns...' : 'Cari kampanye...';
+    // Donate buttons
+    document.querySelectorAll<HTMLElement>('[id^="cam-btn-"]').forEach(el => {
+      el.textContent = lang === 'en' ? 'Donate →' : 'Donasi →';
+    });
+  };
+  const saved = localStorage.getItem('lang') || 'id';
+  applyLang(saved);
+  document.addEventListener('langchange', (e) => { applyLang((e as CustomEvent).detail); filterAndSort(); });
+</script>

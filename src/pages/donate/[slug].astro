@@ -1,0 +1,869 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { campaigns, formatRupiah, formatRupiahFull, getPercent } from '../../data/campaigns';
+
+export function getStaticPaths() {
+  return campaigns.map(c => ({ params: { slug: c.slug }, props: { campaign: c } }));
+}
+
+const { campaign: c } = Astro.props;
+const pct = getPercent(c.raised, c.target);
+const urlAmount = Astro.url.searchParams.get('amount') || '';
+---
+
+<Layout
+  title={`Donasi untuk ${c.title} — Indonesia Peduli Sesama`}
+  description={`Donasikan untuk ${c.title} melalui Indonesia Peduli Sesama. Aman, transparan, dan terpercaya.`}
+>
+
+<style>
+  /* ── Page wrapper ─────────────────────────────── */
+  .donate-page {
+    padding-top: calc(var(--navbar-h) + 2rem);
+    padding-bottom: 4rem;
+    background: var(--color-gray-50);
+    min-height: 100vh;
+  }
+  .donate-grid {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1.75rem;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .donate-grid { grid-template-columns: 1fr; }
+    .donate-sticky { order: -1; }
+  }
+
+  /* ── Main form card ───────────────────────────── */
+  .donate-main-card {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .form-block {
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+  @media (max-width: 520px) {
+    .form-block { padding: 1.25rem 1.25rem; }
+  }
+  .form-block:last-child { border-bottom: none; }
+  .form-block-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-gray-900);
+    margin-bottom: 1.25rem;
+    white-space: nowrap;   /* keep on one line */
+  }
+  .form-block-title span {
+    width: 30px; height: 30px;
+    background: var(--color-primary-pale);
+    color: var(--color-primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Amount presets ───────────────────────────── */
+  .amount-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .6rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 460px) { .amount-grid { grid-template-columns: repeat(2, 1fr); } }
+  .amount-chip {
+    padding: .65rem .5rem;
+    border: 2px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--color-gray-700);
+    background: var(--color-white);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+  }
+  .amount-chip:hover { border-color: var(--color-primary-light); color: var(--color-primary); }
+  .amount-chip.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-pale);
+    color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(22,163,74,.15);
+  }
+  .custom-input-wrap {
+    position: relative;
+    margin-top: .25rem;
+  }
+  .currency-prefix {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: var(--color-gray-500);
+    font-size: .95rem;
+    pointer-events: none;
+  }
+  .custom-input {
+    width: 100%;
+    padding: .85rem 1rem .85rem 3.2rem;
+    border: 2px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-gray-800);
+    outline: none;
+    transition: border-color var(--transition);
+    background: var(--color-gray-50);
+  }
+  .custom-input:focus {
+    border-color: var(--color-primary);
+    background: #fff;
+  }
+  .custom-input::placeholder { font-weight: 400; color: var(--color-gray-400); }
+
+  /* ── Form fields ──────────────────────────────── */
+  .anon-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1.25rem;
+    cursor: pointer;
+    width: fit-content;
+  }
+  .anon-row input { width: 17px; height: 17px; accent-color: var(--color-primary); cursor: pointer; }
+  .anon-row span { font-size: .9rem; color: var(--color-gray-600); }
+  .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 520px) { .fields-row { grid-template-columns: 1fr; } }
+  .field-group { display: flex; flex-direction: column; gap: .35rem; }
+  .field-label { font-size: .85rem; font-weight: 600; color: var(--color-gray-600); }
+  .field-label .req { color: #ef4444; }
+  .field-input, .field-textarea {
+    padding: .75rem .9rem;
+    border: 2px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    font-size: .9rem;
+    font-family: var(--font-body);
+    color: var(--color-gray-800);
+    outline: none;
+    transition: border-color var(--transition);
+    background: var(--color-gray-50);
+  }
+  .field-input:focus, .field-textarea:focus {
+    border-color: var(--color-primary);
+    background: #fff;
+  }
+  .field-textarea { resize: vertical; min-height: 72px; }
+  .notif-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-top: .75rem;
+    cursor: pointer;
+    width: fit-content;
+  }
+  .notif-row input { width: 16px; height: 16px; accent-color: var(--color-primary); cursor: pointer; }
+  .notif-row span { font-size: .85rem; color: var(--color-gray-500); }
+
+  /* ── Payment methods grid ─────────────────────── */
+  .pay-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem;
+  }
+  @media (max-width: 420px) { .pay-grid { grid-template-columns: 1fr; } }
+  .pay-card {
+    position: relative;
+    border: 2px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1rem 1rem 1.25rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    background: #fff;
+    overflow: hidden;
+  }
+  .pay-card:hover { border-color: var(--color-gray-300); box-shadow: var(--shadow-sm); }
+  .pay-card.active {
+    border-color: var(--color-primary);
+    background: #f0fdf4;
+    box-shadow: 0 0 0 3px rgba(22,163,74,.12);
+  }
+  .pay-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .pay-radio-dot {
+    width: 18px; height: 18px;
+    border: 2px solid var(--color-gray-300);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pay-card.active .pay-radio-dot {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+  }
+  .pay-card.active .pay-radio-dot::after {
+    content: '';
+    width: 7px; height: 7px;
+    background: #fff;
+    border-radius: 50%;
+  }
+  .pay-logo {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    font-weight: 800;
+    font-family: var(--font-heading);
+  }
+  .pay-name { font-family: var(--font-heading); font-weight: 700; font-size: .9rem; color: var(--color-gray-900); }
+  .pay-desc { font-size: .75rem; color: var(--color-gray-500); margin-top: .1rem; }
+
+  /* Payment brand colors */
+  .pay-qris     .pay-logo { background: #e8f5e9; color: #1b5e20; }
+  .pay-va       .pay-logo { background: #e3f2fd; color: #0d47a1; }
+  .pay-shopee   .pay-logo { background: #fff3e0; color: #e65100; }
+  .pay-gopay    .pay-logo { background: #e8f5e9; color: #00880a; }
+  .pay-ovo      .pay-logo { background: #ede7f6; color: #4527a0; }
+  .pay-transfer .pay-logo { background: #fce4ec; color: #880e4f; }
+
+  /* ── Sticky sidebar ───────────────────────────── */
+  .donate-sticky {
+    position: sticky;
+    top: calc(var(--navbar-h) + 1.5rem);
+  }
+  .summary-card {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .summary-campaign {
+    display: flex;
+    gap: .9rem;
+    align-items: center;
+    padding: 1.25rem;
+    background: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+  .summary-campaign img {
+    width: 72px; height: 52px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+  .summary-campaign-label { font-size: .75rem; color: var(--color-gray-500); }
+  .summary-campaign-name  { font-family: var(--font-heading); font-weight: 700; font-size: .9rem; line-height: 1.3; color: var(--color-gray-900); }
+  .summary-progress-wrap {
+    background: var(--color-gray-100);
+    border-radius: var(--radius-full);
+    height: 5px;
+    margin-top: .5rem;
+    overflow: hidden;
+  }
+  .summary-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    border-radius: var(--radius-full);
+  }
+  .summary-body { padding: 1.25rem; }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem 0;
+    font-size: .9rem;
+    color: var(--color-gray-600);
+    border-bottom: 1px dashed var(--color-gray-100);
+  }
+  .summary-row:last-of-type { border-bottom: none; }
+  .summary-row span:last-child { font-weight: 600; color: var(--color-gray-900); }
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--color-gray-100);
+    font-family: var(--font-heading);
+    font-weight: 800;
+  }
+  .summary-total-label { font-size: 1rem; color: var(--color-gray-800); }
+  .summary-total-amount { font-size: 1.3rem; color: var(--color-primary); }
+  .pay-btn {
+    display: block;
+    width: calc(100% - 2.5rem);
+    margin: 0 1.25rem 1.25rem;
+    text-align: center;
+    padding: 1rem;
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.05rem;
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(245,158,11,.3);
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition);
+  }
+  .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245,158,11,.4); }
+  .pay-btn:active { transform: scale(.97); }
+  .pay-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+  .secure-note {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--color-gray-400);
+    padding: 0 1.25rem .75rem;
+  }
+  .trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: .4rem;
+    flex-wrap: wrap;
+    padding: 0 1.25rem 1.25rem;
+  }
+  .trust-badge {
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .2rem .55rem;
+    border-radius: var(--radius-full);
+  }
+  .trust-badge-green  { background: var(--color-primary-pale); color: var(--color-primary); }
+  .trust-badge-blue   { background: var(--color-accent-pale); color: var(--color-accent); }
+  .trust-badge-amber  { background: var(--color-secondary-pale); color: var(--color-secondary-dark); }
+
+  /* ── Success overlay ──────────────────────────── */
+  .success-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.7);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .success-overlay.show { display: flex; }
+  .success-box {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    padding: 3rem 2.5rem;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    animation: scale-in .4s cubic-bezier(.34,1.56,.64,1) both;
+    box-shadow: var(--shadow-xl);
+  }
+  .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .success-box h2 { color: var(--color-primary); margin-bottom: .75rem; }
+  .success-box p  { color: var(--color-gray-600); font-size: .95rem; line-height: 1.6; }
+  .success-txid {
+    background: var(--color-primary-pale);
+    border-radius: var(--radius-md);
+    padding: .75rem 1rem;
+    margin: 1.25rem 0;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--color-primary);
+  }
+  .success-actions { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.25rem; }
+
+  /* ── Back link ────────────────────────────────── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--color-gray-500);
+    margin-bottom: 1.25rem;
+    transition: color var(--transition);
+  }
+  .back-link:hover { color: var(--color-primary); }
+
+  /* Error state */
+  .field-error { color: #ef4444; font-size: .8rem; margin-top: .2rem; display: none; }
+  .field-input.error, .custom-input.error { border-color: #ef4444; }
+</style>
+
+<div class="donate-page">
+  <div style="max-width:1060px;margin:0 auto;padding:0 1.25rem;">
+    <a href={`/campaigns/${c.slug}`} class="back-link" id="back-link">
+      ← <span id="back-label">Kembali ke kampanye</span>
+    </a>
+  </div>
+
+  <div class="donate-grid">
+
+    <!-- ── LEFT: Main form ───────────────────────── -->
+    <div class="donate-main-card" id="donate-form-card">
+
+      <!-- Section 1: Amount -->
+      <div class="form-block">
+        <div class="form-block-title">
+          <span>1</span>
+          <span id="s1-title">Jumlah Donasi</span>
+        </div>
+
+        <div class="amount-grid">
+          <button class="amount-chip" data-amount="25000"   id="chip-25">Rp 25.000</button>
+          <button class="amount-chip" data-amount="50000"   id="chip-50">Rp 50.000</button>
+          <button class="amount-chip" data-amount="100000"  id="chip-100">Rp 100.000</button>
+          <button class="amount-chip" data-amount="250000"  id="chip-250">Rp 250.000</button>
+          <button class="amount-chip" data-amount="500000"  id="chip-500">Rp 500.000</button>
+          <button class="amount-chip" data-amount="1000000" id="chip-1jt">Rp 1.000.000</button>
+        </div>
+
+        <div class="custom-input-wrap">
+          <span class="currency-prefix">Rp</span>
+          <input
+            type="number"
+            class="custom-input"
+            id="custom-amount"
+            placeholder="Nominal lain..."
+            min="1000"
+            value={urlAmount}
+          />
+        </div>
+        <p class="field-error" id="err-amount">Masukkan nominal minimal Rp 1.000</p>
+      </div>
+
+      <!-- Section 2: Donor info -->
+      <div class="form-block">
+        <div class="form-block-title">
+          <span>2</span>
+          <span id="s2-title">Data Diri</span>
+        </div>
+
+        <label class="anon-row" for="is-anon">
+          <input type="checkbox" id="is-anon" />
+          <span id="label-anon">Donasi sebagai Anonim</span>
+        </label>
+
+        <div id="personal-fields">
+          <div class="fields-row">
+            <div class="field-group">
+              <label class="field-label" for="f-name">
+                <span class="req">* </span><span id="label-name">Nama Lengkap</span>
+              </label>
+              <input type="text"  class="field-input" id="f-name"  placeholder="Nama Anda" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="f-phone">
+                <span class="req">* </span><span id="label-phone">No. HP / WhatsApp</span>
+              </label>
+              <input type="tel"   class="field-input" id="f-phone" placeholder="+62..." />
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:.9rem;">
+            <label class="field-label" for="f-email">
+              <span class="req">* </span>Email
+            </label>
+            <input type="email" class="field-input" id="f-email" placeholder="email@contoh.com" />
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top:.9rem;">
+          <label class="field-label" for="f-message" id="label-msg">Pesan / Doa <span style="font-weight:400;color:var(--color-gray-400);" id="label-optional">(opsional)</span></label>
+          <textarea class="field-textarea" id="f-message" placeholder="Tulis pesan atau doa untuk penerima manfaat..."></textarea>
+        </div>
+
+        <label class="notif-row" for="is-notif">
+          <input type="checkbox" id="is-notif" />
+          <span id="label-notif">Kirim notifikasi update kampanye ke email saya</span>
+        </label>
+        <p class="field-error" id="err-personal">Harap lengkapi nama, email, dan nomor HP</p>
+      </div>
+
+      <!-- Section 3: Payment method -->
+      <div class="form-block">
+        <div class="form-block-title">
+          <span>3</span>
+          <span id="s3-title">Metode Pembayaran</span>
+        </div>
+
+        <div class="pay-grid">
+
+          <label class="pay-card pay-qris" id="pm-qris">
+            <input type="radio" name="pay-method" value="qris" id="r-qris" />
+            <div class="pay-radio-dot"></div>
+            <div class="pay-logo">⬛</div>
+            <div>
+              <div class="pay-name">QRIS</div>
+              <div class="pay-desc" id="pd-qris">Scan & bayar semua e-wallet</div>
+            </div>
+          </label>
+
+          <label class="pay-card pay-va" id="pm-va">
+            <input type="radio" name="pay-method" value="va" id="r-va" />
+            <div class="pay-radio-dot"></div>
+            <div class="pay-logo">🏦</div>
+            <div>
+              <div class="pay-name">Virtual Account</div>
+              <div class="pay-desc" id="pd-va">BCA, Mandiri, BNI, BRI</div>
+            </div>
+          </label>
+
+          <label class="pay-card pay-shopee" id="pm-shopee">
+            <input type="radio" name="pay-method" value="shopeepay" id="r-shopee" />
+            <div class="pay-radio-dot"></div>
+            <div class="pay-logo" style="font-size:.8rem;font-family:var(--font-heading);">🛒</div>
+            <div>
+              <div class="pay-name">ShopeePay</div>
+              <div class="pay-desc" id="pd-shopee">Saldo ShopeePay</div>
+            </div>
+          </label>
+
+          <label class="pay-card pay-gopay" id="pm-gopay">
+            <input type="radio" name="pay-method" value="gopay" id="r-gopay" />
+            <div class="pay-radio-dot"></div>
+            <div class="pay-logo" style="font-size:.75rem;font-family:var(--font-heading);font-weight:800;">GP</div>
+            <div>
+              <div class="pay-name">GoPay</div>
+              <div class="pay-desc" id="pd-gopay">Saldo GoPay / Tokopedia</div>
+            </div>
+          </label>
+
+          <label class="pay-card pay-ovo" id="pm-ovo">
+            <input type="radio" name="pay-method" value="ovo" id="r-ovo" />
+            <div class="pay-radio-dot"></div>
+            <div class="pay-logo" style="font-size:.8rem;font-family:var(--font-heading);font-weight:800;">OVO</div>
+            <div>
+              <div class="pay-name">OVO</div>
+              <div class="pay-desc" id="pd-ovo">Saldo OVO Cash</div>
+            </div>
+          </label>
+
+          <label class="pay-card pay-transfer" id="pm-transfer">
+            <input type="radio" name="pay-method" value="transfer" id="r-transfer" />
+            <div class="pay-radio-dot"></div>
+            <div class="pay-logo">💳</div>
+            <div>
+              <div class="pay-name" id="pm-transfer-name">Bank Transfer</div>
+              <div class="pay-desc" id="pd-transfer">Transfer manual antar bank</div>
+            </div>
+          </label>
+
+        </div>
+        <p class="field-error" id="err-payment">Pilih metode pembayaran terlebih dahulu</p>
+      </div>
+
+    </div><!-- /.donate-main-card -->
+
+    <!-- ── RIGHT: Sticky summary ─────────────────── -->
+    <aside class="donate-sticky">
+      <div class="summary-card">
+
+        <!-- Campaign strip -->
+        <div class="summary-campaign">
+          <img src={c.image} alt={c.title} />
+          <div>
+            <div class="summary-campaign-label" id="sum-label-for">Donasi untuk</div>
+            <div class="summary-campaign-name">{c.title}</div>
+            <div class="summary-progress-wrap">
+              <div class="summary-progress-bar" style={`width:${pct}%;`}></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary rows -->
+        <div class="summary-body">
+          <div class="summary-row">
+            <span id="sum-label-donation">Jumlah Donasi</span>
+            <span id="sum-amount">Rp 0</span>
+          </div>
+          <div class="summary-row">
+            <span id="sum-label-fee">Biaya Admin</span>
+            <span id="sum-fee" style="color:var(--color-primary);">GRATIS</span>
+          </div>
+          <div class="summary-row" id="sum-method-row" style="display:none;">
+            <span id="sum-label-method">Via</span>
+            <span id="sum-method-val" style="font-weight:700;">—</span>
+          </div>
+          <div class="summary-total">
+            <span class="summary-total-label" id="sum-label-total">Total</span>
+            <span class="summary-total-amount" id="sum-total">Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Pay button -->
+        <button class="pay-btn" id="pay-btn">
+          🔐 <span id="pay-btn-label">Bayar Sekarang</span>
+        </button>
+        <p class="secure-note" id="secure-note">🔒 Enkripsi SSL 256-bit · Data Anda aman</p>
+        <div class="trust-badges">
+          <span class="trust-badge trust-badge-green"  id="tb-verified">✓ Verified</span>
+          <span class="trust-badge trust-badge-blue"   id="tb-ssl">🔒 SSL Secure</span>
+          <span class="trust-badge trust-badge-amber"  id="tb-transparent">💯 Transparan</span>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div style="background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:1rem 1.25rem;margin-top:1rem;">
+        <p style="font-size:.82rem;font-weight:600;color:var(--color-gray-600);margin-bottom:.6rem;" id="share-label">Bagikan kampanye ini:</p>
+        <div style="display:flex;gap:.5rem;">
+          <button class="share-btn share-btn--whatsapp" id="btn-wa" style="flex:1;padding:.55rem;border-radius:var(--radius-md);font-size:.8rem;font-weight:600;cursor:pointer;border:2px solid #25d366;color:#25d366;background:transparent;transition:all .25s;">WhatsApp</button>
+          <button class="share-btn share-btn--fb"       id="btn-fb" style="flex:1;padding:.55rem;border-radius:var(--radius-md);font-size:.8rem;font-weight:600;cursor:pointer;border:2px solid #1877f2;color:#1877f2;background:transparent;transition:all .25s;">Facebook</button>
+          <button class="share-btn share-btn--copy"     id="btn-copy" style="flex:1;padding:.55rem;border-radius:var(--radius-md);font-size:.8rem;font-weight:600;cursor:pointer;border:2px solid var(--color-gray-300);color:var(--color-gray-600);background:transparent;transition:all .25s;" id="copy-label">Salin</button>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /.donate-grid -->
+</div><!-- /.donate-page -->
+
+<!-- ── Success overlay ────────────────────────────── -->
+<div class="success-overlay" id="success-overlay" role="dialog" aria-modal="true" aria-labelledby="success-heading">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <h2 id="success-heading">Terima Kasih!</h2>
+    <p id="success-desc">Donasi Anda sedang diproses. Konfirmasi akan dikirim ke email Anda segera.</p>
+    <div class="success-txid" id="success-txid">📋 No. Transaksi: IPS-2025-XXXXXX</div>
+    <div class="success-actions">
+      <a href="/campaigns" class="btn btn--outline" id="success-btn-more">← Kampanye Lain</a>
+      <a href="/"          class="btn btn--primary" id="success-btn-home">🏠 Beranda</a>
+    </div>
+  </div>
+</div>
+
+</Layout>
+
+<script define:vars={{ campaignSlug: c.slug, campaignTitle: c.title }}>
+  // ── State ──────────────────────────────────────
+  let amount    = 0;
+  let payMethod = '';
+
+  const fmtRp = (n) => n > 0 ? `Rp ${n.toLocaleString('id-ID')}` : 'Rp 0';
+
+  // ── Amount chips ───────────────────────────────
+  const chips = document.querySelectorAll('.amount-chip');
+  const customInput = document.getElementById('custom-amount');
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      amount = +chip.dataset.amount;
+      customInput.value = '';
+      updateSummary();
+    });
+  });
+
+  customInput.addEventListener('input', () => {
+    chips.forEach(c => c.classList.remove('active'));
+    amount = +customInput.value || 0;
+    updateSummary();
+  });
+
+  // Pre-select from URL param
+  if (customInput.value && +customInput.value > 0) {
+    amount = +customInput.value;
+    updateSummary();
+  }
+
+  // ── Payment cards ──────────────────────────────
+  const payCards = document.querySelectorAll('.pay-card');
+  const payLabels = {
+    qris: 'QRIS', va: 'Virtual Account', shopeepay: 'ShopeePay',
+    gopay: 'GoPay', ovo: 'OVO', transfer: 'Bank Transfer'
+  };
+
+  payCards.forEach(card => {
+    card.addEventListener('click', () => {
+      payCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const radio = card.querySelector('input[type="radio"]');
+      radio.checked = true;
+      payMethod = radio.value;
+      updateSummary();
+    });
+  });
+
+  // ── Anonymous checkbox ─────────────────────────
+  const isAnon = document.getElementById('is-anon');
+  isAnon.addEventListener('change', () => {
+    const fields = document.getElementById('personal-fields');
+    fields.style.opacity = isAnon.checked ? '.35' : '1';
+    fields.style.pointerEvents = isAnon.checked ? 'none' : '';
+  });
+
+  // ── Summary updater ────────────────────────────
+  function updateSummary() {
+    // Admin fee by method
+    const fees = { qris: 0, va: 1500, shopeepay: 0, gopay: 0, ovo: 1000, transfer: 2000 };
+    const fee  = fees[payMethod] ?? 0;
+    const total = amount + fee;
+
+    document.getElementById('sum-amount').textContent = fmtRp(amount);
+    document.getElementById('sum-fee').textContent    = fee > 0 ? fmtRp(fee) : 'GRATIS';
+    document.getElementById('sum-total').textContent  = fmtRp(total);
+
+    const methodRow = document.getElementById('sum-method-row');
+    const methodVal = document.getElementById('sum-method-val');
+    if (payMethod) {
+      methodRow.style.display = 'flex';
+      methodVal.textContent   = payLabels[payMethod] ?? payMethod;
+    } else {
+      methodRow.style.display = 'none';
+    }
+  }
+
+  // ── Validation & Pay ───────────────────────────
+  document.getElementById('pay-btn').addEventListener('click', () => {
+    const lang = localStorage.getItem('lang') || 'id';
+    let valid  = true;
+
+    // Validate amount
+    const errAmt = document.getElementById('err-amount');
+    if (amount < 1000) {
+      errAmt.style.display = 'block';
+      customInput.classList.add('error');
+      valid = false;
+    } else {
+      errAmt.style.display = 'none';
+      customInput.classList.remove('error');
+    }
+
+    // Validate personal info
+    const errPersonal = document.getElementById('err-personal');
+    if (!isAnon.checked) {
+      const name  = document.getElementById('f-name').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const phone = document.getElementById('f-phone').value.trim();
+      if (!name || !email || !phone) {
+        errPersonal.style.display = 'block';
+        valid = false;
+      } else {
+        errPersonal.style.display = 'none';
+      }
+    } else {
+      errPersonal.style.display = 'none';
+    }
+
+    // Validate payment method
+    const errPay = document.getElementById('err-payment');
+    if (!payMethod) {
+      errPay.style.display = 'block';
+      valid = false;
+    } else {
+      errPay.style.display = 'none';
+    }
+
+    if (!valid) {
+      // Scroll to first error
+      document.querySelector('.field-error[style*="block"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Process payment
+    const btn = document.getElementById('pay-btn');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = lang === 'en' ? '⏳ Processing...' : '⏳ Memproses...';
+
+    // TODO: integrate Midtrans/Xendit/Xenith API here based on payMethod
+    setTimeout(() => {
+      const txId = 'IPS-2025-' + Math.random().toString(36).substring(2,8).toUpperCase();
+      document.getElementById('success-txid').textContent = `📋 No. Transaksi: ${txId}`;
+      document.getElementById('success-overlay').classList.add('show');
+      btn.disabled = false;
+      btn.querySelector('span').textContent = lang === 'en' ? 'Pay Now' : 'Bayar Sekarang';
+    }, 1800);
+  });
+
+  // Close overlay on backdrop click
+  document.getElementById('success-overlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
+  // ── Share ──────────────────────────────────────
+  document.getElementById('btn-wa').addEventListener('click', () => {
+    const text = encodeURIComponent(`Bantu kampanye ini: ${campaignTitle}\n${window.location.origin}/campaigns/${campaignSlug}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  });
+  document.getElementById('btn-fb').addEventListener('click', () => {
+    const url = encodeURIComponent(`${window.location.origin}/campaigns/${campaignSlug}`);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+  });
+  document.getElementById('btn-copy').addEventListener('click', () => {
+    navigator.clipboard.writeText(`${window.location.origin}/campaigns/${campaignSlug}`);
+    (window).showToast?.('Link berhasil disalin! 🎉');
+  });
+
+  // ── Language ───────────────────────────────────
+  const i18n = {
+    id: {
+      'back-label':'Kembali ke kampanye',
+      's1-title':'Jumlah Donasi','s2-title':'Data Diri','s3-title':'Metode Pembayaran',
+      'label-anon':'Donasi sebagai Anonim','label-name':'Nama Lengkap','label-phone':'No. HP / WhatsApp',
+      'label-msg':'Pesan / Doa','label-optional':'(opsional)','label-notif':'Kirim notifikasi update kampanye ke email saya',
+      'pd-qris':'Scan & bayar semua e-wallet','pd-va':'BCA, Mandiri, BNI, BRI',
+      'pd-shopee':'Saldo ShopeePay','pd-gopay':'Saldo GoPay / Tokopedia',
+      'pd-ovo':'Saldo OVO Cash','pd-transfer':'Transfer manual antar bank','pm-transfer-name':'Bank Transfer',
+      'sum-label-for':'Donasi untuk','sum-label-donation':'Jumlah Donasi',
+      'sum-label-fee':'Biaya Admin','sum-label-method':'Via','sum-label-total':'Total',
+      'pay-btn-label':'Bayar Sekarang','secure-note':'🔒 Enkripsi SSL 256-bit · Data Anda aman',
+      'tb-verified':'✓ Verified','tb-ssl':'🔒 SSL Secure','tb-transparent':'💯 Transparan',
+      'share-label':'Bagikan kampanye ini:',
+      'success-heading':'Terima Kasih!','success-desc':'Donasi Anda sedang diproses. Konfirmasi akan dikirim ke email Anda.',
+      'success-btn-more':'← Kampanye Lain','success-btn-home':'🏠 Beranda',
+      'err-amount':'Masukkan nominal minimal Rp 1.000',
+      'err-personal':'Harap lengkapi nama, email, dan nomor HP','err-payment':'Pilih metode pembayaran terlebih dahulu',
+    },
+    en: {
+      'back-label':'Back to campaign',
+      's1-title':'Donation Amount','s2-title':'Your Info','s3-title':'Payment Method',
+      'label-anon':'Donate Anonymously','label-name':'Full Name','label-phone':'Phone / WhatsApp',
+      'label-msg':'Message / Prayer','label-optional':'(optional)','label-notif':'Send campaign update notifications to my email',
+      'pd-qris':'Scan & pay with any e-wallet','pd-va':'BCA, Mandiri, BNI, BRI',
+      'pd-shopee':'ShopeePay balance','pd-gopay':'GoPay / Tokopedia balance',
+      'pd-ovo':'OVO Cash balance','pd-transfer':'Manual bank transfer','pm-transfer-name':'Bank Transfer',
+      'sum-label-for':'Donating for','sum-label-donation':'Donation Amount',
+      'sum-label-fee':'Admin Fee','sum-label-method':'Via','sum-label-total':'Total',
+      'pay-btn-label':'Pay Now','secure-note':'🔒 SSL 256-bit encryption · Your data is safe',
+      'tb-verified':'✓ Verified','tb-ssl':'🔒 SSL Secure','tb-transparent':'💯 Transparent',
+      'share-label':'Share this campaign:',
+      'success-heading':'Thank You!','success-desc':'Your donation is being processed. A confirmation will be sent to your email.',
+      'success-btn-more':'← Other Campaigns','success-btn-home':'🏠 Home',
+      'err-amount':'Minimum donation is Rp 1,000',
+      'err-personal':'Please fill in name, email, and phone number','err-payment':'Please select a payment method',
+    },
+  };
+
+  const applyLang = (lang) => {
+    Object.entries(i18n[lang] || {}).forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    });
+    document.getElementById('f-name').placeholder  = lang === 'en' ? 'Your name' : 'Nama Anda';
+    document.getElementById('f-email').placeholder = lang === 'en' ? 'email@example.com' : 'email@contoh.com';
+    document.getElementById('f-message').placeholder = lang === 'en' ? 'Write a message or prayer for the beneficiaries...' : 'Tulis pesan atau doa untuk penerima manfaat...';
+    document.getElementById('custom-amount').placeholder = lang === 'en' ? 'Other amount...' : 'Nominal lain...';
+  };
+
+  const savedLang = localStorage.getItem('lang') || 'id';
+  applyLang(savedLang);
+  document.addEventListener('langchange', (e) => applyLang(e.detail));
+</script>

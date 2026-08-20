@@ -1,0 +1,255 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  lang?: 'id' | 'en';
+}
+
+const {
+  title,
+  description = 'Indonesia Peduli Sesama — Platform donasi online terpercaya untuk membantu sesama di seluruh Indonesia.',
+  ogImage = '/images/hero-banner.jpg',
+  lang = 'id',
+} = Astro.props;
+
+const siteUrl = 'https://indonesiapedulisesama.org';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="donasi online, crowdfunding Indonesia, zakat, sedekah, bantuan kemanusiaan, Indonesia Peduli Sesama" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={siteUrl} />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:locale"      content="id_ID" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href={siteUrl} />
+
+    <title>{title}</title>
+
+    <!-- Preconnect Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header class="navbar" id="navbar">
+      <div class="navbar__inner">
+        <a href="/" class="navbar__logo" aria-label="Indonesia Peduli Sesama">
+          <img src="/images/logo-indonesia-peduli.png" alt="Indonesia Peduli" class="navbar__logo-img" width="180" height="48" loading="eager" />
+        </a>
+
+        <nav class="navbar__nav" aria-label="Main navigation">
+          <a href="/"              class="navbar__link" data-id="nav-home">Beranda</a>
+          <a href="/campaigns"     class="navbar__link" data-id="nav-campaigns">Kampanye</a>
+          <a href="/about"         class="navbar__link" data-id="nav-about">Tentang Kami</a>
+          <a href="/#cara-donasi"  class="navbar__link" data-id="nav-how">Cara Donasi</a>
+        </nav>
+
+        <div class="navbar__actions">
+          <div class="navbar__lang" id="lang-switcher" aria-label="Language switcher">
+            <button class="lang-btn active" id="btn-id" data-lang="id">ID</button>
+            <button class="lang-btn"        id="btn-en" data-lang="en">EN</button>
+          </div>
+          <a href="/campaigns" class="btn btn--primary btn--sm" id="btn-donate-nav">
+            💙 Donasi
+          </a>
+        </div>
+
+        <button class="navbar__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile nav -->
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <button class="mobile-nav__close" id="mobile-close" aria-label="Close menu">✕</button>
+      <a href="/"          class="mobile-nav__link" id="mnav-home">Beranda</a>
+      <a href="/campaigns" class="mobile-nav__link" id="mnav-campaigns">Kampanye</a>
+      <a href="/about"     class="mobile-nav__link" id="mnav-about">Tentang Kami</a>
+      <a href="/#cara-donasi" class="mobile-nav__link" id="mnav-how">Cara Donasi</a>
+      <a href="/campaigns" class="btn btn--primary btn--lg" id="mnav-donate">💙 Mulai Donasi</a>
+    </div>
+
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+      <div class="container">
+        <div class="footer__grid">
+          <div class="footer__brand">
+            <div class="footer__logo">
+              <div class="footer__logo-icon" aria-hidden="true">🤝</div>
+              <span class="footer__logo-name">Indonesia Peduli Sesama</span>
+            </div>
+            <p class="footer__desc" data-i18n="footer-desc">
+              Platform donasi online terpercaya untuk membantu sesama di seluruh Indonesia. Bersama kita bisa membuat perbedaan nyata.
+            </p>
+            <div class="footer__socials">
+              <a href="#" class="footer__social" aria-label="Instagram" id="social-instagram">📷</a>
+              <a href="#" class="footer__social" aria-label="Facebook"  id="social-facebook">📘</a>
+              <a href="#" class="footer__social" aria-label="Twitter"   id="social-twitter">🐦</a>
+              <a href="#" class="footer__social" aria-label="YouTube"   id="social-youtube">▶️</a>
+              <a href="#" class="footer__social" aria-label="WhatsApp"  id="social-wa">💬</a>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="footer__col-title" data-i18n="footer-col-campaign">Kampanye</h4>
+            <ul class="footer__links">
+              <li><a href="/campaigns?cat=kemanusiaan" class="footer__link" data-i18n="cat-kemanusiaan">Kemanusiaan</a></li>
+              <li><a href="/campaigns?cat=pendidikan"  class="footer__link" data-i18n="cat-pendidikan">Pendidikan</a></li>
+              <li><a href="/campaigns?cat=infrastruktur" class="footer__link" data-i18n="cat-infrastruktur">Infrastruktur</a></li>
+              <li><a href="/campaigns?cat=charity"     class="footer__link" data-i18n="cat-charity">Charity</a></li>
+              <li><a href="/campaigns?cat=lingkungan"  class="footer__link" data-i18n="cat-lingkungan">Lingkungan</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="footer__col-title" data-i18n="footer-col-info">Informasi</h4>
+            <ul class="footer__links">
+              <li><a href="/about"    class="footer__link" data-i18n="about-us">Tentang Kami</a></li>
+              <li><a href="#"         class="footer__link" data-i18n="faq">FAQ</a></li>
+              <li><a href="#"         class="footer__link" data-i18n="blog">Blog</a></li>
+              <li><a href="#"         class="footer__link" data-i18n="transparency">Transparansi</a></li>
+              <li><a href="#"         class="footer__link" data-i18n="contact">Kontak</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="footer__col-title" data-i18n="footer-col-legal">Legal</h4>
+            <ul class="footer__links">
+              <li><a href="#" class="footer__link" data-i18n="terms">Syarat & Ketentuan</a></li>
+              <li><a href="#" class="footer__link" data-i18n="privacy">Kebijakan Privasi</a></li>
+              <li><a href="#" class="footer__link" data-i18n="cookie">Cookie Policy</a></li>
+            </ul>
+            <div style="margin-top:1.5rem;">
+              <p style="font-size:.8rem;margin-bottom:.5rem;" data-i18n="payment-partner">Partner Pembayaran:</p>
+              <div style="display:flex;flex-direction:column;gap:.4rem;">
+                <span class="payment-logo-item midtrans" style="font-size:.8rem;padding:.3rem .6rem;">Midtrans</span>
+                <span class="payment-logo-item xendit"   style="font-size:.8rem;padding:.3rem .6rem;">Xendit</span>
+                <span class="payment-logo-item xenith"   style="font-size:.8rem;padding:.3rem .6rem;">Xenith</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer__bottom">
+          <p>© 2025 Indonesia Peduli Sesama. <span data-i18n="rights">Hak cipta dilindungi.</span></p>
+          <div class="footer__cert">
+            <span class="footer__cert-badge">✓ Terdaftar Kemenkumham</span>
+            <span class="footer__cert-badge">✓ ISO 27001</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script>
+      // ── Navbar scroll effect ───────────────────
+      const navbar = document.getElementById('navbar')!;
+      const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 20);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // ── Mobile nav ─────────────────────────────
+      const hamburger   = document.getElementById('hamburger')!;
+      const mobileNav   = document.getElementById('mobile-nav')!;
+      const mobileClose = document.getElementById('mobile-close')!;
+      const openMobile  = () => { mobileNav.classList.add('open'); mobileNav.setAttribute('aria-hidden','false'); hamburger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; };
+      const closeMobile = () => { mobileNav.classList.remove('open'); mobileNav.setAttribute('aria-hidden','true'); hamburger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; };
+      hamburger.addEventListener('click', openMobile);
+      mobileClose.addEventListener('click', closeMobile);
+      mobileNav.querySelectorAll('.mobile-nav__link').forEach(l => l.addEventListener('click', closeMobile));
+
+      // ── Language switcher ──────────────────────
+      const translations: Record<string, Record<string, string>> = {
+        id: {
+          'nav-home': 'Beranda', 'nav-campaigns': 'Kampanye', 'nav-about': 'Tentang Kami', 'nav-how': 'Cara Donasi',
+          'btn-donate-nav': '💚 Donasi', 'footer-desc': 'Platform donasi online terpercaya untuk membantu sesama di seluruh Indonesia.',
+          'footer-col-campaign': 'Kampanye', 'footer-col-info': 'Informasi', 'footer-col-legal': 'Legal',
+          'cat-kemanusiaan': 'Kemanusiaan', 'cat-pendidikan': 'Pendidikan', 'cat-infrastruktur': 'Infrastruktur',
+          'cat-charity': 'Charity', 'cat-lingkungan': 'Lingkungan',
+          'about-us': 'Tentang Kami', 'faq': 'FAQ', 'blog': 'Blog', 'transparency': 'Transparansi', 'contact': 'Kontak',
+          'terms': 'Syarat & Ketentuan', 'privacy': 'Kebijakan Privasi', 'cookie': 'Cookie Policy',
+          'payment-partner': 'Partner Pembayaran:', 'rights': 'Hak cipta dilindungi.',
+          'mnav-home': 'Beranda', 'mnav-campaigns': 'Kampanye', 'mnav-about': 'Tentang Kami',
+          'mnav-how': 'Cara Donasi', 'mnav-donate': '💚 Mulai Donasi',
+        },
+        en: {
+          'nav-home': 'Home', 'nav-campaigns': 'Campaigns', 'nav-about': 'About Us', 'nav-how': 'How to Donate',
+          'btn-donate-nav': '💚 Donate', 'footer-desc': 'Trusted online donation platform to help others across Indonesia.',
+          'footer-col-campaign': 'Campaigns', 'footer-col-info': 'Information', 'footer-col-legal': 'Legal',
+          'cat-kemanusiaan': 'Humanitarian', 'cat-pendidikan': 'Education', 'cat-infrastruktur': 'Infrastructure',
+          'cat-charity': 'Charity', 'cat-lingkungan': 'Environment',
+          'about-us': 'About Us', 'faq': 'FAQ', 'blog': 'Blog', 'transparency': 'Transparency', 'contact': 'Contact',
+          'terms': 'Terms & Conditions', 'privacy': 'Privacy Policy', 'cookie': 'Cookie Policy',
+          'payment-partner': 'Payment Partners:', 'rights': 'All rights reserved.',
+          'mnav-home': 'Home', 'mnav-campaigns': 'Campaigns', 'mnav-about': 'About Us',
+          'mnav-how': 'How to Donate', 'mnav-donate': '💚 Start Donating',
+        },
+      };
+      let currentLang = (localStorage.getItem('lang') || 'id') as 'id'|'en';
+      const applyLang = (lang: string) => {
+        const t = translations[lang];
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = (el as HTMLElement).dataset.i18n!;
+          if (t[key]) el.textContent = t[key];
+        });
+        document.getElementById('btn-id')!.classList.toggle('active', lang==='id');
+        document.getElementById('btn-en')!.classList.toggle('active', lang==='en');
+        document.documentElement.lang = lang;
+        localStorage.setItem('lang', lang);
+        currentLang = lang as 'id'|'en';
+        document.dispatchEvent(new CustomEvent('langchange', { detail: lang }));
+      };
+      document.getElementById('btn-id')!.addEventListener('click', () => applyLang('id'));
+      document.getElementById('btn-en')!.addEventListener('click', () => applyLang('en'));
+      applyLang(currentLang);
+
+      // ── Scroll animations ──────────────────────
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('visible'), i * 80);
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+      // ── Toast helper (global) ──────────────────
+      (window as any).showToast = (msg: string, type = 'success') => {
+        const toast = document.getElementById('toast')!;
+        toast.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
+        toast.className = `toast toast--${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      };
+    </script>
+  </body>
+</html>

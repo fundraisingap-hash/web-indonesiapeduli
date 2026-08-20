@@ -1,0 +1,365 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { campaigns, categories, testimonials, formatRupiah, getPercent } from '../data/campaigns';
+
+const featured = campaigns.filter(c => c.featured).slice(0, 6);
+---
+
+<Layout
+  title="Indonesia Peduli Sesama — Platform Donasi Online Terpercaya"
+  description="Platform donasi dan crowdfunding terpercaya di Indonesia. Bantu sesama melalui program kemanusiaan, pendidikan, infrastruktur, charity, dan lingkungan."
+>
+
+  <!-- ── HERO ─────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero__bg"></div>
+    <img src="/images/hero-banner.jpg" alt="Indonesia Peduli Sesama" class="hero__img" loading="eager" fetchpriority="high" />
+    <div class="hero__overlay"></div>
+
+    <div class="hero__particles" aria-hidden="true">
+      {Array.from({length:12}).map((_,i) => (
+        <div class="hero__particle" style={`left:${(i*7.3+11)%100}%;animation-duration:${6+i*0.7}s;animation-delay:${i*0.5}s;width:${3+i%3}px;height:${3+i%3}px;`}></div>
+      ))}
+    </div>
+
+    <div class="hero__content">
+      <div class="hero__left">
+        <div class="hero__badge" id="hero-badge">
+          <span>🇮🇩</span>
+          <span data-i18n-hero="badge">Platform Donasi #1 Indonesia</span>
+        </div>
+        <h1 class="hero__title">
+          <span data-i18n-hero="title1">Bersama Kita</span><br />
+          <span data-i18n-hero="title2" class="text-secondary">Peduli Sesama</span>
+        </h1>
+        <p class="hero__desc" data-i18n-hero="desc">
+          Platform donasi dan galang dana online terpercaya untuk membantu sesama di seluruh Indonesia. Transparan, aman, dan berdampak nyata.
+        </p>
+        <div class="hero__actions">
+          <a href="/campaigns" class="btn btn--secondary btn--lg" id="hero-cta-donate">
+            💚 Mulai Donasi
+          </a>
+          <a href="/campaigns" class="btn btn--ghost btn--lg" id="hero-cta-campaign">
+            📋 Lihat Kampanye
+          </a>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat-item">
+            <span class="hero__stat-num" id="stat-donors" data-target="127000">127.000+</span>
+            <span class="hero__stat-label" data-i18n-hero="stat-donors">Donatur Aktif</span>
+          </div>
+          <div class="hero__stat-item">
+            <span class="hero__stat-num" id="stat-raised" data-target="48">48 M</span>
+            <span class="hero__stat-label" data-i18n-hero="stat-raised">Miliar Terkumpul</span>
+          </div>
+          <div class="hero__stat-item">
+            <span class="hero__stat-num" id="stat-campaigns" data-target="342">342+</span>
+            <span class="hero__stat-label" data-i18n-hero="stat-campaigns">Kampanye Sukses</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── STATS ─────────────────────────────────────── -->
+  <section class="stats-section" id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card animate-on-scroll">
+          <div class="stat-card__icon">👥</div>
+          <span class="stat-card__num counter" data-target="127000" data-suffix="+">0</span>
+          <div class="stat-card__label" data-i18n-stats="donatur">Total Donatur</div>
+        </div>
+        <div class="stat-card animate-on-scroll">
+          <div class="stat-card__icon">💰</div>
+          <span class="stat-card__num counter" data-target="48" data-suffix=" M">0</span>
+          <div class="stat-card__label" data-i18n-stats="raised">Miliar Terkumpul</div>
+        </div>
+        <div class="stat-card animate-on-scroll">
+          <div class="stat-card__icon">📋</div>
+          <span class="stat-card__num counter" data-target="342" data-suffix="+">0</span>
+          <div class="stat-card__label" data-i18n-stats="campaigns">Kampanye Sukses</div>
+        </div>
+        <div class="stat-card animate-on-scroll">
+          <div class="stat-card__icon">🌏</div>
+          <span class="stat-card__num counter" data-target="34" data-suffix=" Prov">0</span>
+          <div class="stat-card__label" data-i18n-stats="provinces">Provinsi Terjangkau</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CATEGORIES ────────────────────────────────── -->
+  <section class="section" id="kategori">
+    <div class="container">
+      <div class="section-badge animate-on-scroll">🗂️ Kategori</div>
+      <h2 class="section-title animate-on-scroll" data-i18n-cat="title">Pilih Kategori Donasi</h2>
+      <p class="section-subtitle animate-on-scroll" data-i18n-cat="subtitle">Temukan kampanye yang sesuai dengan kepedulianmu</p>
+
+      <div class="categories-grid">
+        {categories.map((cat, i) => (
+          <a
+            href={`/campaigns?cat=${cat.id}`}
+            class={`category-card cat-${cat.id} animate-on-scroll`}
+            id={`cat-${cat.id}`}
+            style={`animation-delay:${i*0.08}s`}
+            data-cat-id={cat.id}
+          >
+            <div class="category-card__icon" style={`background:${cat.color};`}>
+              {cat.icon}
+            </div>
+            <span class="category-card__name" data-i18n-catname={cat.id}>{cat.labelId}</span>
+            <span class="category-card__count">{cat.count} kampanye</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURED CAMPAIGNS ────────────────────────── -->
+  <section class="section" id="kampanye-unggulan" style="background:var(--color-gray-50);">
+    <div class="container">
+      <div class="section-badge animate-on-scroll">✨ Pilihan Editor</div>
+      <h2 class="section-title animate-on-scroll" data-i18n-featured="title">Kampanye Unggulan</h2>
+      <p class="section-subtitle animate-on-scroll" data-i18n-featured="subtitle">
+        Kampanye terpilih yang membutuhkan dukungan Anda sekarang
+      </p>
+
+      <div class="grid grid-3">
+        {featured.map((c, i) => {
+          const pct = getPercent(c.raised, c.target);
+          return (
+            <article class="campaign-card animate-on-scroll" style={`animation-delay:${i*0.1}s`} data-slug={c.slug}>
+              <div class="campaign-card__img-wrap">
+                <img src={c.image} alt={c.title} class="campaign-card__img" loading={i < 3 ? 'eager' : 'lazy'} width="400" height="225" />
+                {c.urgent && <span class="campaign-card__badge campaign-card__urgent">🔥 Mendesak</span>}
+                <span class="campaign-card__cat-badge" data-cat={c.category}>
+                  {categories.find(cat => cat.id === c.category)?.icon} {categories.find(cat => cat.id === c.category)?.labelId}
+                </span>
+                <span class="campaign-card__days">⏰ {c.daysLeft} hari lagi</span>
+              </div>
+              <div class="campaign-card__body">
+                <div class="campaign-card__org">
+                  <span class="campaign-card__org-dot"></span>
+                  {c.org}
+                </div>
+              {/* Invisible overlay link covers whole card */}
+              <a href={`/campaigns/${c.slug}`} class="campaign-card__link" aria-label={c.title} tabindex="-1"></a>
+                <h3 class="campaign-card__title" data-title-id={c.slug} data-title-en={c.titleEn}>
+                  {c.title}
+                </h3>
+                <div class="campaign-card__progress-wrap">
+                  <div class="campaign-card__progress-bar" style={`width:${pct}%;`}></div>
+                </div>
+                <div class="campaign-card__meta">
+                  <div>
+                    <div class="campaign-card__raised">{formatRupiah(c.raised)}</div>
+                    <div class="campaign-card__target">dari {formatRupiah(c.target)}</div>
+                  </div>
+                  <span class="campaign-card__pct">{pct}%</span>
+                </div>
+              </div>
+              <div class="campaign-card__footer">
+                <div class="campaign-card__donors">
+                  👥 {c.donors.toLocaleString('id-ID')} donatur
+                </div>
+                <a href={`/campaigns/${c.slug}`} class="btn btn--primary btn--sm" id={`btn-campaign-${i}`}>
+                  Donasi →
+                </a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div class="text-center" style="margin-top:3rem;">
+        <a href="/campaigns" class="btn btn--outline btn--lg" id="btn-all-campaigns">
+          Lihat Semua Kampanye →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW TO DONATE ─────────────────────────────── -->
+  <section class="section" id="cara-donasi">
+    <div class="container">
+      <div class="section-badge animate-on-scroll">💡 Mudah & Aman</div>
+      <h2 class="section-title animate-on-scroll" data-i18n-how="title">Cara Berdonasi</h2>
+      <p class="section-subtitle animate-on-scroll" data-i18n-how="subtitle">
+        Hanya 3 langkah mudah untuk mulai membantu sesama
+      </p>
+
+      <div class="steps">
+        <div class="step-card animate-on-scroll">
+          <div class="step-card__num">1</div>
+          <h3 class="step-card__title" data-i18n-step="s1-title">Pilih Kampanye</h3>
+          <p class="step-card__desc" data-i18n-step="s1-desc">Temukan kampanye yang sesuai dengan niat baikmu. Filter berdasarkan kategori atau cari langsung.</p>
+        </div>
+        <div class="step-card animate-on-scroll">
+          <div class="step-card__num">2</div>
+          <h3 class="step-card__title" data-i18n-step="s2-title">Tentukan Nominal</h3>
+          <p class="step-card__desc" data-i18n-step="s2-desc">Pilih nominal donasi yang sesuai kemampuanmu. Tidak ada minimum donasi — setiap rupiah berarti.</p>
+        </div>
+        <div class="step-card animate-on-scroll">
+          <div class="step-card__num">3</div>
+          <h3 class="step-card__title" data-i18n-step="s3-title">Bayar & Pantau</h3>
+          <p class="step-card__desc" data-i18n-step="s3-desc">Bayar via Midtrans, Xendit, atau Xenith. Pantau perkembangan kampanye melalui update berkala.</p>
+        </div>
+      </div>
+
+      <div class="animate-on-scroll" style="margin-top:3.5rem;">
+        <p class="text-center" style="color:var(--color-gray-500);font-size:.9rem;margin-bottom:1.25rem;" data-i18n-how="payment-text">
+          Didukung oleh payment gateway terpercaya:
+        </p>
+        <div class="payment-logos">
+          <div class="payment-logo-item midtrans" id="logo-midtrans">🔐 Midtrans</div>
+          <div class="payment-logo-item xendit"   id="logo-xendit">💳 Xendit</div>
+          <div class="payment-logo-item xenith"   id="logo-xenith">⚡ Xenith</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ──────────────────────────────── -->
+  <section class="section" id="testimoni" style="background:var(--color-gray-50);">
+    <div class="container">
+      <div class="section-badge animate-on-scroll">💬 Cerita Nyata</div>
+      <h2 class="section-title animate-on-scroll" data-i18n-testi="title">Kata Mereka</h2>
+      <p class="section-subtitle animate-on-scroll" data-i18n-testi="subtitle">
+        Ribuan donatur dan penggalang dana telah merasakan manfaatnya
+      </p>
+      <div class="testimonial-grid">
+        {testimonials.map((t, i) => (
+          <div class="testimonial-card animate-on-scroll" style={`animation-delay:${i*0.1}s`} id={`testi-${i}`}>
+            <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-card__text" data-text-id={t.text} data-text-en={t.textEn}>"{t.text}"</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">{t.initial}</div>
+              <div>
+                <div class="testimonial-card__name">{t.name}</div>
+                <div class="testimonial-card__role">{t.role}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ───────────────────────────────────────── -->
+  <section class="cta-section" id="cta">
+    <div style="position:relative;z-index:1;">
+      <h2 data-i18n-cta="title">Mulai Berbagi Kebaikan Hari Ini</h2>
+      <p data-i18n-cta="desc">Bergabunglah bersama 127.000+ donatur yang telah mengubah kehidupan sesama melalui Indonesia Peduli Sesama.</p>
+      <div class="cta-actions">
+        <a href="/campaigns" class="btn btn--secondary btn--lg" id="cta-btn-donate">💚 Mulai Donasi Sekarang</a>
+        <a href="/campaigns" class="btn btn--ghost btn--lg"     id="cta-btn-campaign">📋 Buat Kampanye</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  // ── Animated counter ──────────────────────────────
+  const counters = document.querySelectorAll<HTMLElement>('.counter');
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target as HTMLElement;
+      const target = +(el.dataset.target || 0);
+      const suffix = el.dataset.suffix || '';
+      const duration = 2000;
+      const start = performance.now();
+      const animate = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(ease * target).toLocaleString('id-ID') + (progress >= 1 ? suffix : '');
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+      countObserver.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => countObserver.observe(c));
+
+  // ── Language update ────────────────────────────────
+  const translations: Record<string, Record<string, Record<string, string>>> = {
+    hero: {
+      id: { badge:'Platform Donasi #1 Indonesia', title1:'Bersama Kita', title2:'Peduli Sesama', desc:'Platform donasi dan galang dana online terpercaya untuk membantu sesama di seluruh Indonesia. Transparan, aman, dan berdampak nyata.', 'stat-donors':'Donatur Aktif','stat-raised':'Miliar Terkumpul','stat-campaigns':'Kampanye Sukses' },
+      en: { badge:"Indonesia's #1 Donation Platform", title1:'Together We', title2:'Care for Each Other', desc:'Trusted online donation platform to help others across Indonesia. Transparent, safe, and impactful.', 'stat-donors':'Active Donors','stat-raised':'Billion Raised','stat-campaigns':'Successful Campaigns' },
+    },
+    stats: {
+      id: { donatur:'Total Donatur', raised:'Miliar Terkumpul', campaigns:'Kampanye Sukses', provinces:'Provinsi Terjangkau' },
+      en: { donatur:'Total Donors', raised:'Billion Raised', campaigns:'Successful Campaigns', provinces:'Provinces Reached' },
+    },
+    cat: {
+      id: { title:'Pilih Kategori Donasi', subtitle:'Temukan kampanye yang sesuai dengan kepedulianmu' },
+      en: { title:'Choose Donation Category', subtitle:'Find campaigns that match your cause' },
+    },
+    catname: {
+      id: { kemanusiaan:'Kemanusiaan', pendidikan:'Pendidikan', infrastruktur:'Infrastruktur', charity:'Charity', lingkungan:'Lingkungan' },
+      en: { kemanusiaan:'Humanitarian', pendidikan:'Education', infrastruktur:'Infrastructure', charity:'Charity', lingkungan:'Environment' },
+    },
+    featured: {
+      id: { title:'Kampanye Unggulan', subtitle:'Kampanye terpilih yang membutuhkan dukungan Anda sekarang' },
+      en: { title:'Featured Campaigns', subtitle:'Selected campaigns that need your support now' },
+    },
+    how: {
+      id: { title:'Cara Berdonasi', subtitle:'Hanya 3 langkah mudah untuk mulai membantu sesama', 's1-title':'Pilih Kampanye','s1-desc':'Temukan kampanye yang sesuai dengan niat baikmu.','s2-title':'Tentukan Nominal','s2-desc':'Pilih nominal donasi. Tidak ada minimum donasi.','s3-title':'Bayar & Pantau','s3-desc':'Bayar via Midtrans, Xendit, atau Xenith.','payment-text':'Didukung oleh payment gateway terpercaya:' },
+      en: { title:'How to Donate', subtitle:'Just 3 easy steps to start helping others', 's1-title':'Choose a Campaign','s1-desc':'Find a campaign that matches your intentions.','s2-title':'Set Your Amount','s2-desc':'Choose any amount. No minimum donation.','s3-title':'Pay & Monitor','s3-desc':'Pay via Midtrans, Xendit, or Xenith.','payment-text':'Supported by trusted payment gateways:' },
+    },
+    testi: {
+      id: { title:'Kata Mereka', subtitle:'Ribuan donatur dan penggalang dana telah merasakan manfaatnya' },
+      en: { title:'What They Say', subtitle:'Thousands of donors and fundraisers have felt the benefits' },
+    },
+    cta: {
+      id: { title:'Mulai Berbagi Kebaikan Hari Ini', desc:'Bergabunglah bersama 127.000+ donatur yang telah mengubah kehidupan sesama.' },
+      en: { title:'Start Sharing Kindness Today', desc:'Join 127,000+ donors who have transformed lives through Indonesia Peduli Sesama.' },
+    },
+  };
+  const catIcons: Record<string, string> = { kemanusiaan:'❤️', pendidikan:'📚', infrastruktur:'🏗️', charity:'🤲', lingkungan:'🌿' };
+
+  const applyLang = (lang: string) => {
+    ['hero','stats','cat','featured','testi','cta'].forEach(ns => {
+      const t = translations[ns]?.[lang];
+      if (!t) return;
+      Object.entries(t).forEach(([k,v]) => {
+        document.querySelectorAll<HTMLElement>(`[data-i18n-${ns}="${k}"]`).forEach(el => el.textContent = v);
+        document.querySelectorAll<HTMLElement>(`[data-i18n-step="${k}"]`).forEach(el => el.textContent = v);
+      });
+    });
+    // Category names
+    document.querySelectorAll<HTMLElement>('[data-i18n-catname]').forEach(el => {
+      const cat = el.dataset.i18nCatname!;
+      el.textContent = translations.catname[lang]?.[cat] ?? el.textContent;
+    });
+    // Campaign titles
+    document.querySelectorAll<HTMLElement>('[data-title-en]').forEach(el => {
+      el.textContent = lang === 'en' ? el.dataset.titleEn! : el.dataset.titleId!;
+    });
+    // Testimonial texts
+    document.querySelectorAll<HTMLElement>('[data-text-en]').forEach(el => {
+      el.textContent = `"${lang === 'en' ? el.dataset.textEn : el.dataset.textId}"`;
+    });
+    // Cat badges on cards
+    document.querySelectorAll<HTMLElement>('[data-cat]').forEach(el => {
+      const cat = el.dataset.cat!;
+      el.textContent = `${catIcons[cat] ?? ''} ${translations.catname[lang]?.[cat] ?? cat}`;
+    });
+    // Buttons
+    const btnMap: Record<string, Record<string, string>> = {
+      id: { 'hero-cta-donate':'💚 Mulai Donasi','hero-cta-campaign':'📋 Lihat Kampanye','btn-all-campaigns':'Lihat Semua Kampanye →','cta-btn-donate':'💚 Mulai Donasi Sekarang','cta-btn-campaign':'📋 Buat Kampanye' },
+      en: { 'hero-cta-donate':'💚 Donate Now','hero-cta-campaign':'📋 View Campaigns','btn-all-campaigns':'View All Campaigns →','cta-btn-donate':'💚 Donate Now','cta-btn-campaign':'📋 Create Campaign' },
+    };
+    Object.entries(btnMap[lang] ?? {}).forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    });
+  };
+
+  const saved = localStorage.getItem('lang') || 'id';
+  applyLang(saved);
+  document.addEventListener('langchange', (e) => applyLang((e as CustomEvent).detail));
+</script>
