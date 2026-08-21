@@ -1499,6 +1499,11 @@ const fmtRp = n => n >= 1e9
 const fmtRpFull = n => `Rp ${n.toLocaleString('id-ID')}`;
 const pct = (r, t) => t ? Math.min(100, Math.round(r/t*100)) : 0;
 
+// SEC-02/03 fix: sanitize all user-supplied data before innerHTML
+const escHtml = (s) => String(s ?? '')
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+
 const statusBadge = (s) => ({
   sukses:   '<span class="badge badge-green">✅ Sukses</span>',
   pending:  '<span class="badge badge-amber">⏳ Pending</span>',
@@ -1637,8 +1642,8 @@ function renderDashboard() {
   const tbody = document.getElementById('recent-donations-body');
   tbody.innerHTML = donations.slice(0,5).map(d => `
     <tr>
-      <td><div class="donor-cell"><div class="donor-initial">${d.name[0]}</div><div><div style="font-weight:600;">${d.name}</div><div style="font-size:.75rem;color:var(--gray-400);">${d.email}</div></div></div></td>
-      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.campaign}</td>
+      <td><div class="donor-cell"><div class="donor-initial">${escHtml(d.name[0])}</div><div><div style="font-weight:600;">${escHtml(d.name)}</div><div style="font-size:.75rem;color:var(--gray-400);">${escHtml(d.email)}</div></div></div></td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(d.campaign)}</td>
       <td class="fw-bold text-green">${fmtRpFull(d.amount)}</td>
       <td>${methodBadge(d.method)}</td>
       <td class="text-muted" style="font-size:.8rem;">${d.date}</td>
@@ -1672,8 +1677,8 @@ function renderCampaigns() {
       const p = pct(c.raised, c.target);
       return `<tr>
         <td style="max-width:180px;">
-          <div style="font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.titleId}</div>
-          <div style="font-size:.75rem;color:var(--gray-400);">${c.org}</div>
+          <div style="font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.titleId)}</div>
+          <div style="font-size:.75rem;color:var(--gray-400);">${escHtml(c.org)}</div>
         </td>
         <td>${catBadge(c.category)}</td>
         <td style="font-size:.82rem;">${fmtRp(c.target)}</td>
@@ -1763,7 +1768,7 @@ function saveCampaign() {
 
 function deleteCampaign(id) {
   const c = campaigns.find(x => x.id === id);
-  showConfirm('🗑️','Hapus Kampanye',`"${c.titleId}" akan dihapus secara permanen.`,'Ya, Hapus', () => {
+  showConfirm('🗑️','Hapus Kampanye',`"${escHtml(c.titleId)}" akan dihapus secara permanen.`,'Ya, Hapus', () => {
     campaigns = campaigns.filter(x => x.id !== id);
     saveData(); renderCampaigns(); renderDashboard();
     showToast('Kampanye berhasil dihapus', 'error');
@@ -1823,10 +1828,10 @@ function donCellVal(d, colId) {
     infrastruktur:'🏗️ Infrastruktur', charity:'🤲 Charity', lingkungan:'🌿 Lingkungan' };
   const camp = campaigns.find(c => c.titleId === d.campaign);
   switch(colId) {
-    case 'donatur':    return `<td><div class="donor-cell"><div class="donor-initial">${d.name[0]}</div><div><div style="font-weight:600;">${d.name}</div><div style="font-size:.75rem;color:var(--gray-400);">${d.email}</div></div></div></td>`;
+    case 'donatur':    return `<td><div class="donor-cell"><div class="donor-initial">${escHtml(d.name[0])}</div><div><div style="font-weight:600;">${escHtml(d.name)}</div><div style="font-size:.75rem;color:var(--gray-400);">${escHtml(d.email)}</div></div></div></td>`;
     case 'status':     return `<td>${statusBadge(d.status)}</td>`;
     case 'pay_status': return `<td>${d.payStatus ? statusBadge(d.payStatus) : '<span class="text-muted">—</span>'}</td>`;
-    case 'kampanye':   return `<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.83rem;">${d.campaign}</td>`;
+    case 'kampanye':   return `<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.83rem;">${escHtml(d.campaign)}</td>`;
     case 'kategori':   return `<td>${camp ? catBadge(camp.category) : '<span class="text-muted">—</span>'}</td>`;
     case 'org':        return `<td style="font-size:.82rem;">${camp ? camp.org : '—'}</td>`;
     case 'pesan':      return `<td style="font-size:.8rem;color:var(--gray-500);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.pesan || '<span class="text-muted">—</span>'}</td>`;
@@ -2018,8 +2023,8 @@ function renderDonors() {
   tbody.innerHTML = list.length === 0
     ? `<tr><td colspan="6" class="table-empty">Tidak ada donatur ditemukan</td></tr>`
     : list.map(d => `<tr>
-        <td><div class="donor-cell"><div class="donor-initial">${d.name[0]}</div><span style="font-weight:600;">${d.name}</span></div></td>
-        <td style="font-size:.82rem;color:var(--gray-500);">${d.email}</td>
+        <td><div class="donor-cell"><div class="donor-initial">${escHtml(d.name[0])}</div><span style="font-weight:600;">${d.name}</span></div></td>
+        <td style="font-size:.82rem;color:var(--gray-500);">${escHtml(d.email)}</td>
         <td class="fw-bold text-green">${fmtRpFull(d.totalDonated)}</td>
         <td style="text-align:center;">${d.txCount}x</td>
         <td class="text-muted" style="font-size:.82rem;">${d.lastDate}</td>
@@ -2038,10 +2043,10 @@ function renderWithdrawals() {
   tbody.innerHTML = list.length === 0
     ? `<tr><td colspan="7" class="table-empty">Tidak ada permintaan penarikan</td></tr>`
     : list.map(w => `<tr>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:.88rem;">${w.campaign}</td>
-        <td style="font-size:.82rem;color:var(--gray-500);">${w.org}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:.88rem;">${escHtml(w.campaign)}</td>
+        <td style="font-size:.82rem;color:var(--gray-500);">${escHtml(w.org)}</td>
         <td class="fw-bold text-green">${fmtRpFull(w.amount)}</td>
-        <td style="font-size:.8rem;">${w.bank}</td>
+        <td style="font-size:.8rem;">${escHtml(w.bank)}</td>
         <td class="text-muted" style="font-size:.82rem;">${w.date}</td>
         <td>${statusBadge(w.status)}</td>
         <td>
@@ -2062,7 +2067,7 @@ document.getElementById('wd-status-filter').addEventListener('change', renderWit
 
 function approveWithdrawal(id) {
   const w = withdrawals.find(x => x.id === id);
-  showConfirm('✅','Setujui Penarikan',`Penarikan sebesar ${fmtRpFull(w.amount)} untuk "${w.campaign}" akan disetujui.`,'Ya, Setujui', () => {
+  showConfirm('✅','Setujui Penarikan',`Penarikan sebesar ${fmtRpFull(w.amount)} untuk "${escHtml(w.campaign)}" akan disetujui.`,'Ya, Setujui', () => {
     const idx = withdrawals.findIndex(x => x.id === id);
     withdrawals[idx].status = 'approved';
     saveData(); renderWithdrawals();
@@ -2072,7 +2077,7 @@ function approveWithdrawal(id) {
 
 function rejectWithdrawal(id) {
   const w = withdrawals.find(x => x.id === id);
-  showConfirm('❌','Tolak Penarikan',`Penarikan sebesar ${fmtRpFull(w.amount)} untuk "${w.campaign}" akan ditolak.`,'Ya, Tolak', () => {
+  showConfirm('❌','Tolak Penarikan',`Penarikan sebesar ${fmtRpFull(w.amount)} untuk "${escHtml(w.campaign)}" akan ditolak.`,'Ya, Tolak', () => {
     const idx = withdrawals.findIndex(x => x.id === id);
     withdrawals[idx].status = 'rejected';
     saveData(); renderWithdrawals();

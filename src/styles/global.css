@@ -2,7 +2,7 @@
    INDONESIA PEDULI SESAMA — Global Design System
    ====================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+/* Fonts loaded via <link> in Layout.astro head (non-blocking) */
 
 /* ── CSS Variables ─────────────────────────────────── */
 :root {
@@ -64,7 +64,11 @@
 
 /* ── Reset & Base ───────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+/* Respect user motion preference (PERF-05) */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 body {
   font-family: var(--font-body);
   color: var(--color-gray-800);

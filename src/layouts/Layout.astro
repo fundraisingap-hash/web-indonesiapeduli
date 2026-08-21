@@ -43,13 +43,22 @@ const siteUrl = 'https://indonesiapedulisesama.org';
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
-    <link rel="canonical" href={siteUrl} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, siteUrl).href} />
 
     <title>{title}</title>
 
     <!-- Preconnect Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Non-blocking font load (PERF-01 fix) -->
+    <link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" />
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" />
+    </noscript>
   </head>
   <body>
     <!-- Navbar -->
@@ -171,10 +180,15 @@ const siteUrl = 'https://indonesiapedulisesama.org';
     <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 
     <script>
+      // ── Cleanup controller ─────────────────────
+      const _ctrl = new AbortController();
+      const _sig  = _ctrl.signal;
+      document.addEventListener('astro:before-swap', () => _ctrl.abort(), { once: true });
+
       // ── Navbar scroll effect ───────────────────
       const navbar = document.getElementById('navbar')!;
       const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 20);
-      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true, signal: _sig });
       onScroll();
 
       // ── Mobile nav ─────────────────────────────
@@ -183,15 +197,15 @@ const siteUrl = 'https://indonesiapedulisesama.org';
       const mobileClose = document.getElementById('mobile-close')!;
       const openMobile  = () => { mobileNav.classList.add('open'); mobileNav.setAttribute('aria-hidden','false'); hamburger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; };
       const closeMobile = () => { mobileNav.classList.remove('open'); mobileNav.setAttribute('aria-hidden','true'); hamburger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; };
-      hamburger.addEventListener('click', openMobile);
-      mobileClose.addEventListener('click', closeMobile);
-      mobileNav.querySelectorAll('.mobile-nav__link').forEach(l => l.addEventListener('click', closeMobile));
+      hamburger.addEventListener('click', openMobile, { signal: _sig });
+      mobileClose.addEventListener('click', closeMobile, { signal: _sig });
+      mobileNav.querySelectorAll('.mobile-nav__link').forEach(l => l.addEventListener('click', closeMobile, { signal: _sig }));
 
       // ── Language switcher ──────────────────────
       const translations: Record<string, Record<string, string>> = {
         id: {
           'nav-home': 'Beranda', 'nav-campaigns': 'Kampanye', 'nav-about': 'Tentang Kami', 'nav-how': 'Cara Donasi',
-          'btn-donate-nav': '💚 Donasi', 'footer-desc': 'Platform donasi online terpercaya untuk membantu sesama di seluruh Indonesia.',
+          'btn-donate-nav': '💙 Donasi', 'footer-desc': 'Platform donasi online terpercaya untuk membantu sesama di seluruh Indonesia.',
           'footer-col-campaign': 'Kampanye', 'footer-col-info': 'Informasi', 'footer-col-legal': 'Legal',
           'cat-kemanusiaan': 'Kemanusiaan', 'cat-pendidikan': 'Pendidikan', 'cat-infrastruktur': 'Infrastruktur',
           'cat-charity': 'Charity', 'cat-lingkungan': 'Lingkungan',
@@ -199,11 +213,11 @@ const siteUrl = 'https://indonesiapedulisesama.org';
           'terms': 'Syarat & Ketentuan', 'privacy': 'Kebijakan Privasi', 'cookie': 'Cookie Policy',
           'payment-partner': 'Partner Pembayaran:', 'rights': 'Hak cipta dilindungi.',
           'mnav-home': 'Beranda', 'mnav-campaigns': 'Kampanye', 'mnav-about': 'Tentang Kami',
-          'mnav-how': 'Cara Donasi', 'mnav-donate': '💚 Mulai Donasi',
+          'mnav-how': 'Cara Donasi', 'mnav-donate': '💙 Mulai Donasi',
         },
         en: {
           'nav-home': 'Home', 'nav-campaigns': 'Campaigns', 'nav-about': 'About Us', 'nav-how': 'How to Donate',
-          'btn-donate-nav': '💚 Donate', 'footer-desc': 'Trusted online donation platform to help others across Indonesia.',
+          'btn-donate-nav': '💙 Donate', 'footer-desc': 'Trusted online donation platform to help others across Indonesia.',
           'footer-col-campaign': 'Campaigns', 'footer-col-info': 'Information', 'footer-col-legal': 'Legal',
           'cat-kemanusiaan': 'Humanitarian', 'cat-pendidikan': 'Education', 'cat-infrastruktur': 'Infrastructure',
           'cat-charity': 'Charity', 'cat-lingkungan': 'Environment',
@@ -211,7 +225,7 @@ const siteUrl = 'https://indonesiapedulisesama.org';
           'terms': 'Terms & Conditions', 'privacy': 'Privacy Policy', 'cookie': 'Cookie Policy',
           'payment-partner': 'Payment Partners:', 'rights': 'All rights reserved.',
           'mnav-home': 'Home', 'mnav-campaigns': 'Campaigns', 'mnav-about': 'About Us',
-          'mnav-how': 'How to Donate', 'mnav-donate': '💚 Start Donating',
+          'mnav-how': 'How to Donate', 'mnav-donate': '💙 Start Donating',
         },
       };
       let currentLang = (localStorage.getItem('lang') || 'id') as 'id'|'en';
@@ -228,27 +242,38 @@ const siteUrl = 'https://indonesiapedulisesama.org';
         currentLang = lang as 'id'|'en';
         document.dispatchEvent(new CustomEvent('langchange', { detail: lang }));
       };
-      document.getElementById('btn-id')!.addEventListener('click', () => applyLang('id'));
-      document.getElementById('btn-en')!.addEventListener('click', () => applyLang('en'));
+      document.getElementById('btn-id')!.addEventListener('click', () => applyLang('id'), { signal: _sig });
+      document.getElementById('btn-en')!.addEventListener('click', () => applyLang('en'), { signal: _sig });
       applyLang(currentLang);
 
       // ── Scroll animations ──────────────────────
+      // MEM-04 fix: track observer + disconnect when done
+      let _obsCount = 0;
+      const _obsTargets = document.querySelectorAll('.animate-on-scroll');
+      _obsCount = _obsTargets.length;
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((e, i) => {
           if (e.isIntersecting) {
             setTimeout(() => e.target.classList.add('visible'), i * 80);
             observer.unobserve(e.target);
+            _obsCount--;
+            if (_obsCount <= 0) observer.disconnect();
           }
         });
       }, { threshold: 0.1 });
-      document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+      _obsTargets.forEach(el => observer.observe(el));
+      // Disconnect on navigation
+      document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
 
       // ── Toast helper (global) ──────────────────
+      // MEM-07 fix: cancel previous timer before setting new one
+      let _toastTimer: ReturnType<typeof setTimeout> | null = null;
       (window as any).showToast = (msg: string, type = 'success') => {
         const toast = document.getElementById('toast')!;
+        if (_toastTimer) clearTimeout(_toastTimer);
         toast.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
         toast.className = `toast toast--${type} show`;
-        setTimeout(() => toast.classList.remove('show'), 3500);
+        _toastTimer = setTimeout(() => { toast.classList.remove('show'); _toastTimer = null; }, 3500);
       };
     </script>
   </body>
