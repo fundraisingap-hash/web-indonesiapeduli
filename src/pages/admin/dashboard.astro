@@ -10,6 +10,10 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+  <!-- Quill.js rich editor -->
+  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css" />
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -759,6 +763,352 @@
       border-radius: var(--radius-sm);
       flex-shrink: 0;
     }
+
+    /* ══════════════════════════════════════════
+       CAMPAIGN RICH EDITOR STYLES
+    ══════════════════════════════════════════ */
+    .ce-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .ce-overlay.open { display: flex; }
+    .ce-wrap { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+    /* Topbar */
+    .ce-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .8rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .ce-topbar__left { display: flex; align-items: center; gap: 1rem; }
+    .ce-back {
+      padding: .45rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--gray-600);
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .ce-back:hover { border-color: var(--green); color: var(--green); }
+    .ce-topbar__title { font-weight: 700; font-size: 1rem; color: var(--gray-900); }
+    .ce-topbar__right { display: flex; gap: .75rem; align-items: center; }
+    .ce-save-draft {
+      padding: .5rem 1.2rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--gray-700);
+      font-weight: 600;
+      font-size: .88rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .ce-save-draft:hover { border-color: var(--green); color: var(--green); }
+    .ce-publish {
+      padding: .5rem 1.4rem;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--green), #0e6ea8);
+      color: #fff;
+      font-weight: 700;
+      font-size: .88rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+      box-shadow: 0 3px 12px rgba(26,171,228,.3);
+    }
+    .ce-publish:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,171,228,.4); }
+
+    /* Body layout */
+    .ce-body {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .ce-body { grid-template-columns: 1fr; }
+      .ce-sidebar { order: -1; border-right: none; border-bottom: 1px solid var(--border); max-height: 320px; overflow-y: auto; }
+    }
+
+    /* Editor area */
+    .ce-editor-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem 2.5rem;
+      max-width: 100%;
+    }
+
+    /* Cover */
+    .ce-cover {
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 1.5rem;
+      background: var(--bg);
+      transition: border-color .15s;
+    }
+    .ce-cover:hover { border-color: var(--green); }
+    .ce-cover__placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      color: var(--gray-400);
+      font-size: .9rem;
+      padding: 2rem;
+      text-align: center;
+    }
+    .ce-cover__icon { font-size: 2.5rem; }
+    .ce-cover__hint { font-size: .75rem; color: var(--gray-300); }
+    .ce-cover__img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+    }
+    .ce-cover__actions {
+      position: absolute;
+      bottom: .75rem;
+      right: .75rem;
+      display: flex;
+      gap: .5rem;
+    }
+    .ce-cover__change, .ce-cover__remove {
+      padding: .35rem .8rem;
+      border-radius: 8px;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .ce-cover__change { background: rgba(0,0,0,.6); color: #fff; }
+    .ce-cover__remove { background: rgba(220,38,38,.8); color: #fff; }
+
+    /* Title inputs */
+    .ce-title-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      background: transparent;
+      font-family: inherit;
+      line-height: 1.3;
+      margin-bottom: .5rem;
+      padding: 0;
+    }
+    .ce-title-input::placeholder { color: var(--gray-300); }
+    .ce-title-en-input {
+      width: 100%;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      outline: none;
+      font-size: 1rem;
+      color: var(--gray-500);
+      background: transparent;
+      font-family: inherit;
+      padding: .25rem 0 .75rem;
+      margin-bottom: 1.5rem;
+    }
+    .ce-title-en-input::placeholder { color: var(--gray-300); }
+
+    /* Editor card */
+    .ce-editor-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .ce-editor-label {
+      padding: .75rem 1rem;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Quill overrides */
+    #ce-quill-toolbar {
+      border: none !important;
+      border-bottom: 1px solid var(--border) !important;
+      background: var(--bg);
+      padding: .5rem .75rem;
+    }
+    #ce-quill-editor {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .95rem;
+      line-height: 1.8;
+      color: var(--gray-800);
+    }
+    .ql-container.ql-snow { border: none !important; }
+    .ql-editor { padding: 1.25rem 1.5rem; min-height: 400px; }
+    .ql-editor img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin: .75rem auto;
+      display: block;
+    }
+    .ql-editor h1 { font-size: 1.6rem; font-weight: 800; margin: 1rem 0 .5rem; }
+    .ql-editor h2 { font-size: 1.3rem; font-weight: 700; margin: 1rem 0 .5rem; }
+    .ql-editor h3 { font-size: 1.1rem; font-weight: 700; margin: .75rem 0 .4rem; }
+    .ql-editor blockquote {
+      border-left: 4px solid var(--green);
+      padding: .5rem 1rem;
+      margin: 1rem 0;
+      background: rgba(26,171,228,.05);
+      border-radius: 0 8px 8px 0;
+      color: var(--gray-600);
+      font-style: italic;
+    }
+    .ql-editor p { margin-bottom: .6rem; }
+    .ql-toolbar.ql-snow .ql-formats { margin-right: 10px; }
+    .ql-snow .ql-picker { color: var(--gray-700); }
+    .ce-img-hint {
+      padding: .6rem 1rem;
+      font-size: .75rem;
+      color: var(--gray-400);
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Short desc */
+    .ce-short-desc {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: none;
+      resize: vertical;
+      font-family: inherit;
+      font-size: .9rem;
+      line-height: 1.6;
+      color: var(--gray-800);
+      background: transparent;
+      outline: none;
+    }
+    .ce-char-count {
+      padding: .4rem 1rem;
+      font-size: .75rem;
+      color: var(--gray-400);
+      text-align: right;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Sidebar */
+    .ce-sidebar {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .ce-sidebar-card {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+    .ce-sidebar-title {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: .9rem;
+    }
+    .ce-field-label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: .35rem;
+      margin-top: .65rem;
+    }
+    .ce-field-label:first-of-type { margin-top: 0; }
+    .ce-field-input, .ce-field-select {
+      width: 100%;
+      padding: .55rem .75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--gray-900);
+      font-size: .85rem;
+      font-family: inherit;
+      transition: border-color .15s;
+    }
+    .ce-field-input:focus, .ce-field-select:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,171,228,.12);
+    }
+    .ce-amount-wrap {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .ce-amount-prefix {
+      padding: .55rem .7rem;
+      background: var(--bg);
+      color: var(--gray-500);
+      font-size: .82rem;
+      font-weight: 600;
+      border-right: 1.5px solid var(--border);
+    }
+    .ce-amount-wrap .ce-field-input { border: none; border-radius: 0; }
+    .ce-amount-wrap .ce-field-input:focus { box-shadow: none; }
+    .ce-amount-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,171,228,.12); }
+    .ce-divider { height: 1px; background: var(--border); margin: .75rem 0; }
+    .ce-urgent-toggle {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      cursor: pointer;
+      margin-bottom: .3rem;
+    }
+    .ce-urgent-toggle input { accent-color: #ef4444; width: 15px; height: 15px; }
+    .ce-urgent-label { font-size: .85rem; font-weight: 600; color: var(--gray-800); }
+    .ce-urgent-desc { font-size: .75rem; color: var(--gray-400); line-height: 1.5; }
+    .ce-tips-card {
+      background: linear-gradient(135deg, #f0f9ff, #e0f5fd);
+      border: 1.5px solid #bae6fd;
+      border-radius: 14px;
+      padding: 1rem;
+    }
+    .ce-tips-title { font-size: .85rem; font-weight: 700; color: #0369a1; margin-bottom: .6rem; }
+    .ce-tips-list { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+    .ce-tips-list li { font-size: .78rem; color: #0c4a6e; line-height: 1.4; }
+    .ce-tips-list li::before { content: '→ '; color: var(--green); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -1512,75 +1862,160 @@
 </div>
 
 <!-- ═══════════ CAMPAIGN MODAL ═══════════ -->
-<div class="modal-overlay" id="campaign-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="campaign-modal-title">➕ Tambah Kampanye Baru</div>
-      <button class="modal-close" onclick="closeModal('campaign-modal')">✕</button>
+<!-- ═══════════ CAMPAIGN RICH EDITOR (full-page) ═══════════ -->
+<div class="ce-overlay" id="campaign-modal">
+  <div class="ce-wrap">
+    <!-- Top bar -->
+    <div class="ce-topbar">
+      <div class="ce-topbar__left">
+        <button class="ce-back" onclick="closeCampaignEditor()">← Kembali</button>
+        <span class="ce-topbar__title" id="campaign-modal-title">➕ Buat Kampanye Baru</span>
+      </div>
+      <div class="ce-topbar__right">
+        <button class="ce-save-draft" onclick="saveCampaign('draft')">💾 Simpan Draft</button>
+        <button class="ce-publish" onclick="saveCampaign('aktif')">🚀 Publish</button>
+      </div>
     </div>
-    <div class="modal-body">
-      <input type="hidden" id="modal-campaign-id" />
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Judul Kampanye (ID)</label>
-          <input type="text" class="form-input" id="modal-title-id" placeholder="Judul dalam Bahasa Indonesia" />
+
+    <div class="ce-body">
+      <!-- LEFT: Editor area -->
+      <div class="ce-editor-area">
+        <input type="hidden" id="modal-campaign-id" />
+
+        <!-- Cover image upload -->
+        <div class="ce-cover" id="ce-cover-wrap">
+          <div class="ce-cover__placeholder" id="ce-cover-placeholder">
+            <span class="ce-cover__icon">🖼️</span>
+            <span>Klik untuk upload gambar cover</span>
+            <span class="ce-cover__hint">PNG, JPG, JPEG · Maks 2MB · Rasio 16:9 disarankan</span>
+          </div>
+          <img id="ce-cover-img" class="ce-cover__img" src="" alt="Cover" style="display:none" />
+          <div class="ce-cover__actions" id="ce-cover-actions" style="display:none">
+            <button class="ce-cover__change" onclick="document.getElementById('ce-cover-input').click()">🔄 Ganti</button>
+            <button class="ce-cover__remove" onclick="removeCover()">✕ Hapus</button>
+          </div>
+          <input type="file" id="ce-cover-input" accept="image/*" style="display:none" />
         </div>
-        <div class="form-group">
-          <label class="form-label">Judul Kampanye (EN)</label>
-          <input type="text" class="form-input" id="modal-title-en" placeholder="Title in English" />
+
+        <!-- Title input -->
+        <input class="ce-title-input" id="modal-title-id"
+               placeholder="Judul kampanye dalam Bahasa Indonesia..."
+               maxlength="120" />
+        <input class="ce-title-en-input" id="modal-title-en"
+               placeholder="Campaign title in English (optional)..."
+               maxlength="120" />
+
+        <!-- Quill toolbar & editor -->
+        <div class="ce-editor-card">
+          <div class="ce-editor-label">📝 Cerita Lengkap</div>
+          <div id="ce-quill-toolbar">
+            <span class="ql-formats">
+              <select class="ql-header">
+                <option value="1">Heading 1</option>
+                <option value="2">Heading 2</option>
+                <option value="3">Heading 3</option>
+                <option selected>Normal</option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-bold"></button>
+              <button class="ql-italic"></button>
+              <button class="ql-underline"></button>
+              <button class="ql-strike"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-blockquote"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-list" value="ordered"></button>
+              <button class="ql-list" value="bullet"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-link"></button>
+              <button class="ql-image" id="ce-img-btn" title="Upload Gambar"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-align" value=""></button>
+              <button class="ql-align" value="center"></button>
+              <button class="ql-align" value="right"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-clean"></button>
+            </span>
+          </div>
+          <div id="ce-quill-editor" style="min-height:420px;"></div>
+          <input type="file" id="ce-inline-img-input" accept="image/*" style="display:none" />
+          <div class="ce-img-hint">💡 Klik ikon 🖼️ di toolbar untuk sisipkan gambar. Max 1MB per gambar.</div>
+        </div>
+
+        <!-- Short description -->
+        <div class="ce-editor-card">
+          <div class="ce-editor-label">💬 Ajakan Singkat <span style="font-weight:400;color:var(--gray-400);font-size:.8rem;">(tampil di card kampanye)</span></div>
+          <textarea class="ce-short-desc" id="modal-desc-id"
+                    placeholder="Tuliskan kalimat ajakan singkat yang kuat — maks 180 karakter..."
+                    maxlength="180" rows="3"></textarea>
+          <div class="ce-char-count"><span id="ce-desc-count">0</span>/180</div>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Deskripsi (ID)</label>
-        <textarea class="form-textarea" id="modal-desc-id" placeholder="Deskripsi singkat kampanye..."></textarea>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Kategori</label>
-          <select class="form-select" id="modal-category">
+
+      <!-- RIGHT: Sidebar settings -->
+      <aside class="ce-sidebar">
+        <div class="ce-sidebar-card">
+          <div class="ce-sidebar-title">⚙️ Pengaturan Kampanye</div>
+
+          <label class="ce-field-label">Kategori</label>
+          <select class="ce-field-select" id="modal-category">
             <option value="kemanusiaan">❤️ Kemanusiaan</option>
             <option value="pendidikan">📚 Pendidikan</option>
             <option value="infrastruktur">🏗️ Infrastruktur</option>
             <option value="charity">🤲 Charity</option>
             <option value="lingkungan">🌿 Lingkungan</option>
           </select>
+
+          <label class="ce-field-label">Target Dana (Rp)</label>
+          <div class="ce-amount-wrap">
+            <span class="ce-amount-prefix">Rp</span>
+            <input type="number" class="ce-field-input" id="modal-target" placeholder="500000000" min="0" step="1000000" />
+          </div>
+
+          <label class="ce-field-label">Hari Tersisa</label>
+          <input type="number" class="ce-field-input" id="modal-days" placeholder="30" min="1" />
+
+          <label class="ce-field-label">Penyelenggara / Organisasi</label>
+          <input type="text" class="ce-field-input" id="modal-org" placeholder="Nama yayasan / organisasi" />
+
+          <div class="ce-divider"></div>
+
+          <label class="ce-urgent-toggle">
+            <input type="checkbox" id="modal-urgent" />
+            <span class="ce-urgent-label">🔥 Tandai sebagai Mendesak</span>
+          </label>
+          <p class="ce-urgent-desc">Kampanye mendesak ditampilkan dengan badge khusus dan prioritas lebih tinggi.</p>
         </div>
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select class="form-select" id="modal-status">
-            <option value="aktif">✅ Aktif</option>
+
+        <!-- Status -->
+        <div class="ce-sidebar-card">
+          <div class="ce-sidebar-title">📋 Status</div>
+          <select class="ce-field-select" id="modal-status">
             <option value="draft">📝 Draft</option>
+            <option value="aktif">✅ Aktif</option>
             <option value="selesai">🏁 Selesai</option>
           </select>
+          <p class="ce-urgent-desc" style="margin-top:.5rem;">Draft tidak tampil di halaman publik sampai di-publish.</p>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Target Dana (Rp)</label>
-          <input type="number" class="form-input" id="modal-target" placeholder="500000000" />
+
+        <!-- Tips -->
+        <div class="ce-tips-card">
+          <div class="ce-tips-title">💡 Tips Kampanye Efektif</div>
+          <ul class="ce-tips-list">
+            <li>Gunakan <strong>gambar nyata</strong> dari lokasi/penerima manfaat</li>
+            <li>Tuliskan <strong>cerita personal</strong> yang menyentuh hati</li>
+            <li>Sertakan <strong>rincian penggunaan dana</strong></li>
+            <li>Update <strong>progress secara berkala</strong></li>
+            <li>Judul singkat & jelas — maks 80 karakter</li>
+          </ul>
         </div>
-        <div class="form-group">
-          <label class="form-label">Hari Tersisa</label>
-          <input type="number" class="form-input" id="modal-days" placeholder="30" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Penyelenggara / Organisasi</label>
-        <input type="text" class="form-input" id="modal-org" placeholder="Nama organisasi / penggalang dana" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">URL Gambar</label>
-        <input type="url" class="form-input" id="modal-image" placeholder="https://..." />
-      </div>
-      <div class="form-group">
-        <label class="form-label" style="display:flex;align-items:center;gap:.5rem;">
-          <input type="checkbox" id="modal-urgent" /> Tandai sebagai Mendesak 🔥
-        </label>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-outline" onclick="closeModal('campaign-modal')">Batal</button>
-      <button class="btn-primary" onclick="saveCampaign()">💾 Simpan Kampanye</button>
+      </aside>
     </div>
   </div>
 </div>
@@ -1894,64 +2329,183 @@ function renderCampaigns() {
   document.getElementById(id).addEventListener('change', renderCampaigns);
 });
 
-// Add campaign
-document.getElementById('btn-add-campaign').addEventListener('click', () => {
-  document.getElementById('campaign-modal-title').textContent = '➕ Tambah Kampanye Baru';
+// ── CAMPAIGN RICH EDITOR ─────────────────────────────
+let quillEditor = null;
+let coverImageData = null; // base64 or URL
+
+function initQuill() {
+  if (quillEditor) return;
+  quillEditor = new Quill('#ce-quill-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: { container: '#ce-quill-toolbar' },
+      history: { delay: 500, maxStack: 100 },
+    },
+    placeholder: 'Tuliskan cerita lengkap kampanye di sini...\n\nCeritakan situasi yang dihadapi, dampak yang diharapkan, dan bagaimana donasi akan digunakan.',
+  });
+
+  // Override image handler to use file upload → base64
+  quillEditor.getModule('toolbar').addHandler('image', () => {
+    document.getElementById('ce-inline-img-input').click();
+  });
+
+  document.getElementById('ce-inline-img-input').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    if (file.size > 1048576) {
+      showToast('⚠️ Gambar melebihi 1MB. Kompres dulu sebelum upload.', 'error');
+      this.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const range = quillEditor.getSelection(true);
+      quillEditor.insertEmbed(range.index, 'image', e.target.result);
+      quillEditor.setSelection(range.index + 1);
+    };
+    reader.readAsDataURL(file);
+    this.value = '';
+  });
+}
+
+function openCampaignEditor() {
+  const overlay = document.getElementById('campaign-modal');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(initQuill, 100);
+}
+
+function closeCampaignEditor() {
+  document.getElementById('campaign-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function clearCampaignEditor() {
   document.getElementById('modal-campaign-id').value = '';
-  ['modal-title-id','modal-title-en','modal-desc-id','modal-org','modal-image'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('modal-title-id').value = '';
+  document.getElementById('modal-title-en').value = '';
+  document.getElementById('modal-desc-id').value = '';
   document.getElementById('modal-target').value = '';
   document.getElementById('modal-days').value = '30';
+  document.getElementById('modal-org').value = '';
   document.getElementById('modal-category').value = 'kemanusiaan';
   document.getElementById('modal-status').value = 'draft';
   document.getElementById('modal-urgent').checked = false;
-  openModal('campaign-modal');
+  coverImageData = null;
+  document.getElementById('ce-cover-img').style.display = 'none';
+  document.getElementById('ce-cover-placeholder').style.display = '';
+  document.getElementById('ce-cover-actions').style.display = 'none';
+  if (quillEditor) quillEditor.setContents([]);
+  document.getElementById('ce-desc-count').textContent = '0';
+}
+
+// Cover image upload
+document.getElementById('ce-cover-wrap').addEventListener('click', (e) => {
+  if (!e.target.closest('.ce-cover__change') && !e.target.closest('.ce-cover__remove'))
+    document.getElementById('ce-cover-input').click();
+});
+document.getElementById('ce-cover-input').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+  if (file.size > 2097152) { showToast('⚠️ Gambar cover melebihi 2MB', 'error'); this.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    coverImageData = e.target.result;
+    const img = document.getElementById('ce-cover-img');
+    img.src = coverImageData;
+    img.style.display = 'block';
+    document.getElementById('ce-cover-placeholder').style.display = 'none';
+    document.getElementById('ce-cover-actions').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+  this.value = '';
+});
+
+function removeCover() {
+  coverImageData = null;
+  document.getElementById('ce-cover-img').style.display = 'none';
+  document.getElementById('ce-cover-placeholder').style.display = '';
+  document.getElementById('ce-cover-actions').style.display = 'none';
+}
+
+// Desc char counter
+document.getElementById('modal-desc-id').addEventListener('input', function() {
+  document.getElementById('ce-desc-count').textContent = this.value.length;
+});
+
+// Add campaign button
+document.getElementById('btn-add-campaign').addEventListener('click', () => {
+  document.getElementById('campaign-modal-title').textContent = '➕ Buat Kampanye Baru';
+  clearCampaignEditor();
+  openCampaignEditor();
 });
 
 function editCampaign(id) {
   const c = campaigns.find(x => x.id === id);
   if (!c) return;
   document.getElementById('campaign-modal-title').textContent = '✏️ Edit Kampanye';
+  clearCampaignEditor();
   document.getElementById('modal-campaign-id').value = id;
   document.getElementById('modal-title-id').value   = c.titleId;
   document.getElementById('modal-title-en').value   = c.titleEn || '';
   document.getElementById('modal-desc-id').value    = c.descId || '';
+  document.getElementById('ce-desc-count').textContent = (c.descId || '').length;
   document.getElementById('modal-target').value     = c.target;
   document.getElementById('modal-days').value       = c.daysLeft;
   document.getElementById('modal-org').value        = c.org;
-  document.getElementById('modal-image').value      = c.image || '';
   document.getElementById('modal-category').value   = c.category;
   document.getElementById('modal-status').value     = c.status;
   document.getElementById('modal-urgent').checked   = c.urgent || false;
-  openModal('campaign-modal');
+  // Load cover
+  if (c.image) {
+    coverImageData = c.image;
+    const img = document.getElementById('ce-cover-img');
+    img.src = c.image;
+    img.style.display = 'block';
+    document.getElementById('ce-cover-placeholder').style.display = 'none';
+    document.getElementById('ce-cover-actions').style.display = 'flex';
+  }
+  openCampaignEditor();
+  // Load rich content after Quill init
+  setTimeout(() => {
+    if (quillEditor && c.fullDesc) {
+      quillEditor.clipboard.dangerouslyPasteHTML(c.fullDesc);
+    }
+  }, 200);
 }
 
-function saveCampaign() {
-  const id     = document.getElementById('modal-campaign-id').value;
+function saveCampaign(forceStatus) {
+  const id      = document.getElementById('modal-campaign-id').value;
   const titleId = document.getElementById('modal-title-id').value.trim();
-  if (!titleId) { showToast('Judul kampanye wajib diisi', 'error'); return; }
+  if (!titleId) { showToast('⚠️ Judul kampanye wajib diisi', 'error'); return; }
+
+  const richContent = quillEditor ? quillEditor.root.innerHTML : '';
+  const status = forceStatus || document.getElementById('modal-status').value;
 
   const data = {
-    titleId, titleEn: document.getElementById('modal-title-en').value,
-    descId: document.getElementById('modal-desc-id').value,
+    titleId,
+    titleEn:  document.getElementById('modal-title-en').value,
+    descId:   document.getElementById('modal-desc-id').value,
+    fullDesc: richContent,
     category: document.getElementById('modal-category').value,
-    status:   document.getElementById('modal-status').value,
+    status,
     target:   +document.getElementById('modal-target').value || 0,
     daysLeft: +document.getElementById('modal-days').value  || 30,
     org:      document.getElementById('modal-org').value,
-    image:    document.getElementById('modal-image').value,
+    image:    coverImageData || '/images/campaign-kemanusiaan.jpg',
     urgent:   document.getElementById('modal-urgent').checked,
   };
 
   if (id) {
     const idx = campaigns.findIndex(c => c.id === +id);
-    if (idx > -1) { campaigns[idx] = {...campaigns[idx], ...data}; }
+    if (idx > -1) campaigns[idx] = {...campaigns[idx], ...data};
     showToast('✅ Kampanye berhasil diperbarui', 'success');
   } else {
     const newId = Math.max(0, ...campaigns.map(c => c.id)) + 1;
-    campaigns.push({ id: newId, slug: titleId.toLowerCase().replace(/\s+/g,'-'), raised: 0, donors: 0, ...data });
-    showToast('✅ Kampanye baru berhasil ditambahkan', 'success');
+    campaigns.push({ id: newId, slug: titleId.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''), raised: 0, donors: 0, ...data });
+    showToast(status === 'aktif' ? '🚀 Kampanye berhasil di-publish!' : '💾 Draft tersimpan', 'success');
   }
-  saveData(); closeModal('campaign-modal'); renderCampaigns(); renderDashboard();
+  saveData(); closeCampaignEditor(); renderCampaigns(); renderDashboard();
 }
 
 function deleteCampaign(id) {
