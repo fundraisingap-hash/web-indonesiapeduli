@@ -791,6 +791,9 @@
       <span class="nav-icon">🏦</span> Penarikan Dana
       <span class="nav-badge" id="withdrawal-badge">3</span>
     </button>
+    <button class="nav-item" data-tab="fundraisers">
+      <span class="nav-icon">🤝</span> Fundraiser
+    </button>
     <div class="nav-section-label" style="margin-top:.5rem;">Sistem</div>
     <button class="nav-item" data-tab="settings">
       <span class="nav-icon">⚙️</span> Pengaturan
@@ -1210,6 +1213,190 @@
       </div><!-- /settings-grid -->
     </div><!-- /tab-settings -->
 
+    <!-- ════════════════════════════════
+         TAB: FUNDRAISERS
+    ════════════════════════════════ -->
+    <div class="tab-panel" id="tab-fundraisers">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Kelola Fundraiser</div>
+          <div class="page-subtitle">Pantau dan kelola semua fundraiser yang terdaftar di platform</div>
+        </div>
+        <a href="/fundraiser/daftar" class="btn-primary" style="text-decoration:none;">➕ Buat Fundraiser</a>
+      </div>
+
+      <!-- Fundraiser stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Total Fundraiser</div>
+            <div class="stat-card-icon" style="background:#e0f5fd;">🤝</div>
+          </div>
+          <div class="stat-card-value">4</div>
+          <div class="stat-card-change change-up">▲ 2 baru bulan ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Total Terkumpul</div>
+            <div class="stat-card-icon" style="background:#fffbeb;">💰</div>
+          </div>
+          <div class="stat-card-value">Rp 248 Jt</div>
+          <div class="stat-card-change change-up">▲ 18.5% dari bulan lalu</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Total Donatur</div>
+            <div class="stat-card-icon" style="background:#f5f3ff;">👥</div>
+          </div>
+          <div class="stat-card-value">1.247</div>
+          <div class="stat-card-change change-up">▲ 9.3% dari bulan lalu</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-card-label">Fundraiser Aktif</div>
+            <div class="stat-card-icon" style="background:#dcfce7;">✅</div>
+          </div>
+          <div class="stat-card-value">2</div>
+          <div class="stat-card-change change-up">▲ 1 baru minggu ini</div>
+        </div>
+      </div>
+
+      <!-- Fundraiser table card -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-card-title" id="fr-count">Semua Fundraiser (4)</div>
+          <div class="table-tools">
+            <input type="search" class="search-input" id="fr-search" placeholder="🔍 Cari fundraiser..." />
+            <select class="filter-select" id="fr-status-filter">
+              <option value="">Semua Status</option>
+              <option value="aktif">Aktif</option>
+              <option value="selesai">Selesai</option>
+              <option value="draft">Draft</option>
+              <option value="pending">Pending Review</option>
+            </select>
+            <select class="filter-select" id="fr-campaign-filter">
+              <option value="">Semua Kampanye</option>
+              <option value="bantu-korban">Bantu Korban Bencana</option>
+              <option value="beasiswa">Beasiswa Anak Dhuafa</option>
+              <option value="masjid">Renovasi Masjid Al-Ikhlas</option>
+              <option value="pohon">1000 Pohon untuk Indonesia</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="fr-table">
+            <thead><tr>
+              <th>Fundraiser</th><th>Kampanye</th><th>Target</th>
+              <th>Terkumpul</th><th>%</th><th>Donatur</th>
+              <th>Status</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="fundraisers-table-body">
+              <tr data-name="tim marketing tokopedia" data-status="aktif" data-campaign="bantu-korban">
+                <td>
+                  <div style="font-weight:700;color:var(--gray-900);">Tim Marketing Tokopedia</div>
+                  <div style="font-size:.75rem;color:var(--gray-400);">fundraiser.tokopedia@mail.com</div>
+                </td>
+                <td><span style="font-size:.82rem;">❤️ Bantu Korban Bencana</span></td>
+                <td style="font-weight:700;">Rp 50 Jt</td>
+                <td style="font-weight:700;color:var(--green);">Rp 38,5 Jt</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:.5rem;">
+                    <div class="mini-progress"><div class="mini-progress-bar" style="width:77%;"></div></div>
+                    <span style="font-size:.78rem;font-weight:700;">77%</span>
+                  </div>
+                </td>
+                <td>312</td>
+                <td><span class="badge badge-green">● Aktif</span></td>
+                <td>
+                  <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+                    <button class="btn-action btn-view">👁️ Lihat</button>
+                    <button class="btn-action btn-edit">✏️ Edit</button>
+                    <button class="btn-action btn-view" onclick="navigator.clipboard.writeText(window.location.origin+'/fundraiser/tim-marketing-tokopedia').then(()=>showToast('success','Link disalin!'))">🔗 Copy Link</button>
+                    <button class="btn-action btn-delete">⏸️ Pause</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-name="komunitas biker jakarta" data-status="aktif" data-campaign="pohon">
+                <td>
+                  <div style="font-weight:700;color:var(--gray-900);">Komunitas Biker Jakarta</div>
+                  <div style="font-size:.75rem;color:var(--gray-400);">biker.jakarta@mail.com</div>
+                </td>
+                <td><span style="font-size:.82rem;">🌿 1000 Pohon untuk Indonesia</span></td>
+                <td style="font-weight:700;">Rp 30 Jt</td>
+                <td style="font-weight:700;color:var(--green);">Rp 22,1 Jt</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:.5rem;">
+                    <div class="mini-progress"><div class="mini-progress-bar" style="width:74%;"></div></div>
+                    <span style="font-size:.78rem;font-weight:700;">74%</span>
+                  </div>
+                </td>
+                <td>198</td>
+                <td><span class="badge badge-green">● Aktif</span></td>
+                <td>
+                  <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+                    <button class="btn-action btn-view">👁️ Lihat</button>
+                    <button class="btn-action btn-edit">✏️ Edit</button>
+                    <button class="btn-action btn-view" onclick="navigator.clipboard.writeText(window.location.origin+'/fundraiser/komunitas-biker-jakarta').then(()=>showToast('success','Link disalin!'))">🔗 Copy Link</button>
+                    <button class="btn-action btn-delete">⏸️ Pause</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-name="yayasan harapan bangsa" data-status="selesai" data-campaign="beasiswa">
+                <td>
+                  <div style="font-weight:700;color:var(--gray-900);">Yayasan Harapan Bangsa</div>
+                  <div style="font-size:.75rem;color:var(--gray-400);">harapan.bangsa@yayasan.org</div>
+                </td>
+                <td><span style="font-size:.82rem;">📚 Beasiswa Anak Dhuafa</span></td>
+                <td style="font-weight:700;">Rp 100 Jt</td>
+                <td style="font-weight:700;color:var(--green);">Rp 100 Jt</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:.5rem;">
+                    <div class="mini-progress"><div class="mini-progress-bar" style="width:100%;background:var(--amber);"></div></div>
+                    <span style="font-size:.78rem;font-weight:700;">100%</span>
+                  </div>
+                </td>
+                <td>547</td>
+                <td><span class="badge badge-amber">✔ Selesai</span></td>
+                <td>
+                  <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+                    <button class="btn-action btn-view">👁️ Lihat</button>
+                    <button class="btn-action btn-edit">✏️ Edit</button>
+                    <button class="btn-action btn-view" onclick="navigator.clipboard.writeText(window.location.origin+'/fundraiser/yayasan-harapan-bangsa').then(()=>showToast('success','Link disalin!'))">🔗 Copy Link</button>
+                    <button class="btn-action btn-view" disabled style="opacity:.4;cursor:not-allowed;">⏸️ Pause</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-name="run for green community" data-status="pending" data-campaign="pohon">
+                <td>
+                  <div style="font-weight:700;color:var(--gray-900);">Run for Green Community</div>
+                  <div style="font-size:.75rem;color:var(--gray-400);">runforgreen@community.id</div>
+                </td>
+                <td><span style="font-size:.82rem;">🌿 1000 Pohon untuk Indonesia</span></td>
+                <td style="font-weight:700;">Rp 25 Jt</td>
+                <td style="font-weight:700;color:var(--gray-400);">Rp 0</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:.5rem;">
+                    <div class="mini-progress"><div class="mini-progress-bar" style="width:0%;"></div></div>
+                    <span style="font-size:.78rem;font-weight:700;">0%</span>
+                  </div>
+                </td>
+                <td>0</td>
+                <td><span class="badge badge-purple">⏳ Pending</span></td>
+                <td>
+                  <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+                    <button class="btn-action btn-view">👁️ Lihat</button>
+                    <button class="btn-action btn-edit">✏️ Edit</button>
+                    <button class="btn-action btn-approve">✅ Approve</button>
+                    <button class="btn-action btn-delete">❌ Tolak</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tab-fundraisers -->
+
   </div><!-- /page-content -->
 </div><!-- /main -->
 
@@ -1571,7 +1758,8 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 // ── Tab navigation ──────────────────────────────────
 const pageTitles = {
   dashboard:'Dashboard', campaigns:'Kampanye', donations:'Donasi',
-  donors:'Donatur', withdrawals:'Penarikan Dana', settings:'Pengaturan'
+  donors:'Donatur', withdrawals:'Penarikan Dana', settings:'Pengaturan',
+  fundraisers:'Fundraiser'
 };
 function switchTab(tab) {
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -2185,6 +2373,30 @@ function init() {
   renderCategories();
 }
 init();
+// ── FUNDRAISER TABLE FILTER ──────────────────────────
+function filterFundraisers() {
+  const search   = (document.getElementById('fr-search').value || '').toLowerCase();
+  const status   = (document.getElementById('fr-status-filter').value || '').toLowerCase();
+  const campaign = (document.getElementById('fr-campaign-filter').value || '').toLowerCase();
+  const rows     = document.querySelectorAll('#fundraisers-table-body tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const name = (row.dataset.name || '').toLowerCase();
+    const st   = (row.dataset.status || '').toLowerCase();
+    const cam  = (row.dataset.campaign || '').toLowerCase();
+    const matchSearch   = !search   || name.includes(search);
+    const matchStatus   = !status   || st === status;
+    const matchCampaign = !campaign || cam === campaign;
+    const show = matchSearch && matchStatus && matchCampaign;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('fr-count').textContent = `Semua Fundraiser (${visible})`;
+}
+document.getElementById('fr-search').addEventListener('input', filterFundraisers);
+document.getElementById('fr-status-filter').addEventListener('change', filterFundraisers);
+document.getElementById('fr-campaign-filter').addEventListener('change', filterFundraisers);
+
 </script>
 </body>
 </html>

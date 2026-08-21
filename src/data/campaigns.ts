@@ -17,6 +17,106 @@ export interface Campaign {
   featured?: boolean;
 }
 
+export interface Fundraiser {
+  id: string;
+  slug: string;
+  campaignSlug: string;
+  advertiserName: string;
+  advertiserLogo?: string;
+  contactName: string;
+  contactEmail: string;
+  contactWhatsapp?: string;
+  tagline: string;
+  story: string;
+  goal: number;
+  raised: number;
+  donors: number;
+  endDate: string;
+  status: 'aktif' | 'selesai' | 'draft' | 'pending';
+  socialLinks?: { instagram?: string; whatsapp?: string; website?: string; };
+  createdAt: string;
+  customColor?: string;
+  coverImage?: string;
+}
+
+export const fundraisers: Fundraiser[] = [
+  {
+    id: 'fr-001',
+    slug: 'tim-marketing-tokopedia-banjir',
+    campaignSlug: 'bantu-korban-banjir-kalimantan',
+    advertiserName: 'Tim Marketing Tokopedia',
+    contactName: 'Andi Prasetyo',
+    contactEmail: 'andi@tokopedia.com',
+    contactWhatsapp: '081234567890',
+    tagline: 'Bersama kita bisa selamatkan saudara di Kalimantan!',
+    story: '<p>Kami dari Tim Marketing Tokopedia berkomitmen membantu para korban banjir Kalimantan. Setiap transaksi yang terjadi di platform kami selama bulan Agustus, kami akan donasikan Rp 500 per transaksi. Tapi kami juga mengundang Anda untuk berdonasi langsung melalui halaman ini.</p><p>Target kami adalah Rp 50 juta — cukup untuk membantu 200 keluarga mendapatkan paket sembako darurat.</p>',
+    goal: 50000000,
+    raised: 32500000,
+    donors: 412,
+    endDate: '2026-09-15',
+    status: 'aktif',
+    socialLinks: { instagram: 'tokopedia', website: 'tokopedia.com' },
+    createdAt: '2026-08-01',
+    customColor: '#1aabe4',
+  },
+  {
+    id: 'fr-002',
+    slug: 'komunitas-biker-jakarta-peduli',
+    campaignSlug: 'bantu-korban-banjir-kalimantan',
+    advertiserName: 'Komunitas Biker Jakarta',
+    contactName: 'Rizal Permana',
+    contactEmail: 'rizal@bikerjkt.id',
+    contactWhatsapp: '082345678901',
+    tagline: 'Riding for a Cause — Biker Jakarta Peduli Sesama',
+    story: '<p>Komunitas Biker Jakarta mengadakan charity ride sepanjang 500 km dari Jakarta ke Bandung dan kembali. Setiap km yang kami tempuh, donatur telah berjanji untuk menyumbang Rp 10.000/km.</p><p>Bergabunglah dengan kami dan dukung aksi nyata para biker untuk sesama!</p>',
+    goal: 75000000,
+    raised: 48200000,
+    donors: 287,
+    endDate: '2026-09-30',
+    status: 'aktif',
+    socialLinks: { instagram: 'bikerjkt', whatsapp: '082345678901' },
+    createdAt: '2026-08-05',
+    customColor: '#e45c1a',
+  },
+  {
+    id: 'fr-003',
+    slug: 'yayasan-harapan-bangsa-beasiswa',
+    campaignSlug: 'beasiswa-anak-pedalaman-papua',
+    advertiserName: 'Yayasan Harapan Bangsa',
+    contactName: 'Dr. Sinta Dewi',
+    contactEmail: 'sinta@harapanbangsa.org',
+    tagline: 'Setiap Rupiah = Satu Langkah Menuju Mimpi Anak Papua',
+    story: '<p>Yayasan Harapan Bangsa telah 10 tahun bergerak di bidang pendidikan. Kami melihat potensi luar biasa anak-anak Papua yang terhambat oleh keterbatasan akses. Bersama kampanye beasiswa ini, kami menargetkan bisa membantu minimal 10 anak mendapat beasiswa penuh.</p>',
+    goal: 30000000,
+    raised: 22800000,
+    donors: 198,
+    endDate: '2026-10-31',
+    status: 'aktif',
+    socialLinks: { website: 'harapanbangsa.org' },
+    createdAt: '2026-08-10',
+    customColor: '#7c3aed',
+  },
+  {
+    id: 'fr-004',
+    slug: 'challenge-30-hari-lari-kebaikan',
+    campaignSlug: 'tanam-pohon-hutan-borneo',
+    advertiserName: 'Run for Green Community',
+    contactName: 'Kevin Halim',
+    contactEmail: 'kevin@runforgreen.id',
+    contactWhatsapp: '087654321098',
+    tagline: '30 Hari Lari, 30.000 Pohon Tertanam!',
+    story: '<p>Challenge 30 Hari Lari untuk Kebaikan — setiap peserta berkomitmen lari minimal 5 km per hari selama 30 hari. Untuk setiap hari berhasil diselesaikan, sponsor telah berkomitmen menanam 1 pohon di Borneo.</p><p>Sudah 450 pelari bergabung. Ikut bergabung dan donasikan energi Anda untuk bumi!</p>',
+    goal: 100000000,
+    raised: 67300000,
+    donors: 892,
+    endDate: '2026-09-30',
+    status: 'aktif',
+    socialLinks: { instagram: 'runforgreen.id', website: 'runforgreen.id' },
+    createdAt: '2026-08-08',
+    customColor: '#16a34a',
+  },
+];
+
 export const campaigns: Campaign[] = [
   {
     slug: 'bantu-korban-banjir-kalimantan',

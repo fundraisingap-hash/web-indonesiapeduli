@@ -1,0 +1,627 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { campaigns } from '../../data/campaigns';
+---
+
+<Layout
+  title="Daftar Fundraiser — Indonesia Peduli Sesama"
+  description="Daftarkan fundraiser Anda dan mulai galang dana untuk kampanye sosial yang Anda percaya."
+>
+  <div class="daftar-page">
+    <!-- Left: Form -->
+    <div class="daftar-main">
+      <div class="daftar-header">
+        <a href="/fundraiser" class="daftar-back">← Kembali ke Fundraiser</a>
+        <div class="daftar-badge">🚀 Gratis & Mudah</div>
+        <h1 class="daftar-title">Buat Halaman Fundraiser</h1>
+        <p class="daftar-desc">
+          Isi formulir di bawah ini. Tim kami akan meninjau dan mengaktifkan halaman Anda dalam <strong>1×24 jam</strong>.
+        </p>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="steps" id="steps">
+        <div class="step active" data-step="1">
+          <div class="step__num">1</div>
+          <div class="step__label">Info Dasar</div>
+        </div>
+        <div class="step__line"></div>
+        <div class="step" data-step="2">
+          <div class="step__num">2</div>
+          <div class="step__label">Kampanye & Target</div>
+        </div>
+        <div class="step__line"></div>
+        <div class="step" data-step="3">
+          <div class="step__num">3</div>
+          <div class="step__label">Cerita & Konfirmasi</div>
+        </div>
+      </div>
+
+      <form id="daftar-form" novalidate>
+
+        <!-- Step 1: Info Dasar -->
+        <div class="form-step active" id="step-1">
+          <div class="form-card">
+            <h2 class="form-card__title">👤 Informasi Organisasi / Komunitas</h2>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Nama Organisasi / Komunitas *</label>
+                <input type="text" class="field-input" id="f-org" placeholder="contoh: Tim Marketing Tokopedia" required />
+                <span class="field-hint">Nama ini akan tampil di halaman fundraiser Anda</span>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Jenis Fundraiser *</label>
+                <select class="field-select" id="f-type" required>
+                  <option value="">Pilih jenis...</option>
+                  <option value="perusahaan">🏢 Perusahaan / Brand</option>
+                  <option value="komunitas">🤝 Komunitas</option>
+                  <option value="yayasan">🏛️ Yayasan / NGO</option>
+                  <option value="individu">👤 Individu</option>
+                  <option value="event">🎉 Event / Challenge</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Nama Koordinator / PIC *</label>
+                <input type="text" class="field-input" id="f-pic" placeholder="Nama lengkap" required />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Email *</label>
+                <input type="email" class="field-input" id="f-email" placeholder="email@organisasi.com" required />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">No. WhatsApp *</label>
+                <input type="tel" class="field-input" id="f-wa" placeholder="08xxxxxxxxxx" required />
+                <span class="field-hint">Untuk koordinasi aktivasi halaman</span>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Website / Akun Instagram</label>
+                <input type="text" class="field-input" id="f-social" placeholder="website.com atau @akun_ig" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Warna Brand (opsional)</label>
+              <div class="color-picker-row">
+                <input type="color" class="field-color" id="f-color" value="#1aabe4" />
+                <input type="text" class="field-input" id="f-color-text" value="#1aabe4" placeholder="#1aabe4" style="flex:1;font-family:monospace;" />
+                <div class="color-preview" id="color-preview" style="background:#1aabe4"></div>
+              </div>
+              <span class="field-hint">Warna ini akan digunakan untuk progress bar dan aksen halaman fundraiser Anda</span>
+            </div>
+
+            <button type="button" class="btn-next" id="btn-step1-next">Lanjut →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Kampanye & Target -->
+        <div class="form-step" id="step-2">
+          <div class="form-card">
+            <h2 class="form-card__title">🎯 Pilih Kampanye & Set Target</h2>
+
+            <div class="field-group">
+              <label class="field-label">Kampanye yang Ingin Didukung *</label>
+              <div class="campaign-picker" id="campaign-picker">
+                {campaigns.map(c => (
+                  <label class="campaign-option">
+                    <input type="radio" name="campaign" value={c.slug} required />
+                    <div class="campaign-option__content">
+                      <img src={c.image} alt={c.title} width="60" height="40" loading="lazy" />
+                      <div>
+                        <div class="campaign-option__title">{c.title}</div>
+                        <div class="campaign-option__org">{c.org} · {c.category}</div>
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Target Dana Fundraiser *</label>
+                <div class="amount-input-wrap">
+                  <span class="amount-prefix">Rp</span>
+                  <input type="number" class="field-input amount-input" id="f-goal" placeholder="50000000" min="1000000" step="1000000" required />
+                </div>
+                <span class="field-hint">Minimum Rp 1.000.000</span>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Tanggal Berakhir *</label>
+                <input type="date" class="field-input" id="f-end" required />
+                <span class="field-hint">Minimal 7 hari dari sekarang</span>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Tagline Fundraiser *</label>
+              <input type="text" class="field-input" id="f-tagline" placeholder="contoh: Bersama kita selamatkan saudara di Kalimantan!" required maxlength="120" />
+              <div class="field-counter"><span id="tagline-count">0</span>/120 karakter</div>
+            </div>
+
+            <div class="field-row" style="justify-content:space-between;margin-top:.5rem;">
+              <button type="button" class="btn-back" id="btn-step2-back">← Kembali</button>
+              <button type="button" class="btn-next" id="btn-step2-next">Lanjut →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Cerita & Konfirmasi -->
+        <div class="form-step" id="step-3">
+          <div class="form-card">
+            <h2 class="form-card__title">📖 Cerita & Konfirmasi</h2>
+
+            <div class="field-group">
+              <label class="field-label">Cerita / Motivasi Fundraiser *</label>
+              <div class="rich-toolbar">
+                <button type="button" class="rich-btn" onclick="document.execCommand('bold')"><b>B</b></button>
+                <button type="button" class="rich-btn" onclick="document.execCommand('italic')"><i>I</i></button>
+                <button type="button" class="rich-btn" onclick="document.execCommand('insertUnorderedList')">• List</button>
+              </div>
+              <div class="rich-editor" id="f-story" contenteditable="true" role="textbox" aria-multiline="true"
+                   data-placeholder="Ceritakan mengapa Anda dan organisasi Anda peduli terhadap kampanye ini. Apa motivasi Anda? Apa yang akan Anda lakukan untuk menggalang dana?"></div>
+              <span class="field-hint">Cerita yang menarik akan meningkatkan kepercayaan donatur</span>
+            </div>
+
+            <!-- Preview summary -->
+            <div class="preview-summary" id="preview-summary">
+              <h3 class="preview-summary__title">📋 Ringkasan Fundraiser Anda</h3>
+              <div class="preview-grid">
+                <div class="preview-item">
+                  <div class="preview-item__label">Organisasi</div>
+                  <div class="preview-item__val" id="prev-org">—</div>
+                </div>
+                <div class="preview-item">
+                  <div class="preview-item__label">Koordinator</div>
+                  <div class="preview-item__val" id="prev-pic">—</div>
+                </div>
+                <div class="preview-item">
+                  <div class="preview-item__label">Target Dana</div>
+                  <div class="preview-item__val" id="prev-goal">—</div>
+                </div>
+                <div class="preview-item">
+                  <div class="preview-item__label">Berakhir</div>
+                  <div class="preview-item__val" id="prev-end">—</div>
+                </div>
+              </div>
+            </div>
+
+            <label class="agree-check">
+              <input type="checkbox" id="f-agree" required />
+              <span>Saya menyetujui <a href="#" target="_blank">Syarat & Ketentuan</a> dan <a href="#" target="_blank">Kebijakan Privasi</a> Indonesia Peduli Sesama. Saya menyatakan bahwa informasi yang diberikan adalah benar dan akurat.</span>
+            </label>
+
+            <div style="display:flex;justify-content:space-between;margin-top:.5rem;gap:1rem;flex-wrap:wrap;">
+              <button type="button" class="btn-back" id="btn-step3-back">← Kembali</button>
+              <button type="submit" class="btn-submit" id="btn-submit">🚀 Kirim Pendaftaran</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success state -->
+        <div class="form-step" id="step-success" style="display:none;">
+          <div class="form-card success-card">
+            <div class="success-icon">🎉</div>
+            <h2 class="success-title">Pendaftaran Berhasil Dikirim!</h2>
+            <p class="success-desc">
+              Terima kasih telah mendaftar sebagai fundraiser. Tim kami akan meninjau pendaftaran Anda dan menghubungi Anda melalui WhatsApp dalam <strong>1×24 jam</strong>.
+            </p>
+            <div class="success-steps">
+              <div class="success-step">✅ Formulir diterima</div>
+              <div class="success-step pending">⏳ Review oleh tim (1×24 jam)</div>
+              <div class="success-step pending">📱 Notifikasi WhatsApp</div>
+              <div class="success-step pending">🔗 Halaman fundraiser aktif</div>
+            </div>
+            <a href="/fundraiser" class="btn-submit" style="display:inline-block;text-decoration:none;text-align:center;margin-top:1.5rem;">Lihat Fundraiser Lainnya</a>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Right: Info panel -->
+    <aside class="daftar-sidebar">
+      <div class="info-panel">
+        <h3>✅ Keuntungan Jadi Fundraiser</h3>
+        <ul class="info-list">
+          <li>🔗 Landing page unik dengan URL Anda sendiri</li>
+          <li>📱 QR Code gratis untuk cetak offline</li>
+          <li>📊 Dashboard real-time capaian</li>
+          <li>💙 Terhubung ke kampanye terverifikasi</li>
+          <li>🔔 Notifikasi setiap ada donasi masuk</li>
+          <li>🆓 100% Gratis, tidak ada biaya setup</li>
+        </ul>
+      </div>
+
+      <div class="info-panel">
+        <h3>📋 Persyaratan</h3>
+        <ul class="info-list">
+          <li>Identitas organisasi yang jelas</li>
+          <li>Kontak PIC yang aktif</li>
+          <li>Target fundraiser minimum Rp 1 juta</li>
+          <li>Cerita/motivasi yang autentik</li>
+        </ul>
+      </div>
+
+      <div class="info-panel">
+        <h3>🤔 Pertanyaan?</h3>
+        <p style="font-size:.88rem;color:var(--color-gray-500);margin-bottom:1rem;">Hubungi tim kami via WhatsApp untuk panduan lebih lanjut.</p>
+        <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-btn">💬 Chat WhatsApp</a>
+      </div>
+    </aside>
+  </div>
+</Layout>
+
+<style>
+.daftar-page {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 860px) { .daftar-page { grid-template-columns: 1fr; } }
+
+/* Header */
+.daftar-back { font-size: .85rem; color: var(--color-gray-400); text-decoration: none; display: block; margin-bottom: 1rem; }
+.daftar-back:hover { color: #1aabe4; }
+.daftar-badge {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: .78rem;
+  font-weight: 700;
+  padding: .3rem .8rem;
+  border-radius: 100px;
+  margin-bottom: .75rem;
+}
+.daftar-title { font-size: 1.75rem; font-weight: 800; color: var(--color-gray-900); margin-bottom: .5rem; }
+.daftar-desc { color: var(--color-gray-500); font-size: .95rem; margin-bottom: 2rem; line-height: 1.6; }
+
+/* Steps */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 2rem;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+}
+.step__num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--color-gray-400);
+  font-weight: 700;
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+}
+.step.active .step__num, .step.done .step__num {
+  background: #1aabe4;
+  color: #fff;
+}
+.step__label { font-size: .72rem; color: var(--color-gray-400); white-space: nowrap; }
+.step.active .step__label { color: #1aabe4; font-weight: 600; }
+.step__line { flex: 1; height: 2px; background: var(--border); margin: 0 .5rem; margin-bottom: .9rem; }
+
+/* Form card */
+.form-step { display: none; }
+.form-step.active { display: block; }
+.form-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+}
+.form-card__title { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--color-gray-900); }
+
+/* Fields */
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+.field-group { margin-bottom: 1rem; }
+.field-label { display: block; font-size: .82rem; font-weight: 600; color: var(--color-gray-700); margin-bottom: .4rem; }
+.field-input, .field-select {
+  width: 100%;
+  padding: .65rem .9rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--color-gray-900);
+  font-size: .9rem;
+  font-family: inherit;
+  transition: border-color .15s;
+}
+.field-input:focus, .field-select:focus { outline: none; border-color: #1aabe4; box-shadow: 0 0 0 3px #1aabe41a; }
+.field-hint { font-size: .75rem; color: var(--color-gray-400); display: block; margin-top: .3rem; }
+.field-counter { font-size: .75rem; color: var(--color-gray-400); text-align: right; margin-top: .3rem; }
+
+/* Color picker */
+.color-picker-row { display: flex; gap: .5rem; align-items: center; margin-bottom: .25rem; }
+.field-color { width: 44px; height: 38px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; padding: 2px; }
+.color-preview { width: 38px; height: 38px; border-radius: 8px; border: 1.5px solid var(--border); flex-shrink: 0; }
+
+/* Campaign picker */
+.campaign-picker { display: flex; flex-direction: column; gap: .5rem; max-height: 320px; overflow-y: auto; padding-right: .25rem; }
+.campaign-option { cursor: pointer; }
+.campaign-option input { display: none; }
+.campaign-option__content {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  transition: all .15s;
+}
+.campaign-option input:checked + .campaign-option__content {
+  border-color: #1aabe4;
+  background: #dbeafe33;
+}
+.campaign-option__content:hover { border-color: #1aabe4; }
+.campaign-option__content img { width: 60px; height: 40px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+.campaign-option__title { font-weight: 600; font-size: .88rem; color: var(--color-gray-900); }
+.campaign-option__org { font-size: .75rem; color: var(--color-gray-400); margin-top: .15rem; text-transform: capitalize; }
+
+/* Amount input */
+.amount-input-wrap { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg); }
+.amount-prefix { padding: .65rem .85rem; background: var(--bg); color: var(--color-gray-500); font-weight: 600; border-right: 1.5px solid var(--border); font-size: .9rem; }
+.amount-input { border: none; border-radius: 0; flex: 1; }
+.amount-input:focus { box-shadow: none; }
+.amount-input-wrap:focus-within { border-color: #1aabe4; box-shadow: 0 0 0 3px #1aabe41a; }
+
+/* Rich editor */
+.rich-toolbar { display: flex; gap: .3rem; margin-bottom: .4rem; }
+.rich-btn {
+  padding: .3rem .65rem;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  cursor: pointer;
+  font-size: .8rem;
+  color: var(--color-gray-700);
+}
+.rich-btn:hover { border-color: #1aabe4; color: #1aabe4; }
+.rich-editor {
+  min-height: 140px;
+  padding: .75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--color-gray-900);
+  font-size: .9rem;
+  line-height: 1.7;
+  outline: none;
+  transition: border-color .15s;
+}
+.rich-editor:focus { border-color: #1aabe4; box-shadow: 0 0 0 3px #1aabe41a; }
+.rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-gray-400);
+  pointer-events: none;
+}
+
+/* Preview summary */
+.preview-summary {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.preview-summary__title { font-size: .9rem; font-weight: 700; color: var(--color-gray-800); margin-bottom: 1rem; }
+.preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.preview-item__label { font-size: .73rem; color: var(--color-gray-400); margin-bottom: .2rem; }
+.preview-item__val { font-weight: 600; font-size: .88rem; color: var(--color-gray-800); }
+
+/* Agree check */
+.agree-check {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  font-size: .85rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  cursor: pointer;
+}
+.agree-check input { margin-top: .15rem; accent-color: #1aabe4; width: 16px; height: 16px; flex-shrink: 0; }
+.agree-check a { color: #1aabe4; }
+
+/* Buttons */
+.btn-next {
+  background: #1aabe4;
+  color: #fff;
+  padding: .75rem 2rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+  float: right;
+  transition: all .2s;
+}
+.btn-next:hover { background: #0e8fbf; }
+.btn-back {
+  background: var(--bg);
+  color: var(--color-gray-600);
+  padding: .75rem 1.5rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-back:hover { border-color: #1aabe4; color: #1aabe4; }
+.btn-submit {
+  background: linear-gradient(135deg, #1aabe4, #0e6ea8);
+  color: #fff;
+  padding: .85rem 2.5rem;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 4px 16px rgba(26,171,228,.3);
+}
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,171,228,.4); }
+
+/* Success */
+.success-card { text-align: center; padding: 3rem 2rem; }
+.success-icon { font-size: 4rem; margin-bottom: 1rem; }
+.success-title { font-size: 1.5rem; font-weight: 800; color: var(--color-gray-900); margin-bottom: 1rem; }
+.success-desc { color: var(--color-gray-500); line-height: 1.7; margin-bottom: 1.5rem; }
+.success-steps { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; max-width: 300px; margin-inline: auto; }
+.success-step { padding: .6rem 1rem; border-radius: 10px; font-size: .88rem; font-weight: 500; background: #dcfce7; color: #16a34a; }
+.success-step.pending { background: var(--bg); color: var(--color-gray-500); }
+
+/* Sidebar */
+.info-panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.info-panel h3 { font-size: .95rem; font-weight: 700; margin-bottom: .75rem; color: var(--color-gray-900); }
+.info-list { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+.info-list li { font-size: .85rem; color: var(--color-gray-600); }
+.wa-btn {
+  display: block;
+  text-align: center;
+  background: #16a34a;
+  color: #fff;
+  padding: .65rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: .88rem;
+  transition: all .2s;
+}
+.wa-btn:hover { background: #15803d; }
+</style>
+
+<script>
+  // Step navigation
+  let currentStep = 1;
+  const totalSteps = 3;
+
+  function goStep(n: number) {
+    document.getElementById(`step-${currentStep}`)?.classList.remove('active');
+    document.querySelectorAll<HTMLElement>('.step').forEach(s => {
+      const sn = parseInt(s.dataset.step!);
+      s.classList.toggle('active', sn === n);
+      s.classList.toggle('done', sn < n);
+    });
+    currentStep = n;
+    document.getElementById(`step-${n}`)?.classList.add('active');
+    if (n === 3) updatePreview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('btn-step1-next')?.addEventListener('click', () => { if (validateStep(1)) goStep(2); });
+  document.getElementById('btn-step2-next')?.addEventListener('click', () => { if (validateStep(2)) goStep(3); });
+  document.getElementById('btn-step2-back')?.addEventListener('click', () => goStep(1));
+  document.getElementById('btn-step3-back')?.addEventListener('click', () => goStep(2));
+
+  function validateStep(n: number): boolean {
+    if (n === 1) {
+      const org  = (document.getElementById('f-org') as HTMLInputElement).value.trim();
+      const type = (document.getElementById('f-type') as HTMLSelectElement).value;
+      const pic  = (document.getElementById('f-pic') as HTMLInputElement).value.trim();
+      const email= (document.getElementById('f-email') as HTMLInputElement).value.trim();
+      const wa   = (document.getElementById('f-wa') as HTMLInputElement).value.trim();
+      if (!org || !type || !pic || !email || !wa) {
+        (window as any).showToast?.('Lengkapi semua field wajib (*)', 'error');
+        return false;
+      }
+    }
+    if (n === 2) {
+      const campaign = document.querySelector<HTMLInputElement>('input[name="campaign"]:checked');
+      const goal     = (document.getElementById('f-goal') as HTMLInputElement).value;
+      const end      = (document.getElementById('f-end') as HTMLInputElement).value;
+      const tagline  = (document.getElementById('f-tagline') as HTMLInputElement).value.trim();
+      if (!campaign || !goal || !end || !tagline) {
+        (window as any).showToast?.('Lengkapi semua field wajib (*)', 'error');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function updatePreview() {
+    const org  = (document.getElementById('f-org') as HTMLInputElement)?.value || '—';
+    const pic  = (document.getElementById('f-pic') as HTMLInputElement)?.value || '—';
+    const goal = (document.getElementById('f-goal') as HTMLInputElement)?.value || '0';
+    const end  = (document.getElementById('f-end') as HTMLInputElement)?.value || '—';
+    document.getElementById('prev-org')!.textContent = org;
+    document.getElementById('prev-pic')!.textContent = pic;
+    document.getElementById('prev-goal')!.textContent = goal ? `Rp ${parseInt(goal).toLocaleString('id-ID')}` : '—';
+    document.getElementById('prev-end')!.textContent = end ? new Date(end).toLocaleDateString('id-ID', { year:'numeric', month:'long', day:'numeric' }) : '—';
+  }
+
+  // Tagline counter
+  const taglineInput = document.getElementById('f-tagline') as HTMLInputElement;
+  const taglineCount = document.getElementById('tagline-count')!;
+  taglineInput?.addEventListener('input', () => { taglineCount.textContent = String(taglineInput.value.length); });
+
+  // Color picker sync
+  const colorInput = document.getElementById('f-color') as HTMLInputElement;
+  const colorText  = document.getElementById('f-color-text') as HTMLInputElement;
+  const colorPreview = document.getElementById('color-preview') as HTMLElement;
+  colorInput?.addEventListener('input', () => {
+    colorText.value = colorInput.value;
+    colorPreview.style.background = colorInput.value;
+  });
+  colorText?.addEventListener('input', () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(colorText.value)) {
+      colorInput.value = colorText.value;
+      colorPreview.style.background = colorText.value;
+    }
+  });
+
+  // Set min date for end date
+  const endInput = document.getElementById('f-end') as HTMLInputElement;
+  if (endInput) {
+    const min = new Date();
+    min.setDate(min.getDate() + 7);
+    endInput.min = min.toISOString().split('T')[0];
+  }
+
+  // Form submit
+  document.getElementById('daftar-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const agree = (document.getElementById('f-agree') as HTMLInputElement).checked;
+    const story = document.getElementById('f-story')?.innerHTML.trim();
+    if (!agree) { (window as any).showToast?.('Anda harus menyetujui syarat & ketentuan', 'error'); return; }
+    if (!story || story.length < 50) { (window as any).showToast?.('Cerita minimal 50 karakter', 'error'); return; }
+
+    const btn = document.getElementById('btn-submit') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = '⏳ Mengirim...';
+
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 1500));
+
+    document.getElementById('step-3')?.classList.remove('active');
+    document.getElementById('step-success')!.style.display = 'block';
+    (window as any).showToast?.('Pendaftaran berhasil dikirim! ✅');
+  });
+</script>

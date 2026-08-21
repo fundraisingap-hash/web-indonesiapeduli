@@ -1,0 +1,453 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { fundraisers, campaigns, formatRupiah, getPercent } from '../../data/campaigns';
+
+const activeFundraisers = fundraisers.filter(f => f.status === 'aktif');
+const getCampaign = (slug: string) => campaigns.find(c => c.slug === slug);
+
+const totalRaised = activeFundraisers.reduce((s, f) => s + f.raised, 0);
+const totalDonors  = activeFundraisers.reduce((s, f) => s + f.donors, 0);
+---
+
+<Layout
+  title="Fundraiser — Indonesia Peduli Sesama"
+  description="Dukung para fundraiser yang berjuang bersama untuk kebaikan. Setiap halaman fundraiser menghubungkan komunitas, perusahaan, dan individu ke kampanye nyata."
+>
+  <!-- Hero -->
+  <section class="fr-hero">
+    <div class="container">
+      <div class="fr-hero__badge">🤝 Peer-to-Peer Fundraising</div>
+      <h1 class="fr-hero__title">Galang Dana Bersama,<br/><span class="fr-hero__accent">Dampak Nyata</span></h1>
+      <p class="fr-hero__desc">
+        Komunitas, perusahaan, dan individu dari seluruh Indonesia bergabung untuk menggalang dana bagi kampanye yang mereka percaya. Dukung fundraiser favorit Anda atau daftarkan fundraiser Anda sendiri.
+      </p>
+      <div class="fr-hero__stats">
+        <div class="fr-hero__stat">
+          <div class="fr-hero__stat-value">{activeFundraisers.length}</div>
+          <div class="fr-hero__stat-label">Fundraiser Aktif</div>
+        </div>
+        <div class="fr-hero__stat-div"></div>
+        <div class="fr-hero__stat">
+          <div class="fr-hero__stat-value">{formatRupiah(totalRaised)}</div>
+          <div class="fr-hero__stat-label">Total Terkumpul</div>
+        </div>
+        <div class="fr-hero__stat-div"></div>
+        <div class="fr-hero__stat">
+          <div class="fr-hero__stat-value">{totalDonors.toLocaleString('id-ID')}</div>
+          <div class="fr-hero__stat-label">Total Donatur</div>
+        </div>
+      </div>
+      <div class="fr-hero__actions">
+        <a href="/fundraiser/daftar" class="btn-primary-large">🚀 Buat Fundraiser Saya</a>
+        <a href="#daftar-fundraiser" class="btn-outline-large">🔍 Lihat Semua Fundraiser</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="fr-how">
+    <div class="container">
+      <div class="fr-how__header">
+        <h2>Cara Kerja Fundraiser</h2>
+        <p>Buat halaman, bagikan, dan pantau capaian — semua dalam 3 langkah mudah</p>
+      </div>
+      <div class="fr-how__steps">
+        {[
+          { icon:'📝', step:'1', title:'Daftar & Pilih Kampanye', desc:'Isi form pendaftaran dan pilih kampanye yang ingin Anda dukung dari daftar kampanye aktif.' },
+          { icon:'🎯', step:'2', title:'Set Target & Ceritakan', desc:'Tentukan target pribadi Anda dan tulis cerita mengapa Anda peduli. Unggah logo/foto komunitas.' },
+          { icon:'📤', step:'3', title:'Bagikan & Pantau', desc:'Dapatkan link unik & QR code. Bagikan ke jaringan Anda dan pantau capaian real-time.' },
+        ].map(s => (
+          <div class="fr-how__step">
+            <div class="fr-how__step-num">{s.step}</div>
+            <div class="fr-how__step-icon">{s.icon}</div>
+            <h3 class="fr-how__step-title">{s.title}</h3>
+            <p class="fr-how__step-desc">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Fundraiser grid -->
+  <section class="fr-list" id="daftar-fundraiser">
+    <div class="container">
+      <div class="fr-list__header">
+        <div>
+          <h2>Fundraiser Aktif</h2>
+          <p>Pilih fundraiser yang ingin Anda dukung</p>
+        </div>
+        <a href="/fundraiser/daftar" class="btn-primary">+ Buat Fundraiser</a>
+      </div>
+
+      <!-- Filter chips -->
+      <div class="fr-filter" id="fr-filter">
+        <button class="fr-chip active" data-filter="all">Semua</button>
+        <button class="fr-chip" data-filter="kemanusiaan">❤️ Kemanusiaan</button>
+        <button class="fr-chip" data-filter="pendidikan">📚 Pendidikan</button>
+        <button class="fr-chip" data-filter="lingkungan">🌿 Lingkungan</button>
+        <button class="fr-chip" data-filter="infrastruktur">🏗️ Infrastruktur</button>
+      </div>
+
+      <div class="fr-grid" id="fr-grid">
+        {activeFundraisers.map(fr => {
+          const campaign = getCampaign(fr.campaignSlug);
+          const pct = getPercent(fr.raised, fr.goal);
+          const daysLeft = Math.max(0, Math.ceil((new Date(fr.endDate).getTime() - Date.now()) / 86400000));
+          const color = fr.customColor || '#1aabe4';
+          return (
+            <a href={`/fundraiser/${fr.slug}`} class="fr-card" data-cat={campaign?.category || 'other'} style={`--fr-color:${color}`}>
+              <div class="fr-card__top">
+                <div class="fr-card__avatar" style={`background:${color}22;color:${color};`}>
+                  {fr.advertiserName.slice(0,2).toUpperCase()}
+                </div>
+                <div class="fr-card__meta">
+                  <div class="fr-card__name">{fr.advertiserName}</div>
+                  <div class="fr-card__campaign">untuk: {campaign?.title || fr.campaignSlug}</div>
+                </div>
+                {daysLeft <= 7 && <span class="fr-card__urgent">🔥 {daysLeft}h lagi</span>}
+              </div>
+
+              <p class="fr-card__tagline">"{fr.tagline}"</p>
+
+              <div class="fr-card__progress">
+                <div class="fr-card__bar">
+                  <div class="fr-card__fill" style={`width:${pct}%;background:${color}`}></div>
+                </div>
+                <div class="fr-card__nums">
+                  <span class="fr-card__raised">{formatRupiah(fr.raised)}</span>
+                  <span class="fr-card__pct">{pct}%</span>
+                </div>
+                <div class="fr-card__target">dari {formatRupiah(fr.goal)} · {fr.donors} donatur</div>
+              </div>
+
+              <div class="fr-card__footer">
+                <span class="fr-card__cat">{campaign?.category}</span>
+                <span class="fr-card__cta" style={`color:${color}`}>Lihat & Donasi →</span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA banner -->
+  <section class="fr-cta">
+    <div class="container">
+      <div class="fr-cta__inner">
+        <div>
+          <h2>Punya komunitas atau perusahaan?</h2>
+          <p>Daftarkan fundraiser Anda secara gratis dan mulai galang dana untuk kampanye yang Anda percaya.</p>
+        </div>
+        <a href="/fundraiser/daftar" class="btn-white">🚀 Daftar Sekarang — Gratis</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* ─ Hero ─────────────────────────────────────────── */
+.fr-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1aabe4 100%);
+  color: #fff;
+  padding: 7rem 0 5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.fr-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.fr-hero > * { position: relative; }
+.fr-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 100px;
+  padding: .4rem 1.2rem;
+  font-size: .85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(8px);
+}
+.fr-hero__title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+}
+.fr-hero__accent { color: #7dd3fc; }
+.fr-hero__desc {
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  opacity: .85;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.fr-hero__stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.fr-hero__stat-value { font-size: 2rem; font-weight: 800; color: #7dd3fc; }
+.fr-hero__stat-label { font-size: .8rem; opacity: .7; margin-top: .2rem; text-transform: uppercase; letter-spacing: .06em; }
+.fr-hero__stat-div { width: 1px; height: 3rem; background: rgba(255,255,255,.2); }
+.fr-hero__actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary-large {
+  background: #1aabe4;
+  color: #fff;
+  padding: .9rem 2.2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  transition: all .2s;
+  box-shadow: 0 4px 20px rgba(26,171,228,.4);
+}
+.btn-primary-large:hover { background: #0e8fbf; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(26,171,228,.5); }
+.btn-outline-large {
+  border: 2px solid rgba(255,255,255,.4);
+  color: #fff;
+  padding: .9rem 2.2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  transition: all .2s;
+  backdrop-filter: blur(8px);
+}
+.btn-outline-large:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+/* ─ How ─────────────────────────────────────────── */
+.fr-how {
+  padding: 5rem 0;
+  background: var(--bg);
+}
+.fr-how__header { text-align: center; margin-bottom: 3rem; }
+.fr-how__header h2 { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; color: var(--color-gray-900); }
+.fr-how__header p { color: var(--color-gray-500); }
+.fr-how__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+@media (max-width: 768px) { .fr-how__steps { grid-template-columns: 1fr; } }
+.fr-how__step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  transition: transform .2s, box-shadow .2s;
+}
+.fr-how__step:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.08); }
+.fr-how__step-num {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  background: #1aabe4;
+  color: #fff;
+  border-radius: 50%;
+  font-size: .8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fr-how__step-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.fr-how__step-title { font-weight: 700; font-size: 1.05rem; margin-bottom: .5rem; color: var(--color-gray-900); }
+.fr-how__step-desc { color: var(--color-gray-500); font-size: .9rem; line-height: 1.6; }
+
+/* ─ List ─────────────────────────────────────────── */
+.fr-list { padding: 4rem 0 6rem; }
+.fr-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.fr-list__header h2 { font-size: 1.75rem; font-weight: 800; color: var(--color-gray-900); }
+.fr-list__header p { color: var(--color-gray-500); margin-top: .25rem; }
+
+.fr-filter { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.fr-chip {
+  padding: .45rem 1rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--color-gray-600);
+  font-size: .85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.fr-chip:hover, .fr-chip.active {
+  background: #1aabe4;
+  border-color: #1aabe4;
+  color: #fff;
+}
+
+.btn-primary {
+  background: #1aabe4;
+  color: #fff;
+  padding: .6rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: .9rem;
+  text-decoration: none;
+  transition: all .2s;
+}
+.btn-primary:hover { background: #0e8fbf; }
+
+/* ─ Cards ─────────────────────────────────────────── */
+.fr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.fr-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  position: relative;
+  overflow: hidden;
+}
+.fr-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--fr-color, #1aabe4);
+  border-radius: 20px 20px 0 0;
+}
+.fr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,.1);
+  border-color: var(--fr-color, #1aabe4);
+}
+.fr-card__top { display: flex; align-items: center; gap: 1rem; }
+.fr-card__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.fr-card__meta { flex: 1; min-width: 0; }
+.fr-card__name { font-weight: 700; font-size: .95rem; color: var(--color-gray-900); }
+.fr-card__campaign { font-size: .78rem; color: var(--color-gray-500); margin-top: .15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fr-card__urgent {
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .25rem .6rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fr-card__tagline {
+  font-size: .9rem;
+  color: var(--color-gray-600);
+  font-style: italic;
+  line-height: 1.5;
+  flex: 1;
+}
+.fr-card__bar {
+  background: var(--border);
+  border-radius: 100px;
+  height: 8px;
+  overflow: hidden;
+  margin-bottom: .5rem;
+}
+.fr-card__fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width .6s ease;
+}
+.fr-card__nums { display: flex; justify-content: space-between; align-items: baseline; }
+.fr-card__raised { font-weight: 700; font-size: 1.05rem; color: var(--color-gray-900); }
+.fr-card__pct { font-weight: 700; font-size: .85rem; color: var(--fr-color, #1aabe4); }
+.fr-card__target { font-size: .78rem; color: var(--color-gray-400); margin-top: .15rem; }
+.fr-card__footer { display: flex; justify-content: space-between; align-items: center; padding-top: .75rem; border-top: 1px solid var(--border); }
+.fr-card__cat { font-size: .75rem; background: var(--bg); padding: .25rem .6rem; border-radius: 100px; color: var(--color-gray-500); text-transform: capitalize; }
+.fr-card__cta { font-size: .85rem; font-weight: 600; }
+
+/* ─ CTA Banner ────────────────────────────────────── */
+.fr-cta {
+  background: linear-gradient(135deg, #1aabe4, #0e6ea8);
+  padding: 4rem 0;
+}
+.fr-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.fr-cta h2 { font-size: 1.75rem; font-weight: 800; color: #fff; margin-bottom: .5rem; }
+.fr-cta p { color: rgba(255,255,255,.8); }
+.btn-white {
+  background: #fff;
+  color: #1aabe4;
+  padding: .9rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+}
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+</style>
+
+<script>
+  // Filter chips
+  const chips = document.querySelectorAll<HTMLElement>('.fr-chip');
+  const cards = document.querySelectorAll<HTMLElement>('.fr-card');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const filter = chip.dataset.filter!;
+      cards.forEach(card => {
+        const show = filter === 'all' || card.dataset.cat === filter;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

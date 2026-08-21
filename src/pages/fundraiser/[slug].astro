@@ -1,0 +1,542 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { fundraisers, campaigns, formatRupiah, formatRupiahFull, getPercent } from '../../data/campaigns';
+
+export function getStaticPaths() {
+  return fundraisers.map(f => ({ params: { slug: f.slug } }));
+}
+
+const { slug } = Astro.params;
+const fr = fundraisers.find(f => f.slug === slug);
+if (!fr) return Astro.redirect('/fundraiser');
+
+const campaign = campaigns.find(c => c.slug === fr.campaignSlug);
+const pct = getPercent(fr.raised, fr.goal);
+const daysLeft = Math.max(0, Math.ceil((new Date(fr.endDate).getTime() - Date.now()) / 86400000));
+const color = fr.customColor || '#1aabe4';
+const pageUrl = `https://indonesiapedulisesama.org/fundraiser/${fr.slug}`;
+---
+
+<Layout
+  title={`${fr.advertiserName} — Fundraiser Indonesia Peduli`}
+  description={fr.tagline}
+  ogImage={campaign?.image}
+>
+  <!-- Sticky progress banner (mobile) -->
+  <div class="sticky-banner" id="sticky-banner">
+    <div class="sticky-banner__inner">
+      <div>
+        <div class="sticky-banner__name">{fr.advertiserName}</div>
+        <div class="sticky-banner__progress">
+          <div class="sticky-banner__bar">
+            <div class="sticky-banner__fill" style={`width:${pct}%;background:${color}`}></div>
+          </div>
+          <span>{pct}%</span>
+        </div>
+      </div>
+      <a href={`/donate/${fr.campaignSlug}?ref=${fr.slug}`} class="sticky-banner__btn" style={`background:${color}`}>
+        💙 Donasi
+      </a>
+    </div>
+  </div>
+
+  <div class="fr-page">
+    <!-- Left: Main content -->
+    <main class="fr-main">
+
+      <!-- Header card -->
+      <div class="fr-header-card" style={`--fr-color:${color}`}>
+        <div class="fr-header-card__top">
+          <div class="fr-header-card__avatar" style={`background:${color}22;color:${color}`}>
+            {fr.advertiserName.slice(0,2).toUpperCase()}
+          </div>
+          <div>
+            <div class="fr-header-card__label">Fundraiser oleh</div>
+            <h1 class="fr-header-card__name">{fr.advertiserName}</h1>
+            {fr.contactName && <div class="fr-header-card__contact">Koordinator: {fr.contactName}</div>}
+          </div>
+          {daysLeft > 0
+            ? <span class="fr-badge-days" style={`background:${color}22;color:${color}`}>{daysLeft} hari lagi</span>
+            : <span class="fr-badge-done">✅ Selesai</span>
+          }
+        </div>
+
+        <h2 class="fr-tagline">"{fr.tagline}"</h2>
+
+        <!-- Progress -->
+        <div class="fr-progress">
+          <div class="fr-progress__bar">
+            <div class="fr-progress__fill" style={`width:${pct}%;background:${color}`}></div>
+          </div>
+          <div class="fr-progress__info">
+            <div>
+              <div class="fr-progress__raised" style={`color:${color}`}>{formatRupiah(fr.raised)}</div>
+              <div class="fr-progress__label">terkumpul dari {formatRupiah(fr.goal)}</div>
+            </div>
+            <div class="fr-progress__right">
+              <div class="fr-progress__pct" style={`color:${color}`}>{pct}%</div>
+              <div class="fr-progress__donors">{fr.donors.toLocaleString('id-ID')} donatur</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA button -->
+        <a href={`/donate/${fr.campaignSlug}?ref=${fr.slug}`} class="fr-donate-btn" style={`background:${color}`}>
+          💙 Donasi Sekarang via {fr.advertiserName}
+        </a>
+
+        <!-- Social share -->
+        <div class="fr-share">
+          <span class="fr-share__label">Bagikan:</span>
+          <a href={`https://wa.me/?text=${encodeURIComponent('Ayo dukung fundraiser ' + fr.advertiserName + ' di Indonesia Peduli Sesama! ' + pageUrl)}`}
+             class="fr-share__btn fr-share__wa" target="_blank" rel="noopener">💬 WhatsApp</a>
+          <a href={`https://www.instagram.com/`} class="fr-share__btn fr-share__ig" target="_blank" rel="noopener">📷 Instagram</a>
+          <button class="fr-share__btn fr-share__copy" id="btn-copy-link" data-url={pageUrl}>🔗 Salin Link</button>
+        </div>
+      </div>
+
+      <!-- Story -->
+      <div class="fr-story animate-on-scroll">
+        <h3 class="fr-section-title">📖 Cerita Fundraiser</h3>
+        <div class="fr-story__content" set:html={fr.story}></div>
+      </div>
+
+      <!-- Campaign info -->
+      {campaign && (
+        <div class="fr-campaign-card animate-on-scroll">
+          <h3 class="fr-section-title">🎯 Kampanye yang Didukung</h3>
+          <a href={`/campaigns/${campaign.slug}`} class="fr-campaign-link">
+            <img src={campaign.image} alt={campaign.title} class="fr-campaign-img" loading="lazy" />
+            <div class="fr-campaign-info">
+              <div class="fr-campaign-org">{campaign.org}</div>
+              <div class="fr-campaign-title">{campaign.title}</div>
+              <div class="fr-campaign-stats">
+                <span>🎯 Target: {formatRupiah(campaign.target)}</span>
+                <span>👥 {campaign.donors.toLocaleString('id-ID')} donatur</span>
+                <span>⏰ {campaign.daysLeft} hari</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      )}
+    </main>
+
+    <!-- Right sidebar -->
+    <aside class="fr-sidebar">
+
+      <!-- QR Code panel -->
+      <div class="fr-qr-panel animate-on-scroll">
+        <h3 class="fr-section-title">📱 QR Code Fundraiser</h3>
+        <p class="fr-qr-desc">Scan untuk langsung ke halaman ini. Cocok untuk cetak brosur, banner, atau spanduk!</p>
+        <div class="fr-qr-box" id="qr-container">
+          <img
+            id="qr-img"
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pageUrl)}&color=${color.replace('#','')}&bgcolor=FFFFFF&margin=12`}
+            alt="QR Code"
+            width="220"
+            height="220"
+            loading="lazy"
+          />
+        </div>
+        <div class="fr-qr-url">{pageUrl}</div>
+        <button class="fr-qr-download" id="btn-dl-qr" style={`background:${color}`}>
+          ⬇️ Download QR Code
+        </button>
+      </div>
+
+      <!-- Stats panel -->
+      <div class="fr-stats-panel animate-on-scroll">
+        <h3 class="fr-section-title">📊 Statistik</h3>
+        <div class="fr-stats-grid">
+          <div class="fr-stat">
+            <div class="fr-stat__val" style={`color:${color}`}>{formatRupiah(fr.raised)}</div>
+            <div class="fr-stat__lbl">Terkumpul</div>
+          </div>
+          <div class="fr-stat">
+            <div class="fr-stat__val" style={`color:${color}`}>{fr.donors.toLocaleString('id-ID')}</div>
+            <div class="fr-stat__lbl">Donatur</div>
+          </div>
+          <div class="fr-stat">
+            <div class="fr-stat__val" style={`color:${color}`}>{pct}%</div>
+            <div class="fr-stat__lbl">Tercapai</div>
+          </div>
+          <div class="fr-stat">
+            <div class="fr-stat__val" style={`color:${color}`}>{daysLeft}</div>
+            <div class="fr-stat__lbl">Hari Lagi</div>
+          </div>
+        </div>
+        <div class="fr-stats-avg">
+          Rata-rata donasi: <strong>{formatRupiah(Math.round(fr.raised / (fr.donors || 1)))}</strong>
+        </div>
+      </div>
+
+      <!-- Social links -->
+      {fr.socialLinks && Object.keys(fr.socialLinks).length > 0 && (
+        <div class="fr-social-panel animate-on-scroll">
+          <h3 class="fr-section-title">🔗 Link Fundraiser</h3>
+          <div class="fr-social-links">
+            {fr.socialLinks.instagram && (
+              <a href={`https://instagram.com/${fr.socialLinks.instagram}`} target="_blank" rel="noopener" class="fr-social-link">
+                📷 @{fr.socialLinks.instagram}
+              </a>
+            )}
+            {fr.socialLinks.website && (
+              <a href={`https://${fr.socialLinks.website}`} target="_blank" rel="noopener" class="fr-social-link">
+                🌐 {fr.socialLinks.website}
+              </a>
+            )}
+            {fr.socialLinks.whatsapp && (
+              <a href={`https://wa.me/${fr.socialLinks.whatsapp}`} target="_blank" rel="noopener" class="fr-social-link">
+                💬 WhatsApp
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
+      <!-- Back to all -->
+      <a href="/fundraiser" class="fr-back-link">← Lihat Semua Fundraiser</a>
+    </aside>
+  </div>
+</Layout>
+
+<style>
+/* ─ Layout ───────────────────────────────────────── */
+.fr-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .fr-page { grid-template-columns: 1fr; }
+  .fr-sidebar { order: -1; }
+}
+
+/* ─ Sticky Banner ─────────────────────────────────── */
+.sticky-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.1);
+  z-index: 50;
+  padding: .75rem 1.5rem;
+  display: none;
+}
+@media (max-width: 768px) { .sticky-banner { display: block; } }
+.sticky-banner__inner { display: flex; align-items: center; gap: 1rem; max-width: 600px; margin: 0 auto; }
+.sticky-banner__name { font-weight: 700; font-size: .85rem; color: var(--color-gray-900); }
+.sticky-banner__progress { display: flex; align-items: center; gap: .5rem; margin-top: .25rem; }
+.sticky-banner__bar { flex: 1; height: 6px; background: var(--border); border-radius: 100px; overflow: hidden; }
+.sticky-banner__fill { height: 100%; border-radius: 100px; }
+.sticky-banner__btn {
+  color: #fff;
+  padding: .6rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─ Header Card ───────────────────────────────────── */
+.fr-header-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.fr-header-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: var(--fr-color, #1aabe4);
+}
+.fr-header-card__top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.fr-header-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.fr-header-card__label { font-size: .75rem; color: var(--color-gray-400); text-transform: uppercase; letter-spacing: .06em; }
+.fr-header-card__name { font-size: 1.4rem; font-weight: 800; color: var(--color-gray-900); line-height: 1.2; }
+.fr-header-card__contact { font-size: .82rem; color: var(--color-gray-500); margin-top: .15rem; }
+.fr-badge-days {
+  margin-left: auto;
+  padding: .35rem .8rem;
+  border-radius: 100px;
+  font-size: .8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.fr-badge-done {
+  margin-left: auto;
+  background: #dcfce7;
+  color: #16a34a;
+  padding: .35rem .8rem;
+  border-radius: 100px;
+  font-size: .8rem;
+  font-weight: 700;
+}
+.fr-tagline {
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--color-gray-600);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* ─ Progress ──────────────────────────────────────── */
+.fr-progress { margin-bottom: 1.5rem; }
+.fr-progress__bar {
+  height: 14px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: .75rem;
+}
+.fr-progress__fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+  position: relative;
+}
+.fr-progress__fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  background: rgba(255,255,255,.4);
+  border-radius: 100px;
+}
+.fr-progress__info { display: flex; justify-content: space-between; align-items: flex-start; }
+.fr-progress__raised { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.fr-progress__label { font-size: .8rem; color: var(--color-gray-400); margin-top: .25rem; }
+.fr-progress__right { text-align: right; }
+.fr-progress__pct { font-size: 1.4rem; font-weight: 800; }
+.fr-progress__donors { font-size: .8rem; color: var(--color-gray-400); margin-top: .25rem; }
+
+/* ─ Donate Button ─────────────────────────────────── */
+.fr-donate-btn {
+  display: block;
+  text-align: center;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  transition: all .2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+}
+.fr-donate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.2); filter: brightness(1.05); }
+
+/* ─ Share ─────────────────────────────────────────── */
+.fr-share { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.fr-share__label { font-size: .8rem; color: var(--color-gray-400); }
+.fr-share__btn {
+  padding: .4rem .9rem;
+  border-radius: 8px;
+  font-size: .8rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all .15s;
+}
+.fr-share__wa  { background: #dcfce7; color: #16a34a; }
+.fr-share__ig  { background: #fce7f3; color: #be185d; }
+.fr-share__copy{ background: var(--bg); color: var(--color-gray-600); border: 1px solid var(--border); }
+.fr-share__btn:hover { transform: translateY(-1px); }
+
+/* ─ Section title ─────────────────────────────────── */
+.fr-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 1rem;
+}
+
+/* ─ Story ─────────────────────────────────────────── */
+.fr-story, .fr-campaign-card, .fr-social-panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+.fr-story__content { color: var(--color-gray-600); line-height: 1.8; font-size: .95rem; }
+.fr-story__content p { margin-bottom: 1rem; }
+.fr-story__content p:last-child { margin-bottom: 0; }
+
+/* ─ Campaign card ─────────────────────────────────── */
+.fr-campaign-link {
+  display: flex;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  align-items: flex-start;
+  transition: opacity .2s;
+}
+.fr-campaign-link:hover { opacity: .8; }
+.fr-campaign-img {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.fr-campaign-org { font-size: .75rem; color: var(--color-gray-400); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem; }
+.fr-campaign-title { font-weight: 700; font-size: .95rem; color: var(--color-gray-900); line-height: 1.3; margin-bottom: .5rem; }
+.fr-campaign-stats { display: flex; gap: .75rem; flex-wrap: wrap; font-size: .78rem; color: var(--color-gray-500); }
+
+/* ─ QR Panel ──────────────────────────────────────── */
+.fr-qr-panel, .fr-stats-panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.fr-qr-desc { font-size: .83rem; color: var(--color-gray-500); margin-bottom: 1rem; line-height: 1.5; }
+.fr-qr-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .75rem;
+  border: 1px solid var(--border);
+}
+.fr-qr-box img { border-radius: 8px; display: block; }
+.fr-qr-url {
+  font-size: .72rem;
+  color: var(--color-gray-400);
+  word-break: break-all;
+  text-align: center;
+  margin-bottom: .75rem;
+}
+.fr-qr-download {
+  width: 100%;
+  color: #fff;
+  padding: .65rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.fr-qr-download:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* ─ Stats ─────────────────────────────────────────── */
+.fr-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.fr-stat {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: .9rem;
+  text-align: center;
+}
+.fr-stat__val { font-size: 1.2rem; font-weight: 800; }
+.fr-stat__lbl { font-size: .72rem; color: var(--color-gray-400); margin-top: .2rem; }
+.fr-stats-avg { font-size: .82rem; color: var(--color-gray-500); text-align: center; padding-top: .75rem; border-top: 1px solid var(--border); }
+
+/* ─ Social links ──────────────────────────────────── */
+.fr-social-links { display: flex; flex-direction: column; gap: .5rem; }
+.fr-social-link {
+  padding: .6rem .9rem;
+  background: var(--bg);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--color-gray-700);
+  font-size: .88rem;
+  font-weight: 500;
+  transition: all .15s;
+}
+.fr-social-link:hover { background: var(--border); }
+
+/* ─ Back link ─────────────────────────────────────── */
+.fr-back-link {
+  display: block;
+  text-align: center;
+  color: var(--color-gray-400);
+  font-size: .85rem;
+  text-decoration: none;
+  padding: .75rem;
+  transition: color .15s;
+}
+.fr-back-link:hover { color: #1aabe4; }
+</style>
+
+<script>
+  // Copy link
+  const btnCopy = document.getElementById('btn-copy-link');
+  if (btnCopy) {
+    btnCopy.addEventListener('click', async () => {
+      const url = btnCopy.dataset.url!;
+      await navigator.clipboard.writeText(url);
+      const orig = btnCopy.textContent;
+      btnCopy.textContent = '✅ Disalin!';
+      setTimeout(() => { btnCopy.textContent = orig; }, 2000);
+    });
+  }
+
+  // QR Download
+  const btnDl = document.getElementById('btn-dl-qr');
+  const qrImg = document.getElementById('qr-img') as HTMLImageElement;
+  if (btnDl && qrImg) {
+    btnDl.addEventListener('click', async () => {
+      try {
+        const resp = await fetch(qrImg.src);
+        const blob = await resp.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `qr-fundraiser-${window.location.pathname.split('/').pop()}.png`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      } catch {
+        window.open(qrImg.src, '_blank');
+      }
+    });
+  }
+
+  // Animate progress bar on scroll
+  const fill = document.querySelector<HTMLElement>('.fr-progress__fill');
+  if (fill) {
+    const targetWidth = fill.style.width;
+    fill.style.width = '0%';
+    setTimeout(() => { fill.style.width = targetWidth; }, 200);
+  }
+</script>
