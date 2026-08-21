@@ -987,84 +987,144 @@
       text-transform: uppercase;
     }
 
-    /* ── Quill toolbar — safe overrides only (don't break float layout) ── */
+    /* ════════════════════════════════════════════
+       QUILL — LaunchGood Style
+    ════════════════════════════════════════════ */
+
+    /* Sticky toolbar container */
+    .ce-toolbar-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      border-radius: 4px 4px 0 0;
+    }
+
+    /* Toolbar itself */
     #ce-quill-toolbar.ql-toolbar.ql-snow {
       border: none !important;
-      border-bottom: 1px solid #e5e7eb !important;
-      background: #f9fafb;
-      padding: .5rem .75rem;
-      /* DO NOT override display — Quill uses float-based layout internally */
+      background: #fff;
+      padding: 6px 12px;
     }
-    /* SVG icon colors */
-    .ql-snow .ql-stroke { stroke: #4b5563 !important; }
-    .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill { fill: #4b5563 !important; }
-    /* Hover & active state — stroke/fill */
+
+    /* Icon colors - dark gray default */
+    .ql-snow .ql-stroke { stroke: #555 !important; }
+    .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill { fill: #555 !important; }
+
+    /* Hover & active — green accent */
     .ql-snow .ql-toolbar button:hover .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button:hover .ql-fill  { fill:   #1aabe4 !important; }
+    .ql-snow .ql-toolbar button:hover .ql-fill  { fill: #1aabe4 !important; }
     .ql-snow .ql-toolbar button.ql-active .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active .ql-fill  { fill:   #1aabe4 !important; }
-    /* Hover & active background — DO NOT set display/width/height */
-    .ql-snow .ql-toolbar button { border-radius: 6px !important; transition: background .12s; }
-    .ql-snow .ql-toolbar button:hover  { background: #e0f5fd !important; }
-    .ql-snow .ql-toolbar button.ql-active { background: #dbeafe !important; color: #1aabe4 !important; }
-    /* Pickers */
-    .ql-snow .ql-picker { color: #4b5563; font-size: .8rem; font-family: inherit; }
+    .ql-snow .ql-toolbar button.ql-active .ql-fill  { fill: #1aabe4 !important; }
+    .ql-snow .ql-toolbar button.ql-active { color: #1aabe4 !important; }
+
+    /* Button cosmetics */
+    .ql-snow .ql-toolbar button {
+      border-radius: 4px !important;
+      transition: background .1s;
+    }
+    .ql-snow .ql-toolbar button:hover { background: #f3f4f6 !important; }
+
+    /* Custom undo/redo buttons */
+    .ql-undo-custom, .ql-redo-custom {
+      float: left;
+      width: 28px; height: 24px;
+      padding: 3px 5px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #555;
+      border-radius: 4px;
+      transition: background .1s;
+    }
+    .ql-undo-custom:hover, .ql-redo-custom:hover {
+      background: #f3f4f6;
+      color: #1aabe4;
+    }
+
+    /* Picker */
+    .ql-snow .ql-picker { color: #555; font-family: inherit; }
     .ql-snow .ql-picker-label:hover { color: #1aabe4 !important; }
     .ql-snow .ql-picker-label:hover .ql-stroke { stroke: #1aabe4 !important; }
-    /* Formats group — just add right separator, keep float intact */
+    .ql-snow .ql-picker-options {
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.12);
+      border: 1px solid #e5e7eb;
+    }
+
+    /* Format groups — thin divider between */
     .ql-toolbar.ql-snow .ql-formats {
-      margin-right: .5rem !important;
-      padding-right: .5rem !important;
+      margin-right: 6px !important;
+      padding-right: 6px !important;
       border-right: 1px solid #e5e7eb;
     }
     .ql-toolbar.ql-snow .ql-formats:last-child { border-right: none; }
 
-    /* Quill editor area */
+    /* ── Editor canvas — white doc style like LaunchGood ── */
+    .ce-editor-canvas {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      min-height: 500px;
+    }
+
     .ql-container.ql-snow { border: none !important; }
+
     #ce-quill-editor .ql-editor {
-      padding: 1.25rem 1.5rem;
-      min-height: 380px;
+      padding: 2rem 2.5rem;
+      min-height: 500px;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: .95rem;
-      line-height: 1.8;
-      color: #374151;
+      font-size: 1rem;
+      line-height: 1.85;
+      color: #222;
       caret-color: #1aabe4;
     }
     #ce-quill-editor .ql-editor.ql-blank::before {
-      color: #d1d5db;
+      color: #ccc;
       font-style: normal;
-      font-size: .92rem;
-      left: 1.5rem;
+      font-size: 1rem;
+      left: 2.5rem;
     }
+
+    /* Images — full width like LaunchGood */
     #ce-quill-editor .ql-editor img {
       max-width: 100%;
-      border-radius: 12px;
-      margin: 1rem auto;
+      width: 100%;
+      border-radius: 4px;
+      margin: 1.25rem 0;
       display: block;
-      box-shadow: 0 2px 12px rgba(0,0,0,.08);
     }
-    #ce-quill-editor .ql-editor h1 { font-size: 1.6rem; font-weight: 800; color: #111827; margin: 1rem 0 .5rem; }
-    #ce-quill-editor .ql-editor h2 { font-size: 1.3rem; font-weight: 700; color: #1f2937; margin: .9rem 0 .4rem; }
-    #ce-quill-editor .ql-editor h3 { font-size: 1.08rem; font-weight: 700; color: #374151; margin: .75rem 0 .35rem; }
+
+    /* Headings */
+    #ce-quill-editor .ql-editor h1 { font-size: 1.75rem; font-weight: 800; color: #111; margin: 1.5rem 0 .6rem; }
+    #ce-quill-editor .ql-editor h2 { font-size: 1.4rem; font-weight: 700; color: #222; margin: 1.25rem 0 .5rem; }
+    #ce-quill-editor .ql-editor h3 { font-size: 1.15rem; font-weight: 700; color: #333; margin: 1rem 0 .4rem; }
+
+    /* Blockquote */
     #ce-quill-editor .ql-editor blockquote {
       border-left: 4px solid #1aabe4;
-      padding: .65rem 1.1rem;
+      padding: .7rem 1.25rem;
       margin: 1rem 0;
-      background: #f0f9ff;
-      border-radius: 0 10px 10px 0;
-      color: #6b7280;
+      background: #f8fbff;
+      color: #555;
       font-style: italic;
     }
+
+    /* Lists */
     #ce-quill-editor .ql-editor ul, #ce-quill-editor .ql-editor ol { padding-left: 1.5rem; }
     #ce-quill-editor .ql-editor li { margin-bottom: .35rem; }
-    .ce-img-hint {
-      display: flex; align-items: center; gap: .4rem;
-      padding: .55rem 1rem;
-      font-size: .72rem;
-      color: #9ca3af;
-      background: #f9fafb;
-      border-top: 1px solid #f3f4f6;
+
+    /* Video */
+    #ce-quill-editor .ql-editor .ql-video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 4px;
+      margin: 1rem 0;
+      display: block;
     }
+
 
     /* ── Short desc textarea ── */
     .ce-short-desc {
@@ -1220,57 +1280,24 @@
     .ce-tips-list li { font-size: .77rem; color: #075985; line-height: 1.45; display: flex; gap: .4rem; }
     .ce-tips-list li::before { content: '✦'; color: #1aabe4; font-size: .6rem; margin-top: .25rem; flex-shrink: 0; }
 
-    /* ── Extra Quill tool styles ── */
-    /* Toolbar wraps on small screens */
-    /* Toolbar clearfix for float-based Quill items */
-    #ce-quill-toolbar.ql-toolbar.ql-snow::after { content: ''; display: table; clear: both; }
-
-    /* Color picker circles */
-    .ql-snow .ql-color-picker .ql-picker-label svg,
-    .ql-snow .ql-color-picker .ql-picker-item { border-radius: 3px; }
-    /* Size picker */
-    .ql-snow .ql-picker.ql-size { width: 90px; }
-    .ql-snow .ql-picker.ql-size .ql-picker-label::before,
-    .ql-snow .ql-picker.ql-size .ql-picker-item::before { content: 'Normal'; }
-    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=small]::before,
-    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=small]::before { content: 'Kecil'; font-size: .75em; }
-    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=large]::before,
-    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=large]::before { content: 'Besar'; font-size: 1.15em; }
-    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=huge]::before,
-    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=huge]::before { content: 'Xl'; font-size: 1.4em; }
-    /* Code block */
-    #ce-quill-editor .ql-editor pre.ql-syntax {
-      background: #1e293b;
-      color: #e2e8f0;
+    /* Mini cover in sidebar */
+    .ce-cover-mini {
+      border: 2px dashed #e5e7eb;
       border-radius: 10px;
-      padding: 1rem 1.25rem;
-      font-family: 'Fira Code', 'Courier New', monospace;
-      font-size: .85rem;
-      overflow-x: auto;
-      margin: 1rem 0;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .15s;
     }
-    /* Superscript / Subscript */
-    #ce-quill-editor .ql-editor sup { vertical-align: super; font-size: .75em; }
-    #ce-quill-editor .ql-editor sub { vertical-align: sub; font-size: .75em; }
-    /* Picker dropdown */
-    .ql-snow .ql-picker-options { border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.12); border: 1px solid #e5e7eb; }
-    /* Color picker items */
-    .ql-snow .ql-color-picker .ql-picker-options { width: 192px; padding: .5rem; }
-    /* Undo/redo hover */
-    #ce-undo-btn:hover, #ce-redo-btn:hover { background: #e0f5fd !important; color: #1aabe4 !important; }
-    /* Video embed */
-    #ce-quill-editor .ql-editor .ql-video {
-      width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 12px;
-      margin: 1rem 0;
-      display: block;
+    .ce-cover-mini:hover { border-color: #1aabe4; }
+
+    /* Responsive: sidebar collapses on small */
+    @media (max-width: 900px) {
+      .ce-body { grid-template-columns: 1fr; }
+      .ce-sidebar { border-left: none; border-top: 1px solid #e5e7eb; max-height: 340px; }
     }
-
-
-
 
   </style>
+
 </head>
 <body>
 
@@ -2023,7 +2050,7 @@
 </div>
 
 <!-- ═══════════ CAMPAIGN MODAL ═══════════ -->
-<!-- ═══════════ CAMPAIGN RICH EDITOR (full-page) ═══════════ -->
+<!-- ═══════════ CAMPAIGN RICH EDITOR (LaunchGood-style) ═══════════ -->
 <div class="ce-overlay" id="campaign-modal">
   <div class="ce-wrap">
     <!-- Top bar -->
@@ -2043,34 +2070,9 @@
       <div class="ce-editor-area">
         <input type="hidden" id="modal-campaign-id" />
 
-        <!-- Cover image upload -->
-        <div class="ce-cover" id="ce-cover-wrap">
-          <div class="ce-cover__placeholder" id="ce-cover-placeholder">
-            <span class="ce-cover__icon">🖼️</span>
-            <span>Klik untuk upload gambar cover</span>
-            <span class="ce-cover__hint">PNG, JPG, JPEG · Maks 2MB · Rasio 16:9 disarankan</span>
-          </div>
-          <img id="ce-cover-img" class="ce-cover__img" src="" alt="Cover" style="display:none" />
-          <div class="ce-cover__actions" id="ce-cover-actions" style="display:none">
-            <button class="ce-cover__change" onclick="document.getElementById('ce-cover-input').click()">🔄 Ganti</button>
-            <button class="ce-cover__remove" onclick="removeCover()">✕ Hapus</button>
-          </div>
-          <input type="file" id="ce-cover-input" accept="image/*" style="display:none" />
-        </div>
-
-        <!-- Title input -->
-        <input class="ce-title-input" id="modal-title-id"
-               placeholder="Judul kampanye dalam Bahasa Indonesia..."
-               maxlength="120" />
-        <input class="ce-title-en-input" id="modal-title-en"
-               placeholder="Campaign title in English (optional)..."
-               maxlength="120" />
-
-        <!-- Quill toolbar & editor -->
-        <div class="ce-editor-card">
-          <div class="ce-editor-label">📝 Cerita Lengkap</div>
+        <!-- Quill toolbar — LaunchGood style: minimal single row -->
+        <div class="ce-toolbar-sticky">
           <div id="ce-quill-toolbar">
-            <!-- Row 1 -->
             <span class="ql-formats">
               <select class="ql-header">
                 <option value="1">Heading 1</option>
@@ -2080,76 +2082,81 @@
               </select>
             </span>
             <span class="ql-formats">
-              <select class="ql-size">
-                <option value="small">Kecil</option>
-                <option selected>Normal</option>
-                <option value="large">Besar</option>
-                <option value="huge">Sangat Besar</option>
-              </select>
-            </span>
-            <span class="ql-formats">
               <button class="ql-bold"></button>
               <button class="ql-italic"></button>
-              <button class="ql-underline"></button>
-              <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-              <button class="ql-script" value="super"></button>
-              <button class="ql-script" value="sub"></button>
-            </span>
-            <span class="ql-formats">
-              <select class="ql-color"></select>
-              <select class="ql-background"></select>
-            </span>
-            <span class="ql-formats">
-              <button class="ql-blockquote"></button>
-              <button class="ql-code-block"></button>
-            </span>
-            <span class="ql-formats">
-              <button class="ql-list" value="ordered"></button>
-              <button class="ql-list" value="bullet"></button>
-              <button class="ql-indent" value="-1"></button>
-              <button class="ql-indent" value="+1"></button>
             </span>
             <span class="ql-formats">
               <button class="ql-link"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-list" value="bullet"></button>
+              <button class="ql-list" value="ordered"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-blockquote"></button>
+            </span>
+            <span class="ql-formats">
               <button class="ql-image" title="Upload Gambar"></button>
               <button class="ql-video"></button>
             </span>
             <span class="ql-formats">
-              <button class="ql-align" value=""></button>
-              <button class="ql-align" value="center"></button>
-              <button class="ql-align" value="right"></button>
-              <button class="ql-align" value="justify"></button>
-            </span>
-            <span class="ql-formats">
-              <button class="ql-direction" value="rtl"></button>
-            </span>
-            <span class="ql-formats">
-              <button id="ce-undo-btn" title="Undo" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:6px;color:#4b5563;font-size:.9rem;" onclick="if(quillEditor)quillEditor.history.undo()">↩</button>
-              <button id="ce-redo-btn" title="Redo" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:6px;color:#4b5563;font-size:.9rem;" onclick="if(quillEditor)quillEditor.history.redo()">↪</button>
-            </span>
-            <span class="ql-formats">
-              <button class="ql-clean"></button>
+              <button class="ql-undo-custom" title="Undo" onclick="if(quillEditor)quillEditor.history.undo()">
+                <svg viewBox="0 0 18 18" width="18" height="18"><path d="M6 10l-4-4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 6h10a4 4 0 010 8H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button class="ql-redo-custom" title="Redo" onclick="if(quillEditor)quillEditor.history.redo()">
+                <svg viewBox="0 0 18 18" width="18" height="18"><path d="M12 10l4-4-4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 6H6a4 4 0 000 8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
             </span>
           </div>
-          <div id="ce-quill-editor" style="min-height:420px;"></div>
-          <input type="file" id="ce-inline-img-input" accept="image/*" style="display:none" />
-          <div class="ce-img-hint">💡 Klik ikon 🖼️ di toolbar untuk sisipkan gambar. Max 1MB per gambar.</div>
         </div>
 
-        <!-- Short description -->
-        <div class="ce-editor-card">
-          <div class="ce-editor-label">💬 Ajakan Singkat <span style="font-weight:400;color:var(--gray-400);font-size:.8rem;">(tampil di card kampanye)</span></div>
-          <textarea class="ce-short-desc" id="modal-desc-id"
-                    placeholder="Tuliskan kalimat ajakan singkat yang kuat — maks 180 karakter..."
-                    maxlength="180" rows="3"></textarea>
-          <div class="ce-char-count"><span id="ce-desc-count">0</span>/180</div>
+        <!-- Editor content — clean, no card wrapper -->
+        <div class="ce-editor-canvas">
+          <div id="ce-quill-editor"></div>
         </div>
+
+        <input type="file" id="ce-inline-img-input" accept="image/*" style="display:none" />
+        <input type="file" id="ce-cover-input" accept="image/*" style="display:none" />
+
+        <!-- Hidden fields for cover image data -->
+        <input type="hidden" id="ce-cover-data" />
+
+
+
       </div>
 
       <!-- RIGHT: Sidebar settings -->
       <aside class="ce-sidebar">
+        <!-- Title & Cover card -->
+        <div class="ce-sidebar-card">
+          <div class="ce-sidebar-title">📝 Info Kampanye</div>
+
+          <label class="ce-field-label">Judul Kampanye</label>
+          <input type="text" class="ce-field-input" id="modal-title-id"
+                 placeholder="Judul kampanye..." maxlength="120" />
+
+          <label class="ce-field-label">Judul (English)</label>
+          <input type="text" class="ce-field-input" id="modal-title-en"
+                 placeholder="Title in English (optional)..." maxlength="120" />
+
+          <label class="ce-field-label">Ajakan Singkat</label>
+          <textarea class="ce-field-input" id="modal-desc-id" style="min-height:60px;resize:vertical;"
+                    placeholder="Kalimat ajakan — maks 180 karakter" maxlength="180"></textarea>
+          <div style="text-align:right;font-size:.7rem;color:#9ca3af;margin-top:2px;"><span id="ce-desc-count">0</span>/180</div>
+
+          <label class="ce-field-label">Cover Image</label>
+          <div class="ce-cover-mini" id="ce-cover-wrap">
+            <div id="ce-cover-placeholder" style="padding:.75rem;text-align:center;color:#9ca3af;font-size:.78rem;cursor:pointer;">
+              📷 Klik untuk upload cover
+            </div>
+            <img id="ce-cover-img" src="" alt="Cover" style="display:none;width:100%;height:120px;object-fit:cover;border-radius:8px;" />
+            <div id="ce-cover-actions" style="display:none;margin-top:.4rem;display:none;">
+              <button onclick="document.getElementById('ce-cover-input').click()" style="font-size:.72rem;padding:.25rem .5rem;border:1px solid #e5e7eb;border-radius:6px;background:#fff;cursor:pointer;font-family:inherit;">🔄 Ganti</button>
+              <button onclick="removeCover()" style="font-size:.72rem;padding:.25rem .5rem;border:1px solid #fecaca;border-radius:6px;background:#fff7f7;color:#dc2626;cursor:pointer;font-family:inherit;margin-left:.3rem;">✕</button>
+            </div>
+          </div>
+        </div>
+
         <div class="ce-sidebar-card">
           <div class="ce-sidebar-title">⚙️ Pengaturan Kampanye</div>
 
