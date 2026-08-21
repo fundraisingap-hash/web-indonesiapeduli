@@ -1229,6 +1229,52 @@
     .ce-tips-list li { font-size: .77rem; color: #075985; line-height: 1.45; display: flex; gap: .4rem; }
     .ce-tips-list li::before { content: '✦'; color: #1aabe4; font-size: .6rem; margin-top: .25rem; flex-shrink: 0; }
 
+    /* ── Extra Quill tool styles ── */
+    /* Toolbar wraps on small screens */
+    #ce-quill-toolbar.ql-toolbar.ql-snow { flex-wrap: wrap; row-gap: .3rem; }
+    /* Color picker circles */
+    .ql-snow .ql-color-picker .ql-picker-label svg,
+    .ql-snow .ql-color-picker .ql-picker-item { border-radius: 3px; }
+    /* Size picker */
+    .ql-snow .ql-picker.ql-size { width: 90px; }
+    .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item::before { content: 'Normal'; }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=small]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=small]::before { content: 'Kecil'; font-size: .75em; }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=large]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=large]::before { content: 'Besar'; font-size: 1.15em; }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=huge]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=huge]::before { content: 'Xl'; font-size: 1.4em; }
+    /* Code block */
+    #ce-quill-editor .ql-editor pre.ql-syntax {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: .85rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    /* Superscript / Subscript */
+    #ce-quill-editor .ql-editor sup { vertical-align: super; font-size: .75em; }
+    #ce-quill-editor .ql-editor sub { vertical-align: sub; font-size: .75em; }
+    /* Picker dropdown */
+    .ql-snow .ql-picker-options { border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.12); border: 1px solid #e5e7eb; }
+    /* Color picker items */
+    .ql-snow .ql-color-picker .ql-picker-options { width: 192px; padding: .5rem; }
+    /* Undo/redo hover */
+    #ce-undo-btn:hover, #ce-redo-btn:hover { background: #e0f5fd !important; color: #1aabe4 !important; }
+    /* Video embed */
+    #ce-quill-editor .ql-editor .ql-video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      margin: 1rem 0;
+      display: block;
+    }
+
+
 
 
   </style>
@@ -2031,6 +2077,7 @@
         <div class="ce-editor-card">
           <div class="ce-editor-label">📝 Cerita Lengkap</div>
           <div id="ce-quill-toolbar">
+            <!-- Row 1 -->
             <span class="ql-formats">
               <select class="ql-header">
                 <option value="1">Heading 1</option>
@@ -2040,26 +2087,54 @@
               </select>
             </span>
             <span class="ql-formats">
+              <select class="ql-size">
+                <option value="small">Kecil</option>
+                <option selected>Normal</option>
+                <option value="large">Besar</option>
+                <option value="huge">Sangat Besar</option>
+              </select>
+            </span>
+            <span class="ql-formats">
               <button class="ql-bold"></button>
               <button class="ql-italic"></button>
               <button class="ql-underline"></button>
               <button class="ql-strike"></button>
             </span>
             <span class="ql-formats">
+              <button class="ql-script" value="super"></button>
+              <button class="ql-script" value="sub"></button>
+            </span>
+            <span class="ql-formats">
+              <select class="ql-color"></select>
+              <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
               <button class="ql-blockquote"></button>
+              <button class="ql-code-block"></button>
             </span>
             <span class="ql-formats">
               <button class="ql-list" value="ordered"></button>
               <button class="ql-list" value="bullet"></button>
+              <button class="ql-indent" value="-1"></button>
+              <button class="ql-indent" value="+1"></button>
             </span>
             <span class="ql-formats">
               <button class="ql-link"></button>
-              <button class="ql-image" id="ce-img-btn" title="Upload Gambar"></button>
+              <button class="ql-image" title="Upload Gambar"></button>
+              <button class="ql-video"></button>
             </span>
             <span class="ql-formats">
               <button class="ql-align" value=""></button>
               <button class="ql-align" value="center"></button>
               <button class="ql-align" value="right"></button>
+              <button class="ql-align" value="justify"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-direction" value="rtl"></button>
+            </span>
+            <span class="ql-formats">
+              <button id="ce-undo-btn" title="Undo" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:6px;color:#4b5563;font-size:.9rem;" onclick="if(quillEditor)quillEditor.history.undo()">↩</button>
+              <button id="ce-redo-btn" title="Redo" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:6px;color:#4b5563;font-size:.9rem;" onclick="if(quillEditor)quillEditor.history.redo()">↪</button>
             </span>
             <span class="ql-formats">
               <button class="ql-clean"></button>
@@ -2461,9 +2536,9 @@ function initQuill() {
     theme: 'snow',
     modules: {
       toolbar: { container: '#ce-quill-toolbar' },
-      history: { delay: 500, maxStack: 100 },
+      history: { delay: 500, maxStack: 200, userOnly: true },
     },
-    placeholder: 'Tuliskan cerita lengkap kampanye di sini...\n\nCeritakan situasi yang dihadapi, dampak yang diharapkan, dan bagaimana donasi akan digunakan.',
+    placeholder: 'Tuliskan cerita lengkap kampanye di sini...\n\nCeritakan situasi nyata yang dihadapi, dampak yang diharapkan, dan bagaimana donasi akan digunakan.',
   });
 
   // Override image handler to use file upload → base64
