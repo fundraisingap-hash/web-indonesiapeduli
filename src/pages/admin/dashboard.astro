@@ -1099,7 +1099,8 @@
       border: 1px solid #e5e7eb;
       border-radius: 10px;
       background: #fff;
-      overflow: hidden;
+      overflow: visible;
+      position: relative;
     }
 
     /* Quill toolbar */
@@ -1107,53 +1108,110 @@
       border: none !important;
       border-bottom: 1px solid #e5e7eb !important;
       background: #fafbfc;
-      padding: 6px 10px;
+      padding: 8px 12px;
+      border-radius: 10px 10px 0 0;
     }
 
-    /* SVG icon colors */
-    .ql-snow .ql-stroke { stroke: #555 !important; }
-    .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill { fill: #555 !important; }
+    /* ── Quill SVG Icon Fix ─────────────────────────
+       Quill uses these SVG classes:
+       .ql-stroke       → stroke only (most icons)
+       .ql-fill         → solid fill (some icons)
+       .ql-even         → even-odd fill
+       .ql-thin         → thinner stroke
+       .ql-transparent  → must stay transparent fill
+    ──────────────────────────────────────────────── */
+    .ql-snow .ql-stroke {
+      stroke: #555 !important;
+      fill: none !important;
+    }
+    .ql-snow .ql-fill {
+      fill: #555 !important;
+      stroke: none !important;
+    }
+    .ql-snow .ql-stroke.ql-fill {
+      fill: #555 !important;
+      stroke: #555 !important;
+    }
+    .ql-snow .ql-even {
+      fill: #555 !important;
+      stroke: #555 !important;
+    }
+    .ql-snow .ql-thin {
+      stroke: #555 !important;
+      stroke-width: 1 !important;
+    }
+    .ql-snow .ql-transparent {
+      opacity: 0.4;
+    }
+    /* Picker label arrows */
+    .ql-snow .ql-picker-label .ql-stroke {
+      stroke: #555 !important;
+      fill: none !important;
+    }
 
-    /* Hover & active */
-    .ql-snow .ql-toolbar button:hover .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button:hover .ql-fill  { fill: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active .ql-fill  { fill: #1aabe4 !important; }
+    /* ── Hover & active states ── */
+    .ql-snow .ql-toolbar button:hover .ql-stroke,
+    .ql-snow.ql-toolbar button:hover .ql-stroke { stroke: #1aabe4 !important; }
+    .ql-snow .ql-toolbar button:hover .ql-fill,
+    .ql-snow.ql-toolbar button:hover .ql-fill { fill: #1aabe4 !important; }
+    .ql-snow .ql-toolbar button:hover .ql-even,
+    .ql-snow.ql-toolbar button:hover .ql-even { fill: #1aabe4 !important; stroke: #1aabe4 !important; }
+    .ql-snow .ql-toolbar button.ql-active .ql-stroke,
+    .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #1aabe4 !important; }
+    .ql-snow .ql-toolbar button.ql-active .ql-fill,
+    .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: #1aabe4 !important; }
+    .ql-snow .ql-toolbar button.ql-active .ql-even,
+    .ql-snow.ql-toolbar button.ql-active .ql-even { fill: #1aabe4 !important; stroke: #1aabe4 !important; }
     .ql-snow .ql-toolbar button.ql-active { color: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button { border-radius: 4px !important; transition: background .1s; }
-    .ql-snow .ql-toolbar button:hover { background: #f3f4f6 !important; }
+
+    /* Button sizing & hover bg */
+    .ql-snow .ql-toolbar button,
+    .ql-snow.ql-toolbar button {
+      width: 28px !important;
+      height: 28px !important;
+      padding: 3px 5px !important;
+      border-radius: 4px !important;
+      transition: background .12s;
+    }
+    .ql-snow .ql-toolbar button:hover,
+    .ql-snow.ql-toolbar button:hover { background: #e8f4fd !important; }
+    .ql-snow .ql-toolbar button.ql-active,
+    .ql-snow.ql-toolbar button.ql-active { background: #dbeafe !important; }
 
     /* Undo/redo custom buttons */
     .ql-undo-custom, .ql-redo-custom {
       float: left;
-      width: 28px; height: 24px;
-      padding: 3px 5px;
+      width: 28px !important;
+      height: 28px !important;
+      padding: 5px !important;
       cursor: pointer;
       border: none;
       background: transparent;
       color: #555;
-      border-radius: 4px;
-      transition: background .1s;
+      border-radius: 4px !important;
+      transition: background .12s;
     }
-    .ql-undo-custom:hover, .ql-redo-custom:hover { background: #f3f4f6; color: #1aabe4; }
+    .ql-undo-custom:hover, .ql-redo-custom:hover { background: #e8f4fd !important; color: #1aabe4; }
 
     /* Pickers */
-    .ql-snow .ql-picker { color: #555; font-family: inherit; }
+    .ql-snow .ql-picker { color: #555; font-family: inherit; font-size: .82rem; }
     .ql-snow .ql-picker-label:hover { color: #1aabe4 !important; }
     .ql-snow .ql-picker-label:hover .ql-stroke { stroke: #1aabe4 !important; }
     .ql-snow .ql-picker-options {
       border-radius: 8px;
       box-shadow: 0 6px 20px rgba(0,0,0,.12);
       border: 1px solid #e5e7eb;
+      z-index: 10;
     }
 
     /* Format groups */
     .ql-toolbar.ql-snow .ql-formats {
-      margin-right: 6px !important;
-      padding-right: 6px !important;
+      margin-right: 8px !important;
+      padding-right: 8px !important;
       border-right: 1px solid #e5e7eb;
     }
     .ql-toolbar.ql-snow .ql-formats:last-child { border-right: none; }
+
 
     /* Editor area */
     .ql-container.ql-snow { border: none !important; }
