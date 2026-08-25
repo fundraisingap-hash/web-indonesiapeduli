@@ -1155,15 +1155,13 @@
     }
     .ce-story-editor:focus-within { border-color: #1aabe4; }
 
-    /* Quill toolbar — targets the #ce-quill-toolbar when Quill initializes on it */
-    #ce-quill-toolbar,
+    /* Quill toolbar — Quill auto-generates .ql-toolbar.ql-snow */
     .ce-story-editor .ql-toolbar.ql-snow {
       border: none !important;
       border-bottom: 1px solid #eef0f4 !important;
       background: #f8f9fc;
       padding: 8px 12px;
       border-radius: 10px 10px 0 0;
-      min-height: 44px;
     }
     .ce-story-editor .ql-container.ql-snow {
       border: none !important;
@@ -1185,43 +1183,33 @@
     }
 
     /* Toolbar buttons */
-    .ce-story-editor .ql-toolbar button,
-    #ce-quill-toolbar button {
+    .ce-story-editor .ql-toolbar button {
       border-radius: 5px !important;
       transition: background .12s, color .12s;
-      color: #4b5563;
     }
-    .ce-story-editor .ql-toolbar button:hover,
-    #ce-quill-toolbar button:hover { background: #e8f0fe !important; }
-    .ce-story-editor .ql-toolbar button.ql-active,
-    #ce-quill-toolbar button.ql-active { background: #dbeafe !important; color: #1d4ed8 !important; }
+    .ce-story-editor .ql-toolbar button:hover { background: #e8f0fe !important; }
+    .ce-story-editor .ql-toolbar button.ql-active { background: #dbeafe !important; color: #1d4ed8 !important; }
 
-    /* SVG icon colors — stroke-only icons (must have fill:none to be visible) */
-    .ce-story-editor .ql-snow .ql-stroke { stroke: #4b5563 !important; fill: none !important; }
-    .ce-story-editor .ql-snow .ql-fill  { fill: #4b5563 !important; stroke: none !important; }
-    .ce-story-editor .ql-snow .ql-stroke.ql-fill { stroke: #4b5563 !important; fill: #4b5563 !important; }
+    /* SVG icon colors */
+    .ce-story-editor .ql-snow .ql-stroke { stroke: #4b5563 !important; }
+    .ce-story-editor .ql-snow .ql-fill  { fill: #4b5563 !important; }
     .ce-story-editor .ql-toolbar button:hover .ql-stroke { stroke: #1d4ed8 !important; }
-    .ce-story-editor .ql-toolbar button:hover .ql-fill  { fill:   #1d4ed8 !important; }
+    .ce-story-editor .ql-toolbar button:hover .ql-fill  { fill: #1d4ed8 !important; }
     .ce-story-editor .ql-toolbar button.ql-active .ql-stroke { stroke: #1d4ed8 !important; }
-    .ce-story-editor .ql-toolbar button.ql-active .ql-fill  { fill:   #1d4ed8 !important; }
+    .ce-story-editor .ql-toolbar button.ql-active .ql-fill  { fill: #1d4ed8 !important; }
 
     /* Pickers */
-    .ce-story-editor .ql-snow .ql-picker,
-    #ce-quill-toolbar .ql-picker { color: #4b5563; font-size: .82rem; font-family: inherit; }
-    .ce-story-editor .ql-snow .ql-picker-options,
-    #ce-quill-toolbar .ql-picker-options {
+    .ce-story-editor .ql-snow .ql-picker { font-size: .82rem; font-family: inherit; }
+    .ce-story-editor .ql-snow .ql-picker-options {
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(0,0,0,.12);
       border: 1px solid #e5e7eb;
       z-index: 9999;
     }
     .ce-story-editor .ql-snow .ql-picker-item:hover { color: #1d4ed8; }
-    .ce-story-editor .ql-snow .ql-picker-label { border: 1px solid #e5e7eb; border-radius: 4px; }
 
     /* Format group separators */
-    .ce-story-editor .ql-formats,
-    #ce-quill-toolbar .ql-formats { margin-right: 4px !important; }
-
+    .ce-story-editor .ql-formats { margin-right: 4px !important; }
 
     /* Rich text content styles */
     .ce-story-editor .ql-editor img {
@@ -2302,10 +2290,8 @@
             <span class="ce-section__sub">Tampil di halaman kampanye</span>
           </div>
           <div class="ce-story-editor" id="ce-story-editor-wrap">
-            <!-- Toolbar is populated by buildQuillToolbar() before Quill init -->
-            <div id="ce-quill-toolbar"></div>
-            <!-- Quill transforms this div into the editor -->
-            <div id="ce-quill-editor"></div>
+            <!-- Quill auto-generates toolbar + editor here -->
+            <div id="ce-quill-editor" style="min-height:300px;"></div>
             <div class="ce-story-footer">
               <span>💡 Sisipkan gambar nyata, statistik, dan rincian penggunaan dana untuk meningkatkan kepercayaan donatur</span>
             </div>
@@ -2713,125 +2699,67 @@ function renderCampaigns() {
 let quillEditor = null;
 let coverImageData = null; // base64 or URL
 
-function buildQuillToolbar() {
-  const toolbar = document.getElementById('ce-quill-toolbar');
-  if (!toolbar) return;
-  toolbar.innerHTML = `
-    <span class="ql-formats">
-      <select class="ql-header">
-        <option value="1">Heading 1</option>
-        <option value="2">Heading 2</option>
-        <option value="3">Heading 3</option>
-        <option selected="">Normal</option>
-      </select>
-    </span>
-    <span class="ql-formats">
-      <button class="ql-bold" title="Bold"></button>
-      <button class="ql-italic" title="Italic"></button>
-      <button class="ql-underline" title="Underline"></button>
-      <button class="ql-strike" title="Strikethrough"></button>
-    </span>
-    <span class="ql-formats">
-      <button class="ql-blockquote" title="Blockquote"></button>
-      <button class="ql-code-block" title="Code Block"></button>
-    </span>
-    <span class="ql-formats">
-      <button class="ql-list" value="bullet" title="Bullet List"></button>
-      <button class="ql-list" value="ordered" title="Ordered List"></button>
-      <button class="ql-indent" value="-1" title="Outdent"></button>
-      <button class="ql-indent" value="+1" title="Indent"></button>
-    </span>
-    <span class="ql-formats">
-      <button class="ql-link" title="Link"></button>
-      <button class="ql-image" title="Sisipkan Gambar"></button>
-      <button class="ql-video" title="Video"></button>
-    </span>
-    <span class="ql-formats">
-      <select class="ql-align">
-        <option selected=""></option>
-        <option value="center"></option>
-        <option value="right"></option>
-        <option value="justify"></option>
-      </select>
-    </span>
-    <span class="ql-formats">
-      <select class="ql-color"></select>
-      <select class="ql-background"></select>
-    </span>
-    <span class="ql-formats">
-      <button class="ql-clean" title="Clear Format"></button>
-    </span>
-  `;
-}
-
 function initQuill() {
-  const editorEl = document.getElementById('ce-quill-editor');
-  if (!editorEl) return;
-  
-  // Reset if Quill object exists but DOM was replaced (e.g., SPA navigation)
-  if (quillEditor && !editorEl.classList.contains('ql-container')) {
-    quillEditor = null;
-  }
-
   if (quillEditor) return;
 
-  try {
-    if (typeof Quill === 'undefined') {
-      console.warn('Quill not loaded yet, retrying...');
-      setTimeout(initQuill, 300);
-      return;
-    }
-    buildQuillToolbar();
-    quillEditor = new Quill('#ce-quill-editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: {
-          container: '#ce-quill-toolbar',
-          handlers: {
-            image: () => { document.getElementById('ce-inline-img-input').click(); },
-          },
-        },
-        history: { delay: 500, maxStack: 200, userOnly: true },
-      },
-      placeholder: 'Tuliskan cerita lengkap kampanye di sini...',
-    });
+  const editorEl = document.getElementById('ce-quill-editor');
+  if (!editorEl) { console.error('ce-quill-editor not found'); return; }
+  if (typeof Quill === 'undefined') { setTimeout(initQuill, 300); return; }
 
-    const imgInput = document.getElementById('ce-inline-img-input');
-    // Remove old listener if re-initializing
-    const newImgInput = imgInput.cloneNode(true);
-    imgInput.parentNode.replaceChild(newImgInput, imgInput);
-    
-    newImgInput.addEventListener('change', function() {
-      const file = this.files[0];
-      if (!file) return;
-      if (file.size > 1048576) {
-        showToast('⚠️ Gambar melebihi 1MB. Kompres dulu sebelum upload.', 'error');
-        this.value = '';
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (!quillEditor) return;
-        const range = quillEditor.getSelection(true);
-        quillEditor.insertEmbed(range.index, 'image', e.target.result);
-        quillEditor.setSelection(range.index + 1);
-      };
-      reader.readAsDataURL(file);
-      this.value = '';
-    });
-  } catch(err) {
-    console.error('Quill init error:', err);
-    showToast('Gagal memuat editor: ' + err.message, 'error');
-    quillEditor = null;
-    setTimeout(initQuill, 1000);
-  }
+  console.log('[CampaignEditor] Initializing Quill...');
+
+  quillEditor = new Quill('#ce-quill-editor', {
+    theme: 'snow',
+    placeholder: 'Tuliskan cerita lengkap kampanye di sini...\n\nCeritakan situasi nyata, dampak yang diharapkan, dan bagaimana donasi akan digunakan.',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ indent: '-1' }, { indent: '+1' }],
+        ['link', 'image', 'video'],
+        [{ align: [] }],
+        [{ color: [] }, { background: [] }],
+        ['clean'],
+      ],
+    },
+  });
+
+  // Custom image handler — use file input instead of URL prompt
+  quillEditor.getModule('toolbar').addHandler('image', function() {
+    document.getElementById('ce-inline-img-input').click();
+  });
+
+  console.log('[CampaignEditor] Quill ready ✓');
 }
+
+// Image upload handler (attached once at page load, not inside initQuill)
+document.getElementById('ce-inline-img-input').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+  if (file.size > 2097152) {
+    showToast('⚠️ Gambar melebihi 2MB', 'error');
+    this.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (!quillEditor) return;
+    const range = quillEditor.getSelection(true);
+    quillEditor.insertEmbed(range.index, 'image', e.target.result);
+    quillEditor.setSelection(range.index + 1);
+  };
+  reader.readAsDataURL(file);
+  this.value = '';
+});
 
 function openCampaignEditor() {
   const overlay = document.getElementById('campaign-modal');
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
-  setTimeout(initQuill, 200);
+  // Init Quill after modal is visible
+  setTimeout(initQuill, 150);
 }
 
 function closeCampaignEditor() {
