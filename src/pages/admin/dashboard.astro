@@ -2773,7 +2773,7 @@ function clearCampaignEditor() {
   coverImageData = null;
   document.getElementById('ce-cover-img').style.display = 'none';
   document.getElementById('ce-cover-placeholder').style.display = '';
-  document.getElementById('ce-cover-actions').style.display = 'none';
+  document.getElementById('ce-cover-hover-overlay').style.display = 'none';
   if (quillEditor) quillEditor.setContents([]);
   document.getElementById('ce-desc-count').textContent = '0';
   document.getElementById('ce-desc-count-main').textContent = '0';
@@ -2794,7 +2794,7 @@ document.getElementById('ce-cover-input').addEventListener('change', function() 
     img.src = coverImageData;
     img.style.display = 'block';
     document.getElementById('ce-cover-placeholder').style.display = 'none';
-    document.getElementById('ce-cover-actions').style.display = 'flex';
+    // overlay shows on hover via CSS — no need to force display here
   };
   reader.readAsDataURL(file);
   this.value = '';
@@ -2804,7 +2804,7 @@ function removeCover() {
   coverImageData = null;
   document.getElementById('ce-cover-img').style.display = 'none';
   document.getElementById('ce-cover-placeholder').style.display = '';
-  document.getElementById('ce-cover-actions').style.display = 'none';
+  document.getElementById('ce-cover-hover-overlay').style.display = 'none';
 }
 
 // Desc char counter
@@ -2852,7 +2852,7 @@ function editCampaign(id) {
     img.src = c.image;
     img.style.display = 'block';
     document.getElementById('ce-cover-placeholder').style.display = 'none';
-    document.getElementById('ce-cover-actions').style.display = 'flex';
+    // overlay will appear on hover via CSS
   }
   openCampaignEditor();
   // Load rich content after Quill init
