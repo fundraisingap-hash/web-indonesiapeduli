@@ -992,22 +992,46 @@
     ════════════════════════════════════════════ */
 
     /* Section blocks */
-    .ce-section { margin-bottom: 1.75rem; }
+    .ce-section { margin-bottom: 2rem; }
+    .ce-section-header {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .75rem;
+    }
     .ce-section__title {
-      font-size: .85rem;
+      font-size: .8rem;
       font-weight: 700;
-      color: #1f2937;
-      margin: 0 0 .65rem 0;
-      letter-spacing: .01em;
+      color: #374151;
+      margin: 0;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .ce-section__badge {
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding: .18rem .5rem;
+      border-radius: 4px;
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .ce-section__sub {
+      font-size: .72rem;
+      color: #9ca3af;
+      font-weight: 400;
     }
 
     /* ── Cover area ── */
     .ce-cover-area {
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
       overflow: hidden;
       background: #fff;
+      transition: border-color .2s;
     }
+    .ce-cover-area:hover { border-color: #1aabe4; }
     .ce-cover-area__preview {
       min-height: 260px;
       display: flex;
@@ -1015,8 +1039,8 @@
       justify-content: center;
       background: #f8fafc;
       cursor: pointer;
+      position: relative;
     }
-    .ce-cover-area__preview:hover { background: #f0f7ff; }
     .ce-cover-area__empty {
       display: flex;
       flex-direction: column;
@@ -1024,43 +1048,66 @@
       gap: .6rem;
       color: #94a3b8;
       font-size: .85rem;
+      text-align: center;
+      padding: 1.5rem;
     }
+    .ce-cover-area__empty strong { color: #4b5563; font-size: .88rem; }
+    .ce-cover-area__empty span { font-size: .77rem; color: #9ca3af; }
     .ce-cover-area__img {
       width: 100%;
-      max-height: 360px;
+      max-height: 380px;
       object-fit: cover;
       display: block;
     }
+    /* Hover overlay when image is loaded */
+    .ce-cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: .75rem;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .ce-cover-area__preview:hover .ce-cover-overlay { opacity: 1; }
+    .ce-cover-overlay button {
+      padding: .5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,.95);
+      color: #1f2937;
+      font-size: .8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .ce-cover-overlay button:hover { background: #fff; }
     .ce-cover-area__meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: .5rem .85rem;
+      padding: .55rem 1rem;
       border-top: 1px solid #f1f5f9;
-      background: #fafbfc;
+      background: #f8fafc;
     }
-    .ce-cover-area__hint {
-      font-size: .72rem;
-      color: #9ca3af;
-    }
+    .ce-cover-area__hint { font-size: .7rem; color: #9ca3af; }
     .ce-cover-area__btn {
-      padding: .35rem .9rem;
-      font-size: .78rem;
+      padding: .35rem .85rem;
+      font-size: .75rem;
       font-family: inherit;
       font-weight: 600;
-      border: 1px solid #1aabe4;
+      border: 1.5px solid #1aabe4;
       border-radius: 6px;
-      background: #fff;
+      background: transparent;
       color: #1aabe4;
       cursor: pointer;
       transition: all .15s;
     }
     .ce-cover-area__btn:hover { background: #1aabe4; color: #fff; }
-    .ce-cover-area__btn--remove {
-      border-color: #fca5a5;
-      color: #dc2626;
-    }
-    .ce-cover-area__btn--remove:hover { background: #fef2f2; color: #dc2626; }
+
 
     /* ── Ajakan Singkat ── */
     .ce-ajakan-wrap {
@@ -1068,233 +1115,184 @@
       border-radius: 10px;
       background: #fff;
       overflow: hidden;
+      transition: border-color .2s;
     }
+    .ce-ajakan-wrap:focus-within { border-color: #1aabe4; box-shadow: 0 0 0 3px #1aabe420; }
     .ce-ajakan-textarea {
       width: 100%;
-      padding: .85rem 1rem;
+      padding: 1rem 1.1rem;
       border: none;
-      resize: vertical;
+      resize: none;
       font-family: inherit;
-      font-size: .88rem;
-      line-height: 1.65;
+      font-size: .92rem;
+      line-height: 1.7;
       color: #374151;
       background: transparent;
       outline: none;
-      min-height: 72px;
+      min-height: 90px;
     }
-    .ce-ajakan-textarea::placeholder { color: #d1d5db; }
-    .ce-ajakan-textarea:focus { box-shadow: inset 0 0 0 2px #1aabe420; }
-    .ce-ajakan-count {
-      text-align: right;
-      padding: .3rem .85rem;
-      font-size: .7rem;
-      color: #9ca3af;
+    .ce-ajakan-textarea::placeholder { color: #c4c9d4; }
+    .ce-ajakan-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .4rem .85rem;
       border-top: 1px solid #f3f4f6;
       background: #fafbfc;
     }
-    .ce-ajakan-count span { font-weight: 700; color: #6b7280; }
+    .ce-ajakan-tip { font-size: .7rem; color: #6b7280; }
+    .ce-ajakan-count { font-size: .7rem; color: #9ca3af; font-weight: 600; }
+    .ce-ajakan-count span { color: #374151; }
 
-    /* ── Story editor (Quill) ── */
+    /* ── Story editor (Quill native toolbar) ── */
     .ce-story-editor {
       border: 1px solid #e5e7eb;
       border-radius: 10px;
       background: #fff;
       overflow: visible;
       position: relative;
+      transition: border-color .2s;
     }
+    .ce-story-editor:focus-within { border-color: #1aabe4; }
 
-    /* Quill toolbar */
-    #ce-quill-toolbar.ql-toolbar.ql-snow {
+    /* Quill native toolbar — generated by Quill JS */
+    .ce-story-editor .ql-toolbar.ql-snow {
       border: none !important;
-      border-bottom: 1px solid #e5e7eb !important;
-      background: #fafbfc;
+      border-bottom: 1px solid #eef0f4 !important;
+      background: #f8f9fc;
       padding: 8px 12px;
       border-radius: 10px 10px 0 0;
+      flex-wrap: wrap;
     }
-
-    /* ── Quill SVG Icon Fix ─────────────────────────
-       Quill uses these SVG classes:
-       .ql-stroke       → stroke only (most icons)
-       .ql-fill         → solid fill (some icons)
-       .ql-even         → even-odd fill
-       .ql-thin         → thinner stroke
-       .ql-transparent  → must stay transparent fill
-    ──────────────────────────────────────────────── */
-    .ql-snow .ql-stroke {
-      stroke: #555 !important;
-      fill: none !important;
+    .ce-story-editor .ql-container.ql-snow {
+      border: none !important;
+      border-radius: 0 0 10px 10px;
     }
-    .ql-snow .ql-fill {
-      fill: #555 !important;
-      stroke: none !important;
-    }
-    .ql-snow .ql-stroke.ql-fill {
-      fill: #555 !important;
-      stroke: #555 !important;
-    }
-    .ql-snow .ql-even {
-      fill: #555 !important;
-      stroke: #555 !important;
-    }
-    .ql-snow .ql-thin {
-      stroke: #555 !important;
-      stroke-width: 1 !important;
-    }
-    .ql-snow .ql-transparent {
-      opacity: 0.4;
-    }
-    /* Picker label arrows */
-    .ql-snow .ql-picker-label .ql-stroke {
-      stroke: #555 !important;
-      fill: none !important;
-    }
-
-    /* ── Hover & active states ── */
-    .ql-snow .ql-toolbar button:hover .ql-stroke,
-    .ql-snow.ql-toolbar button:hover .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button:hover .ql-fill,
-    .ql-snow.ql-toolbar button:hover .ql-fill { fill: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button:hover .ql-even,
-    .ql-snow.ql-toolbar button:hover .ql-even { fill: #1aabe4 !important; stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active .ql-stroke,
-    .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active .ql-fill,
-    .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active .ql-even,
-    .ql-snow.ql-toolbar button.ql-active .ql-even { fill: #1aabe4 !important; stroke: #1aabe4 !important; }
-    .ql-snow .ql-toolbar button.ql-active { color: #1aabe4 !important; }
-
-    /* Button sizing & hover bg */
-    .ql-snow .ql-toolbar button,
-    .ql-snow.ql-toolbar button {
-      width: 28px !important;
-      height: 28px !important;
-      padding: 3px 5px !important;
-      border-radius: 4px !important;
-      transition: background .12s;
-    }
-    .ql-snow .ql-toolbar button:hover,
-    .ql-snow.ql-toolbar button:hover { background: #e8f4fd !important; }
-    .ql-snow .ql-toolbar button.ql-active,
-    .ql-snow.ql-toolbar button.ql-active { background: #dbeafe !important; }
-
-    /* Undo/redo custom buttons */
-    .ql-undo-custom, .ql-redo-custom {
-      float: left;
-      width: 28px !important;
-      height: 28px !important;
-      padding: 5px !important;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      color: #555;
-      border-radius: 4px !important;
-      transition: background .12s;
-    }
-    .ql-undo-custom:hover, .ql-redo-custom:hover { background: #e8f4fd !important; color: #1aabe4; }
-
-    /* Pickers */
-    .ql-snow .ql-picker { color: #555; font-family: inherit; font-size: .82rem; }
-    .ql-snow .ql-picker-label:hover { color: #1aabe4 !important; }
-    .ql-snow .ql-picker-label:hover .ql-stroke { stroke: #1aabe4 !important; }
-    .ql-snow .ql-picker-options {
-      border-radius: 8px;
-      box-shadow: 0 6px 20px rgba(0,0,0,.12);
-      border: 1px solid #e5e7eb;
-      z-index: 10;
-    }
-
-    /* Format groups */
-    .ql-toolbar.ql-snow .ql-formats {
-      margin-right: 8px !important;
-      padding-right: 8px !important;
-      border-right: 1px solid #e5e7eb;
-    }
-    .ql-toolbar.ql-snow .ql-formats:last-child { border-right: none; }
-
-
-    /* Editor area */
-    .ql-container.ql-snow { border: none !important; }
-    #ce-quill-editor .ql-editor {
+    .ce-story-editor .ql-editor {
       padding: 1.5rem 1.75rem;
-      min-height: 400px;
+      min-height: 380px;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: .95rem;
-      line-height: 1.8;
-      color: #222;
+      line-height: 1.85;
+      color: #1f2937;
       caret-color: #1aabe4;
     }
-    #ce-quill-editor .ql-editor.ql-blank::before {
-      color: #ccc;
+    .ce-story-editor .ql-editor.ql-blank::before {
+      color: #c4c9d4;
       font-style: normal;
       font-size: .92rem;
-      left: 1.75rem;
     }
 
-    /* Images */
-    #ce-quill-editor .ql-editor img {
+    /* Toolbar buttons */
+    .ce-story-editor .ql-toolbar button {
+      border-radius: 5px !important;
+      transition: background .12s, color .12s;
+      color: #4b5563;
+    }
+    .ce-story-editor .ql-toolbar button:hover { background: #e8f0fe !important; }
+    .ce-story-editor .ql-toolbar button.ql-active { background: #dbeafe !important; color: #1d4ed8 !important; }
+
+    /* Toolbar SVG icons — Quill-generated, just theme the colors */
+    .ce-story-editor .ql-snow .ql-stroke { stroke: #4b5563 !important; }
+    .ce-story-editor .ql-snow .ql-fill { fill: #4b5563 !important; }
+    .ce-story-editor .ql-toolbar button:hover .ql-stroke { stroke: #1d4ed8 !important; }
+    .ce-story-editor .ql-toolbar button:hover .ql-fill { fill: #1d4ed8 !important; }
+    .ce-story-editor .ql-toolbar button.ql-active .ql-stroke { stroke: #1d4ed8 !important; }
+    .ce-story-editor .ql-toolbar button.ql-active .ql-fill { fill: #1d4ed8 !important; }
+
+    /* Pickers */
+    .ce-story-editor .ql-snow .ql-picker { color: #4b5563; font-size: .82rem; }
+    .ce-story-editor .ql-snow .ql-picker-options {
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      border: 1px solid #e5e7eb;
+      z-index: 100;
+    }
+    .ce-story-editor .ql-snow .ql-picker-item:hover { color: #1d4ed8; }
+
+    /* Format group separators */
+    .ce-story-editor .ql-formats { margin-right: 4px !important; }
+
+    /* Rich text content styles */
+    .ce-story-editor .ql-editor img {
       max-width: 100%;
-      border-radius: 6px;
-      margin: 1rem 0;
+      border-radius: 8px;
+      margin: 1.25rem 0;
       display: block;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
     }
-
-    /* Headings */
-    #ce-quill-editor .ql-editor h1 { font-size: 1.6rem; font-weight: 800; color: #111; margin: 1.25rem 0 .5rem; }
-    #ce-quill-editor .ql-editor h2 { font-size: 1.3rem; font-weight: 700; color: #222; margin: 1rem 0 .4rem; }
-    #ce-quill-editor .ql-editor h3 { font-size: 1.1rem; font-weight: 700; color: #333; margin: .85rem 0 .35rem; }
-
-    /* Blockquote */
-    #ce-quill-editor .ql-editor blockquote {
+    .ce-story-editor .ql-editor h1 { font-size: 1.6rem; font-weight: 800; color: #111827; margin: 1.5rem 0 .6rem; }
+    .ce-story-editor .ql-editor h2 { font-size: 1.3rem; font-weight: 700; color: #1f2937; margin: 1.25rem 0 .5rem; }
+    .ce-story-editor .ql-editor h3 { font-size: 1.1rem; font-weight: 700; color: #374151; margin: 1rem 0 .4rem; }
+    .ce-story-editor .ql-editor blockquote {
       border-left: 4px solid #1aabe4;
-      padding: .65rem 1.1rem;
-      margin: 1rem 0;
-      background: #f8fbff;
-      color: #555;
+      padding: .75rem 1.25rem;
+      margin: 1.25rem 0;
+      background: #f0f9ff;
+      color: #0c4a6e;
       font-style: italic;
+      border-radius: 0 8px 8px 0;
+    }
+    .ce-story-editor .ql-editor pre.ql-syntax {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: .85rem;
+    }
+    .ce-story-editor .ql-editor ul, .ce-story-editor .ql-editor ol { padding-left: 1.75rem; }
+    .ce-story-editor .ql-editor li { margin-bottom: .4rem; }
+    .ce-story-editor .ql-editor .ql-video {
+      width: 100%; aspect-ratio: 16/9;
+      border-radius: 8px; margin: 1.25rem 0; display: block;
     }
 
-    /* Lists */
-    #ce-quill-editor .ql-editor ul, #ce-quill-editor .ql-editor ol { padding-left: 1.5rem; }
-    #ce-quill-editor .ql-editor li { margin-bottom: .3rem; }
-
-    /* Video */
-    #ce-quill-editor .ql-editor .ql-video {
-      width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 6px;
-      margin: 1rem 0;
-      display: block;
-    }
-
-    /* Story hint */
-    .ce-story-hint {
-      padding: .5rem 1rem;
-      font-size: .72rem;
+    /* Story footer hint */
+    .ce-story-footer {
+      padding: .6rem 1.1rem;
+      font-size: .71rem;
       color: #9ca3af;
       border-top: 1px solid #f3f4f6;
       background: #fafbfc;
+      border-radius: 0 0 10px 10px;
     }
 
     /* ── Save row ── */
     .ce-save-row {
       display: flex;
+      align-items: center;
       justify-content: flex-end;
-      padding: .75rem 0 1.5rem;
+      gap: .75rem;
+      padding: .75rem 0 2rem;
     }
     .ce-save-main {
-      padding: .6rem 1.5rem;
-      font-size: .85rem;
+      padding: .65rem 1.75rem;
+      font-size: .88rem;
       font-weight: 700;
       font-family: inherit;
       border: none;
-      border-radius: 8px;
-      background: #1a4b8c;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #1aabe4, #0e8fc4);
       color: #fff;
       cursor: pointer;
-      transition: background .15s;
+      transition: all .18s;
+      box-shadow: 0 2px 10px #1aabe440;
     }
-    .ce-save-main:hover { background: #133a6d; }
+    .ce-save-main:hover { transform: translateY(-1px); box-shadow: 0 4px 16px #1aabe450; background: linear-gradient(135deg, #0e8fc4, #0a72a0); }
+    .ce-btn-ghost {
+      padding: .65rem 1.25rem;
+      font-size: .85rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: 1.5px solid #d1d5db;
+      border-radius: 9px;
+      background: #fff;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .ce-btn-ghost:hover { border-color: #9ca3af; color: #374151; background: #f9fafb; }
+
 
 
     /* ── Short desc textarea ── */
@@ -2246,92 +2244,66 @@
 
         <!-- ── Section 1: Cover Galang Dana ── -->
         <div class="ce-section">
-          <h3 class="ce-section__title">Cover Galang Dana</h3>
+          <div class="ce-section-header">
+            <h3 class="ce-section__title">Cover Galang Dana</h3>
+            <span class="ce-section__badge">Wajib</span>
+          </div>
           <div class="ce-cover-area" id="ce-cover-wrap">
             <div class="ce-cover-area__preview" id="ce-cover-preview">
               <div class="ce-cover-area__empty" id="ce-cover-placeholder">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                <span>Klik atau drag gambar cover kampanye</span>
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5" fill="#94a3b8" stroke="none"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                <strong>Klik untuk upload cover</strong>
+                <span>atau drag & drop gambar ke sini</span>
               </div>
               <img id="ce-cover-img" src="" alt="Cover" class="ce-cover-area__img" style="display:none" />
+              <div class="ce-cover-overlay" id="ce-cover-hover-overlay" style="display:none">
+                <button type="button" onclick="document.getElementById('ce-cover-input').click()">🔄 Ganti Cover</button>
+                <button type="button" onclick="removeCover()">🗑 Hapus</button>
+              </div>
             </div>
             <div class="ce-cover-area__meta">
-              <span class="ce-cover-area__hint">Recommended: 816 x 460px · Format: PNG, JPG, JPEG · Max 2MB</span>
-              <button type="button" class="ce-cover-area__btn" id="ce-cover-change-btn" onclick="document.getElementById('ce-cover-input').click()">Ganti Cover</button>
-            </div>
-            <div id="ce-cover-actions" style="display:none">
-              <button type="button" class="ce-cover-area__btn ce-cover-area__btn--remove" onclick="removeCover()">✕ Hapus Cover</button>
+              <span class="ce-cover-area__hint">📐 Recommended: 816 × 460px &nbsp;·&nbsp; PNG, JPG, JPEG &nbsp;·&nbsp; Max 2MB</span>
+              <button type="button" class="ce-cover-area__btn" onclick="document.getElementById('ce-cover-input').click()">Upload Cover</button>
             </div>
           </div>
         </div>
 
         <!-- ── Section 2: Ajakan Singkat ── -->
         <div class="ce-section">
-          <h3 class="ce-section__title">Ajakan Singkat</h3>
+          <div class="ce-section-header">
+            <h3 class="ce-section__title">Ajakan Singkat</h3>
+            <span class="ce-section__sub">Tampil di card kampanye</span>
+          </div>
           <div class="ce-ajakan-wrap">
             <textarea class="ce-ajakan-textarea" id="modal-desc-main"
-                      placeholder="Tuliskan kalimat ajakan yang singkat dan kuat untuk menarik perhatian donatur..."
-                      maxlength="300" rows="3"></textarea>
-            <div class="ce-ajakan-count"><span id="ce-desc-count-main">0</span>/300</div>
+                      placeholder="Tuliskan kalimat ajakan yang singkat dan kuat untuk menarik perhatian donatur. Ceritakan urgensi situasi..."
+                      maxlength="300" rows="4"></textarea>
+            <div class="ce-ajakan-footer">
+              <span class="ce-ajakan-tip">💡 Kalimat pembuka yang kuat meningkatkan konversi hingga 3x</span>
+              <span class="ce-ajakan-count"><span id="ce-desc-count-main">0</span>/300</span>
+            </div>
           </div>
         </div>
 
         <!-- ── Section 3: Cerita Lengkap ── -->
         <div class="ce-section">
-          <h3 class="ce-section__title">Cerita Lengkap</h3>
+          <div class="ce-section-header">
+            <h3 class="ce-section__title">Cerita Lengkap</h3>
+            <span class="ce-section__sub">Tampil di halaman kampanye</span>
+          </div>
           <div class="ce-story-editor">
-            <!-- Quill toolbar -->
-            <div id="ce-quill-toolbar">
-              <span class="ql-formats">
-                <select class="ql-header">
-                  <option value="1">Heading 1</option>
-                  <option value="2">Heading 2</option>
-                  <option value="3">Heading 3</option>
-                  <option selected>Normal</option>
-                </select>
-              </span>
-              <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-              </span>
-              <span class="ql-formats">
-                <button class="ql-blockquote"></button>
-              </span>
-              <span class="ql-formats">
-                <button class="ql-list" value="bullet"></button>
-                <button class="ql-list" value="ordered"></button>
-              </span>
-              <span class="ql-formats">
-                <button class="ql-link"></button>
-                <button class="ql-image" title="Upload Gambar"></button>
-                <button class="ql-video"></button>
-              </span>
-              <span class="ql-formats">
-                <button class="ql-align" value=""></button>
-                <button class="ql-align" value="center"></button>
-                <button class="ql-align" value="right"></button>
-              </span>
-              <span class="ql-formats">
-                <button class="ql-undo-custom" title="Undo" onclick="if(quillEditor)quillEditor.history.undo()">
-                  <svg viewBox="0 0 18 18" width="18" height="18"><path d="M6 10l-4-4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 6h10a4 4 0 010 8H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <button class="ql-redo-custom" title="Redo" onclick="if(quillEditor)quillEditor.history.redo()">
-                  <svg viewBox="0 0 18 18" width="18" height="18"><path d="M12 10l4-4-4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 6H6a4 4 0 000 8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-              </span>
-            </div>
-            <!-- Editor content -->
+            <!-- #ce-quill-editor — Quill auto-generates toolbar above this div -->
             <div id="ce-quill-editor"></div>
-            <div class="ce-story-hint">
-              💡 Ceritakan situasi nyata, dampak yang diharapkan, rincian penggunaan dana. Klik 🖼️ untuk sisipkan gambar. Max 1MB/gambar.
+            <div class="ce-story-footer">
+              <span>💡 Sisipkan gambar nyata, statistik, dan rincian penggunaan dana untuk meningkatkan kepercayaan donatur</span>
             </div>
           </div>
         </div>
 
-        <!-- ── Save button ── -->
+        <!-- ── Save row ── -->
         <div class="ce-save-row">
-          <button type="button" class="ce-save-main" onclick="saveCampaign('aktif')">Simpan Perubahan</button>
+          <button type="button" class="ce-btn-ghost" onclick="saveCampaign('draft')">💾 Simpan Draft</button>
+          <button type="button" class="ce-save-main" onclick="saveCampaign('aktif')">🚀 Publish Kampanye</button>
         </div>
       </div>
 
@@ -2734,17 +2706,27 @@ function initQuill() {
   quillEditor = new Quill('#ce-quill-editor', {
     theme: 'snow',
     modules: {
-      toolbar: { container: '#ce-quill-toolbar' },
+      toolbar: {
+        container: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          ['blockquote', 'code-block'],
+          [{ 'list': 'bullet' }, { 'list': 'ordered' }, { 'indent': '-1' }, { 'indent': '+1' }],
+          ['link', 'image', 'video'],
+          [{ 'align': [] }],
+          [{ 'color': [] }, { 'background': [] }],
+          ['clean'],
+        ],
+        handlers: {
+          image: () => { document.getElementById('ce-inline-img-input').click(); },
+        },
+      },
       history: { delay: 500, maxStack: 200, userOnly: true },
     },
     placeholder: 'Tuliskan cerita lengkap kampanye di sini...\n\nCeritakan situasi nyata yang dihadapi, dampak yang diharapkan, dan bagaimana donasi akan digunakan.',
   });
 
-  // Override image handler to use file upload → base64
-  quillEditor.getModule('toolbar').addHandler('image', () => {
-    document.getElementById('ce-inline-img-input').click();
-  });
-
+  // Image file input handler (triggered by toolbar image button via custom handler)
   document.getElementById('ce-inline-img-input').addEventListener('change', function() {
     const file = this.files[0];
     if (!file) return;
