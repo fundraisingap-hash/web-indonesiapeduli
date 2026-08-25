@@ -2765,7 +2765,16 @@ function buildQuillToolbar() {
 }
 
 function initQuill() {
+  const editorEl = document.getElementById('ce-quill-editor');
+  if (!editorEl) return;
+  
+  // Reset if Quill object exists but DOM was replaced (e.g., SPA navigation)
+  if (quillEditor && !editorEl.classList.contains('ql-container')) {
+    quillEditor = null;
+  }
+
   if (quillEditor) return;
+
   try {
     if (typeof Quill === 'undefined') {
       console.warn('Quill not loaded yet, retrying...');
@@ -2787,7 +2796,12 @@ function initQuill() {
       placeholder: 'Tuliskan cerita lengkap kampanye di sini...',
     });
 
-    document.getElementById('ce-inline-img-input').addEventListener('change', function() {
+    const imgInput = document.getElementById('ce-inline-img-input');
+    // Remove old listener if re-initializing
+    const newImgInput = imgInput.cloneNode(true);
+    imgInput.parentNode.replaceChild(newImgInput, imgInput);
+    
+    newImgInput.addEventListener('change', function() {
       const file = this.files[0];
       if (!file) return;
       if (file.size > 1048576) {
@@ -2797,6 +2811,7 @@ function initQuill() {
       }
       const reader = new FileReader();
       reader.onload = (e) => {
+        if (!quillEditor) return;
         const range = quillEditor.getSelection(true);
         quillEditor.insertEmbed(range.index, 'image', e.target.result);
         quillEditor.setSelection(range.index + 1);
@@ -2806,8 +2821,9 @@ function initQuill() {
     });
   } catch(err) {
     console.error('Quill init error:', err);
+    showToast('Gagal memuat editor: ' + err.message, 'error');
     quillEditor = null;
-    setTimeout(initQuill, 500);
+    setTimeout(initQuill, 1000);
   }
 }
 
