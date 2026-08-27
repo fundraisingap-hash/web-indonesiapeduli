@@ -413,24 +413,25 @@
     }
     .filter-select:focus { border-color: var(--green); }
     table { width: 100%; border-collapse: collapse; }
-    thead tr { background: var(--gray-50); }
+    thead tr { background: #f1f5f9; }
     th {
-      padding: .7rem 1rem;
+      padding: .85rem 1rem;
       text-align: left;
       font-size: .75rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: .05em;
+      letter-spacing: .08em;
       color: var(--gray-500);
       white-space: nowrap;
     }
+    tbody tr { transition: all var(--transition); border-left: 3px solid transparent; }
     td {
       padding: .8rem 1rem;
       font-size: .85rem;
       color: var(--gray-700);
       border-top: 1px solid var(--gray-100);
     }
-    tbody tr:hover { background: var(--gray-50); }
+    tbody tr:hover { background: var(--gray-50); border-left-color: var(--green); }
     .table-empty { text-align:center; padding: 3rem; color: var(--gray-400); font-size: .9rem; }
 
     /* Badges */
@@ -452,14 +453,16 @@
 
     /* Action buttons */
     .btn-action {
-      padding: .3rem .7rem;
-      border-radius: var(--radius-sm);
-      font-size: .78rem;
+      padding: .4rem;
+      border-radius: var(--radius-full);
+      font-size: .9rem;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       border: none;
       transition: all var(--transition);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
     }
     .btn-edit   { background: var(--blue-pale); color: #1d4ed8; }
     .btn-edit:hover { background: #dbeafe; }
@@ -473,8 +476,47 @@
     .btn-view:hover { background: var(--gray-200); }
 
     /* Progress mini */
-    .mini-progress { width: 80px; height: 6px; background: var(--gray-200); border-radius: var(--radius-full); overflow:hidden; }
-    .mini-progress-bar { height: 100%; background: var(--green); border-radius: var(--radius-full); }
+    .mini-progress { width: 120px; height: 8px; background: var(--gray-200); border-radius: var(--radius-full); overflow:hidden; }
+    .mini-progress-bar { height: 100%; background: linear-gradient(to right, var(--green), #3b82f6); border-radius: var(--radius-full); }
+
+    /* Campaign Custom Styles */
+    .camp-thumb {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f1f5f9;
+      flex-shrink: 0;
+    }
+    .camp-initial {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .camp-stat-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+    }
+    .camp-stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .camp-stat-value { font-size: 1.3rem; font-weight: 800; color: #1f2937; }
+    .camp-stat-label { font-size: .72rem; color: #9ca3af; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
 
     /* ═══════════════════════════════════════════════
        BUTTONS
@@ -1666,9 +1708,44 @@
         </div>
         <button class="btn-primary" id="btn-add-campaign">➕ Tambah Kampanye</button>
       </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem;">
+        <div class="camp-stat-card">
+          <div class="camp-stat-icon" style="background:var(--blue-pale);color:#1d4ed8;">📋</div>
+          <div>
+            <div class="camp-stat-value" id="camp-stat-total">0</div>
+            <div class="camp-stat-label">Total Kampanye</div>
+          </div>
+        </div>
+        <div class="camp-stat-card">
+          <div class="camp-stat-icon" style="background:var(--amber-pale);color:#92400e;">🎯</div>
+          <div>
+            <div class="camp-stat-value" id="camp-stat-target">Rp0</div>
+            <div class="camp-stat-label">Total Target</div>
+          </div>
+        </div>
+        <div class="camp-stat-card">
+          <div class="camp-stat-icon" style="background:var(--green-pale);color:var(--green);">💰</div>
+          <div>
+            <div class="camp-stat-value" id="camp-stat-raised">Rp0</div>
+            <div class="camp-stat-label">Total Terkumpul</div>
+          </div>
+        </div>
+        <div class="camp-stat-card">
+          <div class="camp-stat-icon" style="background:var(--purple-pale);color:#6d28d9;">📈</div>
+          <div>
+            <div class="camp-stat-value" id="camp-stat-avg-progress">0%</div>
+            <div class="camp-stat-label">Rata-rata Progress</div>
+          </div>
+        </div>
+      </div>
+
       <div class="table-card">
         <div class="table-card-header">
-          <div class="table-card-title" id="camp-count">Semua Kampanye</div>
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <div class="table-card-title">Semua Kampanye</div>
+            <span class="badge badge-gray" id="camp-count">0 Kampanye</span>
+          </div>
           <div class="table-tools">
             <input type="search" class="search-input" id="camp-search" placeholder="🔍 Cari kampanye..." />
             <select class="filter-select" id="camp-cat-filter">
@@ -1691,7 +1768,7 @@
           <table>
             <thead><tr>
               <th>Kampanye</th><th>Kategori</th><th>Target</th>
-              <th>Terkumpul</th><th>Progress</th><th>Donatur</th>
+              <th>Terkumpul</th><th>Progress</th><th>Hari Tersisa</th>
               <th>Status</th><th>Aksi</th>
             </tr></thead>
             <tbody id="campaigns-table-body"></tbody>
@@ -2818,31 +2895,82 @@ function renderCampaigns() {
 
   document.getElementById('camp-count').textContent = `${list.length} Kampanye`;
 
+  // Update stat cards
+  document.getElementById('camp-stat-total').textContent = list.length;
+  const totalTarget = list.reduce((sum, c) => sum + (c.target || 0), 0);
+  const totalRaised = list.reduce((sum, c) => sum + (c.raised || 0), 0);
+  document.getElementById('camp-stat-target').textContent = fmtRpFull(totalTarget);
+  document.getElementById('camp-stat-raised').textContent = fmtRpFull(totalRaised);
+  const avgProgress = list.length > 0 ? (totalRaised / (totalTarget || 1) * 100) : 0;
+  document.getElementById('camp-stat-avg-progress').textContent = `${isNaN(avgProgress) || !isFinite(avgProgress) ? 0 : Math.round(avgProgress)}%`;
+
   const tbody = document.getElementById('campaigns-table-body');
   tbody.innerHTML = list.length === 0
     ? `<tr><td colspan="8" class="table-empty">Tidak ada kampanye ditemukan</td></tr>`
     : list.map(c => {
       const p = pct(c.raised, c.target);
+      
+      let pColor = 'var(--red)';
+      if (p >= 75) pColor = 'var(--green)';
+      else if (p >= 40) pColor = 'var(--amber)';
+
+      const bgColors = ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444'];
+      const bg = bgColors[c.id % bgColors.length];
+      const thumbHtml = c.image 
+        ? `<img src="${c.image}" class="camp-thumb" alt="Cover" />` 
+        : `<div class="camp-initial" style="background:${bg};">${c.titleId.charAt(0).toUpperCase()}</div>`;
+
+      let statusDotColor = '#94a3b8';
+      let statusText = escHtml(c.status);
+      let statusBg = 'var(--gray-100)';
+      let statusColor = 'var(--gray-600)';
+      if(c.status === 'aktif') {
+        statusDotColor = '#10b981';
+        statusBg = 'var(--green-pale)';
+        statusColor = 'var(--green)';
+        statusText = 'Aktif';
+      } else if (c.status === 'draft') {
+        statusDotColor = '#94a3b8';
+        statusBg = 'var(--gray-100)';
+        statusColor = 'var(--gray-600)';
+        statusText = 'Draft';
+      } else if (c.status === 'selesai') {
+        statusDotColor = '#3b82f6';
+        statusBg = 'var(--blue-pale)';
+        statusColor = '#1d4ed8';
+        statusText = 'Selesai';
+      }
+      const statusHtml = `<span class="badge" style="background:${statusBg};color:${statusColor};"><div style="width:6px;height:6px;border-radius:50%;background:${statusDotColor};margin-right:2px;"></div>${statusText}</span>`;
+
+      const daysLeft = c.endDate ? Math.ceil((new Date(c.endDate) - new Date()) / (1000 * 60 * 60 * 24)) : 30;
+
       return `<tr>
-        <td style="max-width:180px;">
-          <div style="font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.titleId)}</div>
-          <div style="font-size:.75rem;color:var(--gray-400);">${escHtml(c.org)}</div>
+        <td>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            ${thumbHtml}
+            <div style="max-width:200px;">
+              <div style="font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gray-900);">${escHtml(c.titleId)}</div>
+              <div style="font-size:.75rem;color:var(--gray-500);font-weight:500;">${escHtml(c.org)}</div>
+            </div>
+          </div>
         </td>
         <td>${catBadge(c.category)}</td>
         <td style="font-size:.82rem;">${fmtRp(c.target)}</td>
-        <td class="fw-bold text-green" style="font-size:.88rem;">${fmtRp(c.raised)}</td>
+        <td class="fw-bold" style="font-size:.88rem;color:var(--green);">${fmtRp(c.raised)}</td>
         <td>
-          <div style="display:flex;align-items:center;gap:.5rem;">
-            <div class="mini-progress"><div class="mini-progress-bar" style="width:${p}%;"></div></div>
-            <span style="font-size:.78rem;font-weight:700;color:var(--green);">${p}%</span>
+          <div style="display:flex;align-items:center;gap:.6rem;">
+            <div class="mini-progress"><div class="mini-progress-bar" style="width:${p}%; background:${pColor};"></div></div>
+            <span style="font-size:.78rem;font-weight:800;color:${pColor};">${p}%</span>
           </div>
         </td>
-        <td style="font-size:.82rem;">${c.donors.toLocaleString('id-ID')}</td>
-        <td>${statusBadge(c.status)}</td>
+        <td style="font-size:.82rem;font-weight:600;color:var(--gray-600);">${Math.max(0, daysLeft)} Hari</td>
+        <td>${statusHtml}</td>
         <td>
           <div style="display:flex;gap:.3rem;flex-wrap:wrap;">
-            <button class="btn-action btn-edit" onclick="editCampaign(${c.id})">✏️ Edit</button>
-            <button class="btn-action btn-delete" onclick="deleteCampaign(${c.id})">🗑️</button>
+            <a href="/campaigns/${c.slug || c.id}" class="btn-action btn-view" style="text-decoration:none;" title="View">👁️</a>
+            <button class="btn-action btn-edit" title="Edit" onclick="editCampaign(${c.id})">✏️</button>
+            <button class="btn-action btn-view" title="Stats">📊</button>
+            <button class="btn-action btn-delete" title="Delete" onclick="deleteCampaign(${c.id})">🗑️</button>
           </div>
         </td>
       </tr>`;
