@@ -13,8 +13,11 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
   <!-- ── HERO ─────────────────────────────────────── -->
   <section class="hero" id="hero">
     <div class="hero__bg"></div>
-    <img src="/images/hero-banner.jpg" alt="Indonesia Peduli Sesama" class="hero__img" loading="eager" fetchpriority="high" />
+    <div class="hero__carousel" id="hero-carousel">
+      <img src="/images/hero-banner.jpg" alt="" class="hero__slide hero__slide--active" />
+    </div>
     <div class="hero__overlay"></div>
+    <div class="hero__dots" id="hero-dots"></div>
 
     <div class="hero__particles" aria-hidden="true">
       {Array.from({length:12}).map((_,i) => (
@@ -65,11 +68,52 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
   <script is:inline>
   (function() {
     try {
-      // Load hero image
-      var heroImg = localStorage.getItem('ips_hero_image');
-      if (heroImg) {
-        var img = document.querySelector('.hero__img');
-        if (img) img.src = heroImg;
+      // Load hero carousel images
+      var carousel = document.getElementById('hero-carousel');
+      var dotsWrap = document.getElementById('hero-dots');
+      var slidesRaw = localStorage.getItem('ips_hero_slides');
+      if (slidesRaw && carousel) {
+        try {
+          var slides = JSON.parse(slidesRaw);
+          if (slides.length > 0) {
+            carousel.innerHTML = '';
+            slides.forEach(function(src, i) {
+              var img = document.createElement('img');
+              img.src = src;
+              img.alt = '';
+              img.className = 'hero__slide' + (i === 0 ? ' hero__slide--active' : '');
+              carousel.appendChild(img);
+            });
+            // Dots
+            if (dotsWrap && slides.length > 1) {
+              dotsWrap.innerHTML = '';
+              slides.forEach(function(_, i) {
+                var dot = document.createElement('button');
+                dot.className = 'hero__dot' + (i === 0 ? ' hero__dot--active' : '');
+                dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                dot.onclick = function() { goToSlide(i); };
+                dotsWrap.appendChild(dot);
+              });
+            }
+            // Auto-rotate
+            var current = 0;
+            window.goToSlide = function(idx) {
+              var allSlides = carousel.querySelectorAll('.hero__slide');
+              var allDots = dotsWrap ? dotsWrap.querySelectorAll('.hero__dot') : [];
+              allSlides.forEach(function(s) { s.classList.remove('hero__slide--active'); });
+              allDots.forEach(function(d) { d.classList.remove('hero__dot--active'); });
+              if (allSlides[idx]) allSlides[idx].classList.add('hero__slide--active');
+              if (allDots[idx]) allDots[idx].classList.add('hero__dot--active');
+              current = idx;
+            };
+            if (slides.length > 1) {
+              setInterval(function() {
+                current = (current + 1) % slides.length;
+                window.goToSlide(current);
+              }, 5000);
+            }
+          }
+        } catch(e) {}
       }
 
       // Load settings
@@ -91,7 +135,7 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
         var imgOpacity = Math.min(1, 0.3 + (1 - op) * 0.7);
         var css = ''
           + '.hero__bg { background: rgb(' + r + ',' + g + ',' + b + ') !important; }'
-          + '.hero__img { opacity: ' + imgOpacity.toFixed(2) + ' !important; mix-blend-mode: normal !important; }'
+          + '.hero__slide--active { opacity: ' + imgOpacity.toFixed(2) + ' !important; }'
           + '.hero__overlay { background: linear-gradient(to right, rgba(' + r + ',' + g + ',' + b + ',' + op + ') 40%, rgba(' + r + ',' + g + ',' + b + ',' + opFade + ') 100%) !important; }';
         var tag = document.createElement('style');
         tag.textContent = css;
