@@ -512,6 +512,7 @@
       gap: .4rem;
     }
     .btn-outline:hover { border-color: var(--gray-400); color: var(--gray-800); }
+    .btn-sm { padding: .4rem .75rem; font-size: .78rem; border-radius: 6px; }
     .btn-success {
       padding: .6rem 1.2rem;
       background: var(--green-pale);
@@ -1830,6 +1831,8 @@
         <!-- Payment Gateway -->
         <div class="settings-card">
           <div class="settings-card-title">💳 Payment Gateway</div>
+
+          <!-- Midtrans -->
           <div class="toggle-row">
             <div>
               <div class="toggle-label">Midtrans</div>
@@ -1838,10 +1841,24 @@
             <label class="toggle"><input type="checkbox" id="pg-midtrans" checked /><span class="toggle-slider"></span></label>
           </div>
           <div class="form-group" style="margin-top:.75rem;">
-            <label class="form-label">Midtrans Server Key</label>
+            <label class="form-label">Server Key</label>
             <input type="password" class="form-input" id="cfg-midtrans-key" placeholder="SB-Mid-server-xxxx" />
           </div>
+          <div class="form-group">
+            <label class="form-label">Client Key</label>
+            <input type="text" class="form-input" id="cfg-midtrans-client" placeholder="SB-Mid-client-xxxx" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Webhook URL <span style="font-size:.68rem;color:#9ca3af;">(Salin ke dashboard Midtrans → Settings → Notification URL)</span></label>
+            <div style="display:flex;gap:.5rem;">
+              <input type="text" class="form-input" id="cfg-midtrans-webhook" value="https://indonesiapedulisesama.org/api/webhook/midtrans" readonly style="background:#f8fafc;color:#64748b;flex:1;" />
+              <button type="button" class="btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('cfg-midtrans-webhook').value);showToast('📋 Webhook URL disalin!','success');" style="white-space:nowrap;">📋 Salin</button>
+            </div>
+          </div>
+
           <div class="section-divider"></div>
+
+          <!-- Xendit -->
           <div class="toggle-row">
             <div>
               <div class="toggle-label">Xendit</div>
@@ -1850,10 +1867,28 @@
             <label class="toggle"><input type="checkbox" id="pg-xendit" checked /><span class="toggle-slider"></span></label>
           </div>
           <div class="form-group" style="margin-top:.75rem;">
-            <label class="form-label">Xendit API Key</label>
+            <label class="form-label">API Key (Secret)</label>
             <input type="password" class="form-input" id="cfg-xendit-key" placeholder="xnd_development_xxxx" />
           </div>
+          <div class="form-group">
+            <label class="form-label">Public Key</label>
+            <input type="text" class="form-input" id="cfg-xendit-public" placeholder="xnd_public_development_xxxx" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Webhook Verification Token</label>
+            <input type="password" class="form-input" id="cfg-xendit-webhook-token" placeholder="Masukkan verification token dari Xendit" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Webhook URL <span style="font-size:.68rem;color:#9ca3af;">(Salin ke dashboard Xendit → Settings → Webhooks)</span></label>
+            <div style="display:flex;gap:.5rem;">
+              <input type="text" class="form-input" id="cfg-xendit-webhook" value="https://indonesiapedulisesama.org/api/webhook/xendit" readonly style="background:#f8fafc;color:#64748b;flex:1;" />
+              <button type="button" class="btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('cfg-xendit-webhook').value);showToast('📋 Webhook URL disalin!','success');" style="white-space:nowrap;">📋 Salin</button>
+            </div>
+          </div>
+
           <div class="section-divider"></div>
+
+          <!-- Xenith -->
           <div class="toggle-row">
             <div>
               <div class="toggle-label">Xenith</div>
@@ -1862,8 +1897,19 @@
             <label class="toggle"><input type="checkbox" id="pg-xenith" /><span class="toggle-slider"></span></label>
           </div>
           <div class="form-group" style="margin-top:.75rem;">
-            <label class="form-label">Xenith API Key</label>
+            <label class="form-label">API Key</label>
             <input type="password" class="form-input" id="cfg-xenith-key" placeholder="xt_live_xxxx" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Secret Key</label>
+            <input type="password" class="form-input" id="cfg-xenith-secret" placeholder="xt_secret_xxxx" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Webhook URL <span style="font-size:.68rem;color:#9ca3af;">(Salin ke dashboard Xenith → Developer → Webhooks)</span></label>
+            <div style="display:flex;gap:.5rem;">
+              <input type="text" class="form-input" id="cfg-xenith-webhook" value="https://indonesiapedulisesama.org/api/webhook/xenith" readonly style="background:#f8fafc;color:#64748b;flex:1;" />
+              <button type="button" class="btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('cfg-xenith-webhook').value);showToast('📋 Webhook URL disalin!','success');" style="white-space:nowrap;">📋 Salin</button>
+            </div>
           </div>
         </div>
 
