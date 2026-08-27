@@ -1888,6 +1888,121 @@
       </div>
       <div class="settings-grid">
 
+        <!-- Hero / Beranda Customization -->
+        <div class="settings-card" style="grid-column: 1 / -1;">
+          <div class="settings-card-title">🏠 Kustomisasi Beranda (Hero Section)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+
+            <!-- Left: Image Upload + Preview -->
+            <div>
+              <div class="form-group">
+                <label class="form-label">Gambar Background Hero</label>
+                <div id="hero-preview-wrap" style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#0f172a;border:2px dashed #334155;cursor:pointer;" onclick="document.getElementById('hero-img-input').click();">
+                  <img id="hero-preview-img" src="/images/hero-banner.jpg" alt="Hero Preview" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                  <div id="hero-preview-overlay" style="position:absolute;inset:0;background:rgba(15,60,80,0.65);pointer-events:none;"></div>
+                  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;opacity:0;transition:opacity .2s;pointer-events:none;" id="hero-upload-hint">
+                    <div style="font-size:2rem;margin-bottom:.5rem;">📷</div>
+                    <div style="font-size:.82rem;font-weight:600;">Klik untuk ganti gambar</div>
+                    <div style="font-size:.7rem;color:#94a3b8;">Rekomendasi: 1920×1080px, max 3MB</div>
+                  </div>
+                  <input type="file" id="hero-img-input" accept="image/*" style="display:none;" />
+                </div>
+              </div>
+
+              <!-- Overlay Controls -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.75rem;">
+                <div class="form-group">
+                  <label class="form-label">Warna Overlay</label>
+                  <div style="display:flex;gap:.5rem;align-items:center;">
+                    <input type="color" id="cfg-hero-overlay-color" value="#0f3c50" style="width:42px;height:36px;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;padding:2px;" />
+                    <input type="text" class="form-input" id="cfg-hero-overlay-hex" value="#0f3c50" style="font-family:monospace;font-size:.8rem;width:90px;" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Opacity Overlay: <span id="cfg-hero-opacity-val" style="color:var(--green);font-weight:700;">65%</span></label>
+                  <input type="range" id="cfg-hero-overlay-opacity" min="0" max="100" value="65" style="width:100%;accent-color:var(--green);margin-top:.35rem;" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Text Fields -->
+            <div>
+              <div class="form-group">
+                <label class="form-label">Badge Teks</label>
+                <div style="display:flex;gap:.5rem;">
+                  <input type="text" class="form-input" id="cfg-hero-badge-emoji" value="🇮🇩" style="width:50px;text-align:center;font-size:1.2rem;" />
+                  <input type="text" class="form-input" id="cfg-hero-badge" value="Platform Donasi #1 Indonesia" style="flex:1;" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Judul Baris 1</label>
+                <input type="text" class="form-input" id="cfg-hero-title1" value="Bersama Kita" style="font-size:1.1rem;font-weight:700;" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Judul Baris 2 <span style="font-size:.68rem;color:#f59e0b;">(warna aksen)</span></label>
+                <input type="text" class="form-input" id="cfg-hero-title2" value="Peduli Sesama" style="font-size:1.1rem;font-weight:700;color:#f59e0b;" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-textarea" id="cfg-hero-desc" rows="3" style="font-size:.85rem;">Platform donasi dan galang dana online terpercaya untuk membantu sesama di seluruh Indonesia. Transparan, aman, dan berdampak nyata.</textarea>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+                <div class="form-group">
+                  <label class="form-label">Tombol CTA 1</label>
+                  <div style="display:flex;gap:.4rem;">
+                    <input type="text" class="form-input" id="cfg-hero-cta1-emoji" value="💚" style="width:40px;text-align:center;" />
+                    <input type="text" class="form-input" id="cfg-hero-cta1" value="Mulai Donasi" style="flex:1;" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tombol CTA 2</label>
+                  <div style="display:flex;gap:.4rem;">
+                    <input type="text" class="form-input" id="cfg-hero-cta2-emoji" value="📋" style="width:40px;text-align:center;" />
+                    <input type="text" class="form-input" id="cfg-hero-cta2" value="Lihat Kampanye" style="flex:1;" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="section-divider"></div>
+              <label class="form-label" style="margin-bottom:.6rem;">Angka Statistik Hero</label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;">
+                <div class="pixel-card" style="padding:.85rem;">
+                  <div class="form-group" style="margin-bottom:.4rem;">
+                    <label class="form-label" style="font-size:.68rem;">Angka 1</label>
+                    <input type="text" class="form-input" id="cfg-hero-stat1-val" value="127.000+" style="font-weight:800;font-size:.95rem;" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" style="font-size:.68rem;">Label 1</label>
+                    <input type="text" class="form-input" id="cfg-hero-stat1-label" value="Donatur Aktif" style="font-size:.8rem;" />
+                  </div>
+                </div>
+                <div class="pixel-card" style="padding:.85rem;">
+                  <div class="form-group" style="margin-bottom:.4rem;">
+                    <label class="form-label" style="font-size:.68rem;">Angka 2</label>
+                    <input type="text" class="form-input" id="cfg-hero-stat2-val" value="48 M" style="font-weight:800;font-size:.95rem;" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" style="font-size:.68rem;">Label 2</label>
+                    <input type="text" class="form-input" id="cfg-hero-stat2-label" value="Miliar Terkumpul" style="font-size:.8rem;" />
+                  </div>
+                </div>
+                <div class="pixel-card" style="padding:.85rem;">
+                  <div class="form-group" style="margin-bottom:.4rem;">
+                    <label class="form-label" style="font-size:.68rem;">Angka 3</label>
+                    <input type="text" class="form-input" id="cfg-hero-stat3-val" value="342+" style="font-weight:800;font-size:.95rem;" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" style="font-size:.68rem;">Label 3</label>
+                    <input type="text" class="form-input" id="cfg-hero-stat3-label" value="Kampanye Sukses" style="font-size:.8rem;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         <!-- Site Config -->
         <div class="settings-card">
           <div class="settings-card-title">🌐 Konfigurasi Website</div>
@@ -3541,6 +3656,63 @@ function removeCategory(i) {
   });
 }
 
+// ── HERO PREVIEW INTERACTIVITY ──────────────────────
+(function() {
+  const wrap = document.getElementById('hero-preview-wrap');
+  const hint = document.getElementById('hero-upload-hint');
+  const overlayEl = document.getElementById('hero-preview-overlay');
+  const colorPicker = document.getElementById('cfg-hero-overlay-color');
+  const hexInput = document.getElementById('cfg-hero-overlay-hex');
+  const opacitySlider = document.getElementById('cfg-hero-overlay-opacity');
+  const opacityVal = document.getElementById('cfg-hero-opacity-val');
+
+  // Hover hint
+  if (wrap && hint) {
+    wrap.addEventListener('mouseenter', () => { hint.style.opacity = '1'; });
+    wrap.addEventListener('mouseleave', () => { hint.style.opacity = '0'; });
+  }
+
+  // Update overlay preview
+  function updateOverlay() {
+    const hex = colorPicker.value;
+    const opacity = opacitySlider.value / 100;
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    overlayEl.style.background = `rgba(${r},${g},${b},${opacity})`;
+    hexInput.value = hex;
+    opacityVal.textContent = opacitySlider.value + '%';
+  }
+
+  colorPicker.addEventListener('input', updateOverlay);
+  opacitySlider.addEventListener('input', updateOverlay);
+  hexInput.addEventListener('change', function() {
+    if (/^#[0-9a-fA-F]{6}$/.test(this.value)) {
+      colorPicker.value = this.value;
+      updateOverlay();
+    }
+  });
+
+  // Hero image upload
+  document.getElementById('hero-img-input').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    if (file.size > 3145728) { showToast('⚠️ Gambar melebihi 3MB', 'error'); this.value=''; return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('hero-preview-img').src = e.target.result;
+      localStorage.setItem('ips_hero_image', e.target.result);
+      showToast('✅ Gambar hero diperbarui', 'success');
+    };
+    reader.readAsDataURL(file);
+    this.value = '';
+  });
+
+  // Load saved hero image
+  const savedImg = localStorage.getItem('ips_hero_image');
+  if (savedImg) document.getElementById('hero-preview-img').src = savedImg;
+})();
+
 // ── SETTINGS ─────────────────────────────────────────
 function saveSettings() {
   const settings = {
@@ -3549,6 +3721,26 @@ function saveSettings() {
     email:    document.getElementById('cfg-email').value,
     whatsapp: document.getElementById('cfg-whatsapp').value,
     address:  document.getElementById('cfg-address').value,
+    // Hero settings
+    hero: {
+      badgeEmoji: document.getElementById('cfg-hero-badge-emoji').value,
+      badge:      document.getElementById('cfg-hero-badge').value,
+      title1:     document.getElementById('cfg-hero-title1').value,
+      title2:     document.getElementById('cfg-hero-title2').value,
+      desc:       document.getElementById('cfg-hero-desc').value,
+      cta1Emoji:  document.getElementById('cfg-hero-cta1-emoji').value,
+      cta1:       document.getElementById('cfg-hero-cta1').value,
+      cta2Emoji:  document.getElementById('cfg-hero-cta2-emoji').value,
+      cta2:       document.getElementById('cfg-hero-cta2').value,
+      overlayColor: document.getElementById('cfg-hero-overlay-color').value,
+      overlayOpacity: document.getElementById('cfg-hero-overlay-opacity').value,
+      stat1Val:   document.getElementById('cfg-hero-stat1-val').value,
+      stat1Label: document.getElementById('cfg-hero-stat1-label').value,
+      stat2Val:   document.getElementById('cfg-hero-stat2-val').value,
+      stat2Label: document.getElementById('cfg-hero-stat2-label').value,
+      stat3Val:   document.getElementById('cfg-hero-stat3-val').value,
+      stat3Label: document.getElementById('cfg-hero-stat3-label').value,
+    },
   };
   localStorage.setItem('ips_settings', JSON.stringify(settings));
   showToast('✅ Pengaturan berhasil disimpan', 'success');
