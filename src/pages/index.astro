@@ -164,20 +164,7 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
       if (cta1 && h.cta1) cta1.innerHTML = (h.cta1Emoji || '') + ' ' + h.cta1;
       if (cta2 && h.cta2) cta2.innerHTML = (h.cta2Emoji || '') + ' ' + h.cta2;
 
-      // Stats
-      var statDonors = document.getElementById('stat-donors');
-      var statRaised = document.getElementById('stat-raised');
-      var statCampaigns = document.getElementById('stat-campaigns');
-      if (statDonors && h.stat1Val) statDonors.textContent = h.stat1Val;
-      if (statRaised && h.stat2Val) statRaised.textContent = h.stat2Val;
-      if (statCampaigns && h.stat3Val) statCampaigns.textContent = h.stat3Val;
-
-      var lblDonors = document.querySelector('[data-i18n-hero="stat-donors"]');
-      var lblRaised = document.querySelector('[data-i18n-hero="stat-raised"]');
-      var lblCampaigns = document.querySelector('[data-i18n-hero="stat-campaigns"]');
-      if (lblDonors && h.stat1Label) lblDonors.textContent = h.stat1Label;
-      if (lblRaised && h.stat2Label) lblRaised.textContent = h.stat2Label;
-      if (lblCampaigns && h.stat3Label) lblCampaigns.textContent = h.stat3Label;
+      // Stats are now auto-generated from campaign data (see script below)
     } catch(e) { /* silent */ }
   })();
   </script>
@@ -185,11 +172,9 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
   <script is:inline>
   (function() {
     try {
-      var raw = localStorage.getItem('ips_data');
-      if (!raw) return;
-      var data = JSON.parse(raw);
-      var campaigns = data.campaigns || [];
-      var donations = data.donations || [];
+      var campaigns = JSON.parse(localStorage.getItem('ips_campaigns') || '[]');
+      var donations = JSON.parse(localStorage.getItem('ips_donations') || '[]');
+      if (!campaigns.length) return;
 
       // Active donors = unique donors with successful donations
       var successDonations = donations.filter(function(d) { return d.status === 'sukses'; });

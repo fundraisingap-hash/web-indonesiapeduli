@@ -1963,39 +1963,25 @@
                 </div>
               </div>
 
-              <!-- Stats -->
+              <!-- Stats (Auto-generated) -->
               <div class="section-divider"></div>
-              <label class="form-label" style="margin-bottom:.6rem;">Angka Statistik Hero</label>
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;">
-                <div class="pixel-card" style="padding:.85rem;">
-                  <div class="form-group" style="margin-bottom:.4rem;">
-                    <label class="form-label" style="font-size:.68rem;">Angka 1</label>
-                    <input type="text" class="form-input" id="cfg-hero-stat1-val" value="127.000+" style="font-weight:800;font-size:.95rem;" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" style="font-size:.68rem;">Label 1</label>
-                    <input type="text" class="form-input" id="cfg-hero-stat1-label" value="Donatur Aktif" style="font-size:.8rem;" />
-                  </div>
+              <label class="form-label" style="margin-bottom:.6rem;">📊 Statistik Hero <span style="font-size:.7rem;color:#9ca3af;font-weight:400;">(otomatis dari data kampanye & donasi)</span></label>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;" id="hero-stats-auto">
+                <div class="pixel-card" style="padding:.7rem;text-align:center;">
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--green);" id="auto-stat-donors">0</div>
+                  <div style="font-size:.68rem;color:#64748b;font-weight:600;">Donatur Aktif</div>
                 </div>
-                <div class="pixel-card" style="padding:.85rem;">
-                  <div class="form-group" style="margin-bottom:.4rem;">
-                    <label class="form-label" style="font-size:.68rem;">Angka 2</label>
-                    <input type="text" class="form-input" id="cfg-hero-stat2-val" value="48 M" style="font-weight:800;font-size:.95rem;" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" style="font-size:.68rem;">Label 2</label>
-                    <input type="text" class="form-input" id="cfg-hero-stat2-label" value="Miliar Terkumpul" style="font-size:.8rem;" />
-                  </div>
+                <div class="pixel-card" style="padding:.7rem;text-align:center;">
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--green);" id="auto-stat-raised">0</div>
+                  <div style="font-size:.68rem;color:#64748b;font-weight:600;">Total Terkumpul</div>
                 </div>
-                <div class="pixel-card" style="padding:.85rem;">
-                  <div class="form-group" style="margin-bottom:.4rem;">
-                    <label class="form-label" style="font-size:.68rem;">Angka 3</label>
-                    <input type="text" class="form-input" id="cfg-hero-stat3-val" value="342+" style="font-weight:800;font-size:.95rem;" />
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" style="font-size:.68rem;">Label 3</label>
-                    <input type="text" class="form-input" id="cfg-hero-stat3-label" value="Kampanye Sukses" style="font-size:.8rem;" />
-                  </div>
+                <div class="pixel-card" style="padding:.7rem;text-align:center;">
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--green);" id="auto-stat-campaigns">0</div>
+                  <div style="font-size:.68rem;color:#64748b;font-weight:600;">Kampanye</div>
+                </div>
+                <div class="pixel-card" style="padding:.7rem;text-align:center;">
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--green);" id="auto-stat-provinces">0</div>
+                  <div style="font-size:.68rem;color:#64748b;font-weight:600;">Lokasi</div>
                 </div>
               </div>
             </div>
@@ -2830,6 +2816,7 @@ function saveData() {
   localStorage.setItem('ips_withdrawals', JSON.stringify(withdrawals));
   localStorage.setItem('ips_donors',      JSON.stringify(donors));
   localStorage.setItem('ips_categories',  JSON.stringify(categories));
+  if (typeof updateHeroStats === 'function') updateHeroStats();
 }
 
 // ── Helpers ─────────────────────────────────────────
@@ -3739,6 +3726,33 @@ hexInput.addEventListener('change', function() {
 
 renderCarouselAdmin();
 
+// ── AUTO-CALCULATE HERO STATS ─────────────────────────
+function updateHeroStats() {
+  var totalDonors = campaigns.reduce(function(s,c) { return s + (c.donors || 0); }, 0);
+  var totalRaised = campaigns.reduce(function(s,c) { return s + (c.raised || 0); }, 0);
+  var activeCampaigns = campaigns.filter(function(c) { return c.status === 'aktif'; }).length;
+  var provinces = {};
+  campaigns.forEach(function(c) { if (c.location) provinces[c.location] = true; });
+  var provCount = Object.keys(provinces).length;
+
+  var fmtDonors = totalDonors >= 1000 ? Math.floor(totalDonors/1000).toLocaleString('id-ID') + '.000+' : totalDonors + '+';
+  var fmtRaised = totalRaised >= 1000000000 
+    ? (totalRaised / 1000000000).toFixed(1) + ' M' 
+    : totalRaised >= 1000000 
+      ? Math.round(totalRaised / 1000000) + ' Jt' 
+      : totalRaised.toLocaleString('id-ID');
+
+  var el1 = document.getElementById('auto-stat-donors');
+  var el2 = document.getElementById('auto-stat-raised');
+  var el3 = document.getElementById('auto-stat-campaigns');
+  var el4 = document.getElementById('auto-stat-provinces');
+  if (el1) el1.textContent = fmtDonors;
+  if (el2) el2.textContent = fmtRaised;
+  if (el3) el3.textContent = activeCampaigns + '+';
+  if (el4) el4.textContent = provCount + ' Daerah';
+}
+updateHeroStats();
+
 // ── SETTINGS ─────────────────────────────────────────
 function saveSettings() {
   const settings = {
@@ -3760,12 +3774,6 @@ function saveSettings() {
       cta2:       document.getElementById('cfg-hero-cta2').value,
       overlayColor: document.getElementById('cfg-hero-overlay-color').value,
       overlayOpacity: document.getElementById('cfg-hero-overlay-opacity').value,
-      stat1Val:   document.getElementById('cfg-hero-stat1-val').value,
-      stat1Label: document.getElementById('cfg-hero-stat1-label').value,
-      stat2Val:   document.getElementById('cfg-hero-stat2-val').value,
-      stat2Label: document.getElementById('cfg-hero-stat2-label').value,
-      stat3Val:   document.getElementById('cfg-hero-stat3-val').value,
-      stat3Label: document.getElementById('cfg-hero-stat3-label').value,
     },
   };
   localStorage.setItem('ips_settings', JSON.stringify(settings));
