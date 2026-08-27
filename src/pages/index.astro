@@ -138,6 +138,66 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
   })();
   </script>
 
+  <script is:inline>
+  (function() {
+    try {
+      var raw = localStorage.getItem('ips_data');
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      var campaigns = data.campaigns || [];
+      var donations = data.donations || [];
+
+      // Active donors = unique donors with successful donations
+      var successDonations = donations.filter(function(d) { return d.status === 'sukses'; });
+      var uniqueDonors = new Set();
+      successDonations.forEach(function(d) { if (d.name && d.name !== '-' && d.name !== 'Donatur Anonim') uniqueDonors.add(d.name); });
+      var totalDonors = campaigns.reduce(function(s,c) { return s + (c.donors || 0); }, 0);
+
+      // Total raised = sum of all campaign raised amounts
+      var totalRaised = campaigns.reduce(function(s,c) { return s + (c.raised || 0); }, 0);
+      var raisedInBillions = (totalRaised / 1000000000).toFixed(1);
+
+      // Successful campaigns = status 'selesai'
+      var successCampaigns = campaigns.filter(function(c) { return c.status === 'selesai'; }).length;
+
+      // Provinces = unique locations
+      var provinces = new Set();
+      campaigns.forEach(function(c) { if (c.location) provinces.add(c.location); });
+
+      // Update hero stats
+      var statDonors = document.getElementById('stat-donors');
+      var statRaised = document.getElementById('stat-raised');
+      var statCampaigns = document.getElementById('stat-campaigns');
+      if (statDonors) statDonors.textContent = totalDonors.toLocaleString('id-ID') + '+';
+      if (statRaised) statRaised.textContent = raisedInBillions + ' M';
+      if (statCampaigns) statCampaigns.textContent = (successCampaigns || campaigns.length) + '+';
+
+      // Update stats section counters
+      var counters = document.querySelectorAll('.counter');
+      counters.forEach(function(el) {
+        var label = el.closest('.stat-card');
+        if (!label) return;
+        var labelText = label.querySelector('.stat-card__label');
+        if (!labelText) return;
+        var lt = labelText.textContent.toLowerCase();
+        if (lt.includes('donatur') || lt.includes('donor')) {
+          el.setAttribute('data-target', totalDonors);
+          el.setAttribute('data-suffix', '+');
+        } else if (lt.includes('terkumpul') || lt.includes('raised')) {
+          el.setAttribute('data-target', raisedInBillions);
+          el.setAttribute('data-suffix', ' M');
+        } else if (lt.includes('kampanye') || lt.includes('campaign')) {
+          el.setAttribute('data-target', successCampaigns || campaigns.length);
+          el.setAttribute('data-suffix', '+');
+        } else if (lt.includes('provinsi') || lt.includes('province')) {
+          el.setAttribute('data-target', provinces.size || 1);
+          el.setAttribute('data-suffix', ' Prov');
+        }
+      });
+    } catch(e) { /* silent */ }
+  })();
+  </script>
+
 
   <!-- ── STATS ─────────────────────────────────────── -->
   <section class="stats-section" id="stats">

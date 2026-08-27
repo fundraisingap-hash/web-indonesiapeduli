@@ -2704,6 +2704,9 @@
           <label class="ce-field-label">Penyelenggara / Organisasi</label>
           <input type="text" class="ce-field-input" id="modal-org" placeholder="Nama yayasan / organisasi" />
 
+          <label class="ce-field-label">📍 Lokasi Penerima Manfaat</label>
+          <input type="text" class="ce-field-input" id="modal-location" placeholder="Contoh: Lombok, NTB" />
+
           <div class="ce-divider"></div>
 
           <label class="ce-urgent-toggle">
@@ -2767,14 +2770,14 @@ if (localStorage.getItem('ips_admin_auth') !== 'true') {
 
 // ── Mock Data ───────────────────────────────────────
 const CAMPAIGNS_DEFAULT = [
-  { id:1, slug:'bantu-korban-banjir-kalimantan', titleId:'Bantu Korban Banjir Kalimantan Tengah', titleEn:'Help Flood Victims in Central Kalimantan', category:'kemanusiaan', target:500000000, raised:363000000, donors:4218, daysLeft:12, org:'Yayasan Indonesia Peduli', status:'aktif', urgent:true, image:'/images/campaign-kemanusiaan.jpg' },
-  { id:2, slug:'beasiswa-anak-pedalaman-papua', titleId:'Beasiswa Anak Pedalaman Papua', titleEn:'Scholarship for Papua Children', category:'pendidikan', target:300000000, raised:215000000, donors:2891, daysLeft:45, org:'Gerakan Pendidikan Nusantara', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg' },
-  { id:3, slug:'jembatan-desa-terpencil-NTT', titleId:'Jembatan Desa Terpencil NTT', titleEn:'Bridge for Remote Village in NTT', category:'infrastruktur', target:800000000, raised:452000000, donors:3102, daysLeft:60, org:'Komunitas Infrastruktur Nusantara', status:'aktif', urgent:false, image:'/images/hero-banner.jpg' },
-  { id:4, slug:'panti-asuhan-yatim-sulawesi', titleId:'Panti Asuhan Yatim Sulawesi', titleEn:'Orphanage in Sulawesi', category:'charity', target:200000000, raised:187000000, donors:5430, daysLeft:8, org:'Rumah Kasih Sulawesi', status:'aktif', urgent:true, image:'/images/campaign-kemanusiaan.jpg' },
-  { id:5, slug:'tanam-pohon-hutan-borneo', titleId:'10.000 Pohon untuk Hutan Borneo', titleEn:'10,000 Trees for Borneo Forest', category:'lingkungan', target:150000000, raised:89000000, donors:1876, daysLeft:30, org:'Green Borneo Foundation', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg' },
-  { id:6, slug:'air-bersih-desa-lombok', titleId:'Air Bersih untuk Desa Lombok', titleEn:'Clean Water for Lombok Village', category:'kemanusiaan', target:120000000, raised:95000000, donors:2340, daysLeft:20, org:'Lombok Bersih Foundation', status:'aktif', urgent:false, image:'/images/campaign-kemanusiaan.jpg' },
-  { id:7, slug:'beasiswa-sma-aceh', titleId:'Beasiswa SMA untuk Siswa Aceh', titleEn:'High School Scholarships for Aceh', category:'pendidikan', target:80000000, raised:72000000, donors:1234, daysLeft:15, org:'Aceh Cerdas Foundation', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg' },
-  { id:8, slug:'bank-sampah-surabaya', titleId:'Bank Sampah Digital Surabaya', titleEn:'Digital Waste Bank Surabaya', category:'lingkungan', target:100000000, raised:43000000, donors:987, daysLeft:50, org:'Eco Surabaya Community', status:'draft', urgent:false, image:'/images/campaign-pendidikan.jpg' },
+  { id:1, slug:'bantu-korban-banjir-kalimantan', titleId:'Bantu Korban Banjir Kalimantan Tengah', titleEn:'Help Flood Victims in Central Kalimantan', category:'kemanusiaan', target:500000000, raised:363000000, donors:4218, daysLeft:12, org:'Yayasan Indonesia Peduli', status:'aktif', urgent:true, image:'/images/campaign-kemanusiaan.jpg', location:'Kalimantan Tengah' },
+  { id:2, slug:'beasiswa-anak-pedalaman-papua', titleId:'Beasiswa Anak Pedalaman Papua', titleEn:'Scholarship for Papua Children', category:'pendidikan', target:300000000, raised:215000000, donors:2891, daysLeft:45, org:'Gerakan Pendidikan Nusantara', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg', location:'Papua' },
+  { id:3, slug:'jembatan-desa-terpencil-NTT', titleId:'Jembatan Desa Terpencil NTT', titleEn:'Bridge for Remote Village in NTT', category:'infrastruktur', target:800000000, raised:452000000, donors:3102, daysLeft:60, org:'Komunitas Infrastruktur Nusantara', status:'aktif', urgent:false, image:'/images/hero-banner.jpg', location:'Nusa Tenggara Timur' },
+  { id:4, slug:'panti-asuhan-yatim-sulawesi', titleId:'Panti Asuhan Yatim Sulawesi', titleEn:'Orphanage in Sulawesi', category:'charity', target:200000000, raised:187000000, donors:5430, daysLeft:8, org:'Rumah Kasih Sulawesi', status:'aktif', urgent:true, image:'/images/campaign-kemanusiaan.jpg', location:'Sulawesi Selatan' },
+  { id:5, slug:'tanam-pohon-hutan-borneo', titleId:'10.000 Pohon untuk Hutan Borneo', titleEn:'10,000 Trees for Borneo Forest', category:'lingkungan', target:150000000, raised:89000000, donors:1876, daysLeft:30, org:'Green Borneo Foundation', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg', location:'Kalimantan Barat' },
+  { id:6, slug:'air-bersih-desa-lombok', titleId:'Air Bersih untuk Desa Lombok', titleEn:'Clean Water for Lombok Village', category:'kemanusiaan', target:120000000, raised:95000000, donors:2340, daysLeft:20, org:'Lombok Bersih Foundation', status:'aktif', urgent:false, image:'/images/campaign-kemanusiaan.jpg', location:'Nusa Tenggara Barat' },
+  { id:7, slug:'beasiswa-sma-aceh', titleId:'Beasiswa SMA untuk Siswa Aceh', titleEn:'High School Scholarships for Aceh', category:'pendidikan', target:80000000, raised:72000000, donors:1234, daysLeft:15, org:'Aceh Cerdas Foundation', status:'aktif', urgent:false, image:'/images/campaign-pendidikan.jpg', location:'Aceh' },
+  { id:8, slug:'bank-sampah-surabaya', titleId:'Bank Sampah Digital Surabaya', titleEn:'Digital Waste Bank Surabaya', category:'lingkungan', target:100000000, raised:43000000, donors:987, daysLeft:50, org:'Eco Surabaya Community', status:'draft', urgent:false, image:'/images/campaign-pendidikan.jpg', location:'Jawa Timur' },
 ];
 
 const DONATIONS_DEFAULT = [
@@ -3181,6 +3184,7 @@ function clearCampaignEditor() {
   document.getElementById('modal-target').value = '';
   document.getElementById('modal-days').value = '30';
   document.getElementById('modal-org').value = '';
+  document.getElementById('modal-location').value = '';
   document.getElementById('modal-category').value = 'kemanusiaan';
   document.getElementById('modal-status').value = 'draft';
   document.getElementById('modal-urgent').checked = false;
@@ -3256,6 +3260,7 @@ function editCampaign(id) {
   document.getElementById('modal-target').value     = c.target;
   document.getElementById('modal-days').value       = c.daysLeft;
   document.getElementById('modal-org').value        = c.org;
+  document.getElementById('modal-location').value   = c.location || '';
   document.getElementById('modal-category').value   = c.category;
   document.getElementById('modal-status').value     = c.status;
   document.getElementById('modal-urgent').checked   = c.urgent || false;
@@ -3295,6 +3300,7 @@ function saveCampaign(forceStatus) {
     target:   +document.getElementById('modal-target').value || 0,
     daysLeft: +document.getElementById('modal-days').value  || 30,
     org:      document.getElementById('modal-org').value,
+    location: document.getElementById('modal-location').value,
     image:    coverImageData || '/images/campaign-kemanusiaan.jpg',
     urgent:   document.getElementById('modal-urgent').checked,
   };

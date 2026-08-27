@@ -13,6 +13,7 @@ export interface Campaign {
   donors: number;
   daysLeft: number;
   image: string;
+  location: string;
   urgent?: boolean;
   featured?: boolean;
 }
@@ -149,6 +150,7 @@ export const campaigns: Campaign[] = [
     donors: 4218,
     daysLeft: 12,
     image: '/images/campaign-kemanusiaan.jpg',
+    location: 'Kalimantan Tengah',
     urgent: true,
     featured: true,
   },
@@ -174,6 +176,7 @@ export const campaigns: Campaign[] = [
     donors: 2891,
     daysLeft: 45,
     image: '/images/campaign-pendidikan.jpg',
+    location: 'Jayapura, Papua',
     featured: true,
   },
   {
@@ -198,6 +201,7 @@ export const campaigns: Campaign[] = [
     donors: 3102,
     daysLeft: 60,
     image: '/images/hero-banner.jpg',
+    location: 'Wairterang, NTT',
     featured: true,
   },
   {
@@ -222,6 +226,7 @@ export const campaigns: Campaign[] = [
     donors: 1654,
     daysLeft: 30,
     image: '/images/campaign-kemanusiaan.jpg',
+    location: 'Makassar, Sulawesi Selatan',
     featured: true,
   },
   {
@@ -246,6 +251,7 @@ export const campaigns: Campaign[] = [
     donors: 8932,
     daysLeft: 90,
     image: '/images/campaign-pendidikan.jpg',
+    location: 'Kalimantan',
     featured: true,
   },
   {
@@ -263,6 +269,7 @@ export const campaigns: Campaign[] = [
     donors: 2210,
     daysLeft: 25,
     image: '/images/hero-banner.jpg',
+    location: 'Lombok, NTB',
   },
   {
     slug: 'beasiswa-sma-aceh',
@@ -279,6 +286,7 @@ export const campaigns: Campaign[] = [
     donors: 1890,
     daysLeft: 40,
     image: '/images/campaign-pendidikan.jpg',
+    location: 'Aceh',
   },
   {
     slug: 'bank-sampah-surabaya',
@@ -295,6 +303,7 @@ export const campaigns: Campaign[] = [
     donors: 743,
     daysLeft: 55,
     image: '/images/campaign-pendidikan.jpg',
+    location: 'Surabaya, Jawa Timur',
   },
 ];
 
