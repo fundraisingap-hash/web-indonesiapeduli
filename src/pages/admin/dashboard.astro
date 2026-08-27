@@ -620,6 +620,14 @@
       box-shadow: var(--shadow-sm);
       border: 1px solid var(--gray-100);
     }
+    .pixel-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color .2s;
+    }
+    .pixel-card:hover { border-color: #94a3b8; }
     .settings-card-title {
       font-size: .95rem;
       font-weight: 800;
@@ -1958,6 +1966,111 @@
               <div class="toggle-sub">Terima donasi baru dari publik</div>
             </div>
             <label class="toggle"><input type="checkbox" id="cfg-accept-donations" checked /><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- Tracking & Ads Pixel -->
+        <div class="settings-card" style="grid-column: 1 / -1;">
+          <div class="settings-card-title">📊 Tracking & Ads Pixel</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;">
+
+            <!-- Meta Pixel (CAPI) -->
+            <div class="pixel-card">
+              <div class="toggle-row" style="margin-bottom:.75rem;">
+                <div>
+                  <div class="toggle-label">Meta Pixel (CAPI)</div>
+                  <div class="toggle-sub">Facebook & Instagram Ads tracking</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="px-meta" /><span class="toggle-slider"></span></label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pixel ID</label>
+                <input type="text" class="form-input" id="cfg-meta-pixel-id" placeholder="123456789012345" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Conversions API Access Token</label>
+                <input type="password" class="form-input" id="cfg-meta-capi-token" placeholder="EAAxxxxxxxxx..." />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Test Event Code <span style="font-size:.65rem;color:#9ca3af;">(opsional, untuk testing)</span></label>
+                <input type="text" class="form-input" id="cfg-meta-test-code" placeholder="TEST12345" />
+              </div>
+            </div>
+
+            <!-- Google Tag Manager -->
+            <div class="pixel-card">
+              <div class="toggle-row" style="margin-bottom:.75rem;">
+                <div>
+                  <div class="toggle-label">Google Tag Manager</div>
+                  <div class="toggle-sub">GTM, GA4, Google Ads conversion</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="px-gtm" /><span class="toggle-slider"></span></label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">GTM Container ID</label>
+                <input type="text" class="form-input" id="cfg-gtm-id" placeholder="GTM-XXXXXXX" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">GA4 Measurement ID <span style="font-size:.65rem;color:#9ca3af;">(opsional)</span></label>
+                <input type="text" class="form-input" id="cfg-ga4-id" placeholder="G-XXXXXXXXXX" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Google Ads Conversion ID <span style="font-size:.65rem;color:#9ca3af;">(opsional)</span></label>
+                <input type="text" class="form-input" id="cfg-gads-id" placeholder="AW-XXXXXXXXX" />
+              </div>
+            </div>
+
+            <!-- TikTok Ads -->
+            <div class="pixel-card">
+              <div class="toggle-row" style="margin-bottom:.75rem;">
+                <div>
+                  <div class="toggle-label">TikTok Pixel</div>
+                  <div class="toggle-sub">TikTok Ads & Events API</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="px-tiktok" /><span class="toggle-slider"></span></label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pixel ID</label>
+                <input type="text" class="form-input" id="cfg-tiktok-pixel-id" placeholder="CXXXXXXXXXXXXXXXXX" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Events API Access Token</label>
+                <input type="password" class="form-input" id="cfg-tiktok-token" placeholder="Server-side access token" />
+              </div>
+            </div>
+
+            <!-- Snack Video -->
+            <div class="pixel-card">
+              <div class="toggle-row" style="margin-bottom:.75rem;">
+                <div>
+                  <div class="toggle-label">Snack Video Ads</div>
+                  <div class="toggle-sub">Kwai / Snack Video pixel tracking</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="px-snack" /><span class="toggle-slider"></span></label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pixel ID</label>
+                <input type="text" class="form-input" id="cfg-snack-pixel-id" placeholder="Snack Video Pixel ID" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">App ID</label>
+                <input type="text" class="form-input" id="cfg-snack-app-id" placeholder="App ID dari Snack Video Ads Manager" />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Event Mapping Info -->
+          <div style="margin-top:1.25rem;padding:1rem 1.25rem;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;">
+            <div style="font-size:.8rem;font-weight:700;color:#0369a1;margin-bottom:.4rem;">📌 Event yang Dikirim Otomatis</div>
+            <div style="font-size:.75rem;color:#475569;line-height:1.7;">
+              <strong>PageView</strong> — Setiap halaman dikunjungi &nbsp;·&nbsp;
+              <strong>ViewContent</strong> — Halaman kampanye dibuka &nbsp;·&nbsp;
+              <strong>InitiateCheckout</strong> — Klik tombol Donasi &nbsp;·&nbsp;
+              <strong>Purchase</strong> — Donasi berhasil (via Webhook) &nbsp;·&nbsp;
+              <strong>Lead</strong> — Fundraiser mendaftar &nbsp;·&nbsp;
+              <strong>CompleteRegistration</strong> — Donatur isi data
+            </div>
           </div>
         </div>
 
