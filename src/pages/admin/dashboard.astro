@@ -481,11 +481,14 @@
 
     /* Campaign Custom Styles */
     .camp-thumb {
-      width: 40px; height: 40px;
+      width: 40px !important; height: 40px !important;
+      min-width: 40px; min-height: 40px;
+      max-width: 40px; max-height: 40px;
       border-radius: 8px;
       object-fit: cover;
       background: #f1f5f9;
       flex-shrink: 0;
+      display: block;
     }
     .camp-initial {
       width: 40px; height: 40px;
@@ -3032,7 +3035,7 @@ function renderCampaigns() {
       const bgColors = ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444'];
       const bg = bgColors[c.id % bgColors.length];
       const thumbHtml = c.image 
-        ? `<img src="${c.image}" class="camp-thumb" alt="Cover" />` 
+        ? `<div style="width:40px;height:40px;min-width:40px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#f1f5f9;"><img src="${c.image}" width="40" height="40" alt="" style="width:40px;height:40px;object-fit:cover;display:block;" /></div>` 
         : `<div class="camp-initial" style="background:${bg};">${c.titleId.charAt(0).toUpperCase()}</div>`;
 
       let statusDotColor = '#94a3b8';
