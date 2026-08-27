@@ -61,6 +61,76 @@ const featured = campaigns.filter(c => c.featured).slice(0, 6);
     </div>
   </section>
 
+  <!-- Load hero customization from admin settings -->
+  <script is:inline>
+  (function() {
+    try {
+      // Load hero image
+      var heroImg = localStorage.getItem('ips_hero_image');
+      if (heroImg) {
+        var img = document.querySelector('.hero__img');
+        if (img) img.src = heroImg;
+      }
+
+      // Load settings
+      var raw = localStorage.getItem('ips_settings');
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (!s.hero) return;
+      var h = s.hero;
+
+      // Overlay color + opacity
+      if (h.overlayColor && h.overlayOpacity) {
+        var overlay = document.querySelector('.hero__overlay');
+        if (overlay) {
+          var hex = h.overlayColor;
+          var r = parseInt(hex.slice(1,3), 16);
+          var g = parseInt(hex.slice(3,5), 16);
+          var b = parseInt(hex.slice(5,7), 16);
+          overlay.style.background = 'rgba(' + r + ',' + g + ',' + b + ',' + (h.overlayOpacity / 100) + ')';
+        }
+      }
+
+      // Badge
+      var badge = document.getElementById('hero-badge');
+      if (badge && h.badge) {
+        badge.innerHTML = '<span>' + (h.badgeEmoji || '🇮🇩') + '</span><span>' + h.badge + '</span>';
+      }
+
+      // Title
+      var t1 = document.querySelector('[data-i18n-hero="title1"]');
+      var t2 = document.querySelector('[data-i18n-hero="title2"]');
+      if (t1 && h.title1) t1.textContent = h.title1;
+      if (t2 && h.title2) t2.textContent = h.title2;
+
+      // Description
+      var desc = document.querySelector('[data-i18n-hero="desc"]');
+      if (desc && h.desc) desc.textContent = h.desc;
+
+      // CTA buttons
+      var cta1 = document.getElementById('hero-cta-donate');
+      var cta2 = document.getElementById('hero-cta-campaign');
+      if (cta1 && h.cta1) cta1.innerHTML = (h.cta1Emoji || '') + ' ' + h.cta1;
+      if (cta2 && h.cta2) cta2.innerHTML = (h.cta2Emoji || '') + ' ' + h.cta2;
+
+      // Stats
+      var statDonors = document.getElementById('stat-donors');
+      var statRaised = document.getElementById('stat-raised');
+      var statCampaigns = document.getElementById('stat-campaigns');
+      if (statDonors && h.stat1Val) statDonors.textContent = h.stat1Val;
+      if (statRaised && h.stat2Val) statRaised.textContent = h.stat2Val;
+      if (statCampaigns && h.stat3Val) statCampaigns.textContent = h.stat3Val;
+
+      var lblDonors = document.querySelector('[data-i18n-hero="stat-donors"]');
+      var lblRaised = document.querySelector('[data-i18n-hero="stat-raised"]');
+      var lblCampaigns = document.querySelector('[data-i18n-hero="stat-campaigns"]');
+      if (lblDonors && h.stat1Label) lblDonors.textContent = h.stat1Label;
+      if (lblRaised && h.stat2Label) lblRaised.textContent = h.stat2Label;
+      if (lblCampaigns && h.stat3Label) lblCampaigns.textContent = h.stat3Label;
+    } catch(e) { /* silent */ }
+  })();
+  </script>
+
 
   <!-- ── STATS ─────────────────────────────────────── -->
   <section class="stats-section" id="stats">
