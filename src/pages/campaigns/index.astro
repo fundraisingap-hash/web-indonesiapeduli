@@ -119,6 +119,75 @@ import { campaigns, categories, formatRupiah, getPercent } from '../../data/camp
     </div>
   </section>
 
+  <!-- Sync campaigns from admin localStorage -->
+  <script is:inline>
+  (function() {
+    try {
+      var raw = localStorage.getItem('ips_campaigns');
+      if (!raw) return;
+      var camps = JSON.parse(raw);
+      if (!camps || !camps.length) return;
+
+      // Only show active campaigns
+      var active = camps.filter(function(c) { return c.status === 'aktif'; });
+      if (!active.length) active = camps;
+
+      var catIcons = { kemanusiaan:'❤️', pendidikan:'📚', infrastruktur:'🏗️', charity:'🤲', lingkungan:'🌿' };
+      var catLabels = { kemanusiaan:'Kemanusiaan', pendidikan:'Pendidikan', infrastruktur:'Infrastruktur', charity:'Charity', lingkungan:'Lingkungan' };
+
+      function fmtRp(n) {
+        if (n >= 1e9) return 'Rp ' + (n/1e9).toFixed(1).replace('.0','') + ' M';
+        if (n >= 1e6) return 'Rp ' + Math.round(n/1e6).toLocaleString('id-ID') + ' Jt';
+        return 'Rp ' + n.toLocaleString('id-ID');
+      }
+      function pct(r, t) { return t > 0 ? Math.min(100, Math.round(r / t * 100)) : 0; }
+
+      var grid = document.getElementById('campaigns-grid');
+      if (!grid) return;
+
+      grid.innerHTML = active.map(function(c, i) {
+        var p = pct(c.raised || 0, c.target || 1);
+        var slug = c.slug || c.titleId.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        var cat = c.category || 'kemanusiaan';
+        var catIcon = catIcons[cat] || '';
+        var catLabel = catLabels[cat] || cat;
+        var title = c.titleId || c.titleEn || 'Kampanye';
+        var titleEn = c.titleEn || title;
+        var desc = c.descId || c.description || '';
+        var descEn = c.descEn || c.descriptionEn || desc;
+        var img = c.image || '/images/campaign-kemanusiaan.jpg';
+        var urgentBadge = c.urgent ? '<span class="campaign-card__badge campaign-card__urgent">🔥 Mendesak</span>' : '';
+        var days = c.daysLeft || 30;
+
+        return '<article class="campaign-card animate-on-scroll visible" style="animation-delay:' + (i*0.07) + 's" data-cat="' + cat + '" data-donors="' + (c.donors||0) + '" data-days="' + days + '" data-pct="' + p + '" data-title-id="' + title.replace(/"/g,'&quot;') + '" data-title-en="' + titleEn.replace(/"/g,'&quot;') + '" data-desc-id="' + desc.replace(/"/g,'&quot;') + '" data-desc-en="' + descEn.replace(/"/g,'&quot;') + '">'
+          + '<div class="campaign-card__img-wrap">'
+          + '<img src="' + img + '" alt="' + title.replace(/"/g,'&quot;') + '" class="campaign-card__img" loading="lazy" width="400" height="225" />'
+          + urgentBadge
+          + '<span class="campaign-card__cat-badge" data-cat-label="' + cat + '">' + catIcon + ' ' + catLabel + '</span>'
+          + '<span class="campaign-card__days">⏰ ' + days + ' hari lagi</span>'
+          + '</div>'
+          + '<div class="campaign-card__body">'
+          + '<div class="campaign-card__org"><span class="campaign-card__org-dot"></span>' + (c.org || '') + '</div>'
+          + '<a href="/campaigns/' + slug + '" class="campaign-card__link" aria-label="' + title.replace(/"/g,'&quot;') + '" tabindex="-1"></a>'
+          + '<h2 class="campaign-card__title campaign-title" data-title-en="' + titleEn.replace(/"/g,'&quot;') + '">' + title + '</h2>'
+          + '<p class="campaign-desc" style="font-size:.85rem;color:var(--color-gray-500);margin-bottom:.75rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;" data-desc-en="' + descEn.replace(/"/g,'&quot;') + '">' + desc + '</p>'
+          + '<div class="campaign-card__progress-wrap"><div class="campaign-card__progress-bar" style="width:' + p + '%;"></div></div>'
+          + '<div class="campaign-card__meta"><div><div class="campaign-card__raised">' + fmtRp(c.raised||0) + '</div><div class="campaign-card__target">dari ' + fmtRp(c.target||0) + '</div></div><span class="campaign-card__pct">' + p + '%</span></div>'
+          + '</div>'
+          + '<div class="campaign-card__footer">'
+          + '<div class="campaign-card__donors">👥 ' + (c.donors||0).toLocaleString('id-ID') + '</div>'
+          + '<a href="/campaigns/' + slug + '" class="btn btn--primary btn--sm" id="cam-btn-' + i + '">Donasi →</a>'
+          + '</div>'
+          + '</article>';
+      }).join('');
+
+      // Update count
+      var countNum = document.getElementById('count-num');
+      if (countNum) countNum.textContent = active.length;
+    } catch(e) { /* silent */ }
+  })();
+  </script>
+
 </Layout>
 
 <style>
