@@ -2710,6 +2710,14 @@
           <p class="ce-urgent-desc" style="margin-top:.5rem;">Draft tidak tampil di halaman publik sampai di-publish.</p>
         </div>
 
+        <!-- Tracking Pixel per Campaign -->
+        <div class="ce-sidebar-card">
+          <div class="ce-sidebar-title">📊 Tracking Pixel</div>
+          <p class="ce-urgent-desc" style="margin-bottom:.5rem;">Pilih pixel yang aktif untuk kampanye ini:</p>
+          <div id="campaign-pixel-list"></div>
+          <p id="campaign-pixel-none" class="ce-urgent-desc" style="color:#f59e0b;margin-top:.3rem;">⚠️ Belum ada pixel dikonfigurasi. Atur di <strong>Pengaturan → Tracking & Ads Pixel</strong>.</p>
+        </div>
+
         <!-- Tips -->
         <div class="ce-tips-card">
           <div class="ce-tips-title">💡 Tips Kampanye Efektif</div>
@@ -3172,6 +3180,7 @@ function clearCampaignEditor() {
   document.getElementById('modal-category').value = 'kemanusiaan';
   document.getElementById('modal-status').value = 'draft';
   document.getElementById('modal-urgent').checked = false;
+  updatePixelCheckboxes();
   coverImageData = null;
   document.getElementById('ce-cover-img').style.display = 'none';
   document.getElementById('ce-cover-placeholder').style.display = '';
@@ -3248,6 +3257,8 @@ function editCampaign(id) {
   document.getElementById('modal-category').value   = c.category;
   document.getElementById('modal-status').value     = c.status;
   document.getElementById('modal-urgent').checked   = c.urgent || false;
+  updatePixelCheckboxes();
+  setSelectedPixels(c.pixels || []);
   // Load cover
   if (c.image) {
     coverImageData = c.image;
@@ -3287,6 +3298,7 @@ function saveCampaign(forceStatus) {
     location: document.getElementById('modal-location').value,
     image:    coverImageData || '/images/campaign-kemanusiaan.jpg',
     urgent:   document.getElementById('modal-urgent').checked,
+    pixels:   getSelectedPixels(),
   };
 
   if (id) {
@@ -3775,8 +3787,16 @@ function saveSettings() {
       overlayColor: document.getElementById('cfg-hero-overlay-color').value,
       overlayOpacity: document.getElementById('cfg-hero-overlay-opacity').value,
     },
+    // Pixel tracking
+    pixels: {
+      meta:   { enabled: document.getElementById('px-meta').checked,   pixelId: document.getElementById('cfg-meta-pixel-id').value, token: document.getElementById('cfg-meta-capi-token').value, testCode: document.getElementById('cfg-meta-test-code').value },
+      gtm:    { enabled: document.getElementById('px-gtm').checked,    containerId: document.getElementById('cfg-gtm-id').value, ga4Id: document.getElementById('cfg-ga4-id').value, gadsId: document.getElementById('cfg-gads-id').value },
+      tiktok: { enabled: document.getElementById('px-tiktok').checked, pixelId: document.getElementById('cfg-tiktok-pixel-id').value, token: document.getElementById('cfg-tiktok-token').value },
+      snack:  { enabled: document.getElementById('px-snack').checked,  pixelId: document.getElementById('cfg-snack-pixel-id').value, appId: document.getElementById('cfg-snack-app-id').value },
+    },
   };
   localStorage.setItem('ips_settings', JSON.stringify(settings));
+  updatePixelCheckboxes();
   showToast('✅ Pengaturan berhasil disimpan', 'success');
 }
 
@@ -3828,6 +3848,33 @@ function init() {
   if (saved.whatsapp) document.getElementById('cfg-whatsapp').value  = saved.whatsapp;
   if (saved.address)  document.getElementById('cfg-address').value   = saved.address;
 
+  // Load pixel settings
+  if (saved.pixels) {
+    var px = saved.pixels;
+    if (px.meta) {
+      document.getElementById('px-meta').checked = px.meta.enabled || false;
+      document.getElementById('cfg-meta-pixel-id').value = px.meta.pixelId || '';
+      document.getElementById('cfg-meta-capi-token').value = px.meta.token || '';
+      document.getElementById('cfg-meta-test-code').value = px.meta.testCode || '';
+    }
+    if (px.gtm) {
+      document.getElementById('px-gtm').checked = px.gtm.enabled || false;
+      document.getElementById('cfg-gtm-id').value = px.gtm.containerId || '';
+      document.getElementById('cfg-ga4-id').value = px.gtm.ga4Id || '';
+      document.getElementById('cfg-gads-id').value = px.gtm.gadsId || '';
+    }
+    if (px.tiktok) {
+      document.getElementById('px-tiktok').checked = px.tiktok.enabled || false;
+      document.getElementById('cfg-tiktok-pixel-id').value = px.tiktok.pixelId || '';
+      document.getElementById('cfg-tiktok-token').value = px.tiktok.token || '';
+    }
+    if (px.snack) {
+      document.getElementById('px-snack').checked = px.snack.enabled || false;
+      document.getElementById('cfg-snack-pixel-id').value = px.snack.pixelId || '';
+      document.getElementById('cfg-snack-app-id').value = px.snack.appId || '';
+    }
+  }
+
   document.getElementById('cfg-admin-user').value = localStorage.getItem('ips_admin_user') || 'admin';
 
   renderDashboard();
@@ -3836,7 +3883,55 @@ function init() {
   renderDonors();
   renderWithdrawals();
   renderCategories();
+  updatePixelCheckboxes();
 }
+
+// Update campaign editor pixel checkboxes based on global settings
+function updatePixelCheckboxes() {
+  var saved = JSON.parse(localStorage.getItem('ips_settings') || '{}');
+  var px = saved.pixels || {};
+  var items = [
+    { key:'meta',   el:'cpx-meta',   label:'Meta Pixel (CAPI)' },
+    { key:'gtm',    el:'cpx-gtm',    label:'Google Tag Manager' },
+    { key:'tiktok', el:'cpx-tiktok', label:'TikTok Pixel' },
+    { key:'snack',  el:'cpx-snack',  label:'Snack Video' },
+  ];
+  var wrap = document.getElementById('campaign-pixel-list');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  var anyPixel = false;
+  items.forEach(function(item) {
+    var cfg = px[item.key];
+    var hasId = cfg && cfg.enabled && (cfg.pixelId || cfg.containerId);
+    if (!hasId) return;
+    anyPixel = true;
+    var div = document.createElement('label');
+    div.style.cssText = 'display:flex;align-items:center;gap:.5rem;padding:.4rem 0;cursor:pointer;font-size:.82rem;';
+    div.innerHTML = '<input type="checkbox" id="' + item.el + '" checked style="accent-color:var(--green);width:16px;height:16px;" /> ' + item.label;
+    wrap.appendChild(div);
+  });
+  var noPixel = document.getElementById('campaign-pixel-none');
+  if (noPixel) noPixel.style.display = anyPixel ? 'none' : 'block';
+}
+
+function getSelectedPixels() {
+  var keys = ['meta','gtm','tiktok','snack'];
+  var result = [];
+  keys.forEach(function(k) {
+    var cb = document.getElementById('cpx-' + k);
+    if (cb && cb.checked) result.push(k);
+  });
+  return result;
+}
+
+function setSelectedPixels(arr) {
+  var keys = ['meta','gtm','tiktok','snack'];
+  keys.forEach(function(k) {
+    var cb = document.getElementById('cpx-' + k);
+    if (cb) cb.checked = arr.length === 0 || arr.indexOf(k) > -1;
+  });
+}
+
 init();
 // ── FUNDRAISER TABLE FILTER ──────────────────────────
 function filterFundraisers() {
