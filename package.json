@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "proxy": "node proxy-server.js"
+    "proxy": "node proxy-server.cjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
