@@ -2105,6 +2105,13 @@
               <button type="button" class="btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('cfg-xenith-webhook').value);showToast('📋 Webhook URL disalin!','success');" style="white-space:nowrap;">📋 Salin</button>
             </div>
           </div>
+          <!-- Test Connection Button -->
+          <div style="margin-top:.75rem;">
+            <button type="button" id="btn-test-xenith" onclick="testXenithConnection()" style="width:100%;padding:.65rem;border-radius:8px;background:#1e40af;color:#fff;border:none;font-weight:600;font-size:.88rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;">
+              🔌 Test Koneksi Xenith
+            </button>
+            <div id="xenith-test-result" style="display:none;margin-top:.6rem;padding:.6rem .75rem;border-radius:8px;font-size:.82rem;line-height:1.5;"></div>
+          </div>
         </div>
 
         <!-- Categories -->
@@ -3949,6 +3956,91 @@ function setSelectedPixels(arr) {
     var cb = document.getElementById('cpx-' + k);
     if (cb) cb.checked = arr.length === 0 || arr.indexOf(k) > -1;
   });
+}
+
+async function testXenithConnection() {
+  var btn = document.getElementById('btn-test-xenith');
+  var result = document.getElementById('xenith-test-result');
+  var apiKey = document.getElementById('cfg-xenith-key').value.trim();
+  var secretKey = document.getElementById('cfg-xenith-secret').value.trim();
+  var sandbox = document.getElementById('xenith-sandbox').checked;
+
+  result.style.display = 'none';
+  btn.textContent = '⏳ Menguji koneksi...';
+  btn.disabled = true;
+
+  if (!apiKey || !secretKey) {
+    result.style.display = 'block';
+    result.style.background = '#fef2f2';
+    result.style.border = '1px solid #fecaca';
+    result.style.color = '#991b1b';
+    result.innerHTML = '❌ <strong>Access Key & Secret Key kosong!</strong><br>Isi dulu kedua field di atas, lalu klik Simpan Semua.';
+    btn.textContent = '🔌 Test Koneksi Xenith';
+    btn.disabled = false;
+    return;
+  }
+
+  try {
+    var res = await fetch('http://localhost:3456/health');
+    if (!res.ok) throw new Error('Proxy tidak merespon');
+  } catch(e) {
+    result.style.display = 'block';
+    result.style.background = '#fef2f2';
+    result.style.border = '1px solid #fecaca';
+    result.style.color = '#991b1b';
+    result.innerHTML = '❌ <strong>Proxy server tidak berjalan!</strong><br>Buka terminal baru dan jalankan: <code style="background:#fee2e2;padding:1px 4px;border-radius:3px;">npm run proxy</code>';
+    btn.textContent = '🔌 Test Koneksi Xenith';
+    btn.disabled = false;
+    return;
+  }
+
+  try {
+    var res2 = await fetch('http://localhost:3456/api/xenith/create-payin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        apiKey, secretKey, sandbox,
+        payinData: {
+          initiatedAmount: 10000, currency: 'IDR',
+          paymentMethod: 'VIRTUAL_ACCOUNT', paymentChannel: 'BRI.VA',
+          referenceCode: 'test-' + Date.now(),
+          customerReference: 'test@test.com',
+          customerName: 'Test User Indonesia Peduli',
+          description: 'Test Koneksi dari Admin',
+        }
+      })
+    });
+    var data = await res2.json();
+
+    if (data.id || data.paymentCode || res2.status === 200) {
+      result.style.display = 'block';
+      result.style.background = '#f0fdf4';
+      result.style.border = '1px solid #bbf7d0';
+      result.style.color = '#166534';
+      result.innerHTML = '✅ <strong>Koneksi berhasil!</strong> Xenith ' + (sandbox ? 'Sandbox' : 'Live') + ' terhubung.<br>Mode: <strong>' + (sandbox ? '🧪 Sandbox' : '🚀 Live') + '</strong> · Transaksi test ID: ' + (data.id || '-');
+    } else {
+      var msg = data.message || data.error || JSON.stringify(data).slice(0,120);
+      var isIp = msg.toLowerCase().includes('ip') || msg.toLowerCase().includes('unauthorized');
+      result.style.display = 'block';
+      result.style.background = '#fef2f2';
+      result.style.border = '1px solid #fecaca';
+      result.style.color = '#991b1b';
+      if (isIp) {
+        result.innerHTML = '⚠️ <strong>IP belum terdaftar di Xenith!</strong><br>Buka <a href="https://app.sandbox.xenithpay.com" target="_blank" style="color:#2563eb;">dashboard Xenith</a> → Developer Settings → IP Whitelist → tambah IP <strong>114.122.115.70</strong>';
+      } else {
+        result.innerHTML = '❌ <strong>Error dari Xenith:</strong> ' + msg + '<br>Pastikan Access Key & Secret Key benar.';
+      }
+    }
+  } catch(e) {
+    result.style.display = 'block';
+    result.style.background = '#fef2f2';
+    result.style.border = '1px solid #fecaca';
+    result.style.color = '#991b1b';
+    result.innerHTML = '❌ <strong>Gagal terhubung:</strong> ' + e.message;
+  }
+
+  btn.textContent = '🔌 Test Koneksi Xenith';
+  btn.disabled = false;
 }
 
 init();
