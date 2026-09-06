@@ -732,7 +732,7 @@ const urlAmount = Astro.url.searchParams.get('amount') || '';
   }
 
   // ── Validation & Pay ───────────────────────────
-  document.getElementById('pay-btn').addEventListener('click', () => {
+  document.getElementById('pay-btn').addEventListener('click', async () => {
     const lang = localStorage.getItem('lang') || 'id';
     let valid  = true;
 
@@ -783,18 +783,97 @@ const urlAmount = Astro.url.searchParams.get('amount') || '';
     btn.disabled = true;
     btn.querySelector('span').textContent = lang === 'en' ? '⏳ Processing...' : '⏳ Memproses...';
 
-    // TODO: integrate Midtrans/Xendit/Xenith API here based on payMethod
-    setTimeout(() => {
-      const txId = 'IPS-2025-' + Math.random().toString(36).substring(2,8).toUpperCase();
-      document.getElementById('success-txid').textContent = `📋 No. Transaksi: ${txId}`;
-      document.getElementById('success-overlay').classList.add('show');
-      btn.disabled = false;
-      btn.querySelector('span').textContent = lang === 'en' ? 'Pay Now' : 'Bayar Sekarang';
-    }, 1800);
+    // Map UI payment methods to Xenith API parameters
+    const xenithMap = {
+      qris:      { paymentMethod: 'QR_CODE',         paymentChannel: 'QRIS' },
+      va:        { paymentMethod: 'VIRTUAL_ACCOUNT',  paymentChannel: 'BRI.VA' },
+      shopeepay: { paymentMethod: 'QR_CODE',          paymentChannel: 'QRIS' },
+      gopay:     { paymentMethod: 'QR_CODE',          paymentChannel: 'QRIS' },
+      ovo:       { paymentMethod: 'EWALLET',          paymentChannel: 'OVO' },
+      transfer:  { paymentMethod: 'VIRTUAL_ACCOUNT',  paymentChannel: 'BCA.VA' },
+    };
+
+    const xenithParams = xenithMap[payMethod] || xenithMap.qris;
+    const donorName = isAnon.checked ? 'Anonim' : (document.getElementById('f-name')?.value?.trim() || 'Anonim');
+    const donorPhone = document.getElementById('f-phone')?.value?.trim() || '';
+    const donorEmail = document.getElementById('f-email')?.value?.trim() || '';
+    const referenceCode = crypto.randomUUID();
+
+    // Get Xenith keys from localStorage or use defaults (proxy has built-in fallback)
+    const ipsSettings = JSON.parse(localStorage.getItem('ips_settings') || localStorage.getItem('adcraft_settings') || '{}');
+    const xenithApiKey = ipsSettings.xenithApiKey || '';
+    const xenithSecretKey = ipsSettings.xenithSecretKey || '';
+
+    // Call Xenith API via proxy server
+    try {
+      const res = await fetch('http://localhost:3456/api/xenith/create-payin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          apiKey: xenithApiKey,
+          secretKey: xenithSecretKey,
+          payinData: {
+            initiatedAmount: amount,
+            currency: 'IDR',
+            paymentMethod: xenithParams.paymentMethod,
+            paymentChannel: xenithParams.paymentChannel,
+            referenceCode,
+            customerReference: donorEmail || referenceCode.slice(0, 8),
+            customerName: donorName.length >= 5 ? donorName : donorName + ' Donor',
+            customerPhoneNumber: donorPhone.replace(/[^0-9]/g, '') || undefined,
+            description: 'Donasi ' + campaignTitle,
+            callbackUrl: 'https://indonesiapedulisesama.org/api/webhook/xenith',
+            redirectUrl: window.location.origin + '/donate/success',
+          },
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.id) {
+        // Xenith API success → save real payment data
+        sessionStorage.setItem('ips_payment_pending', JSON.stringify({
+          txId: data.id, campaignTitle, campaignSlug, amount,
+          payMethodKey: payMethod, payMethodLabel: payLabels[payMethod] || payMethod,
+          donorName, demo: false,
+          xenith: {
+            id: data.id,
+            paymentCode: data.paymentCode,
+            paymentCodeType: data.paymentCodeType,
+            paymentMethod: data.paymentMethod,
+            paymentChannel: data.paymentChannel,
+            status: data.status,
+            expirationTime: data.expirationTime,
+          },
+        }));
+      } else {
+        // API error → fallback to demo with error message
+        console.error('Xenith API error:', data);
+        sessionStorage.setItem('ips_payment_pending', JSON.stringify({
+          txId: 'IPS-2025-' + Math.random().toString(36).substring(2,8).toUpperCase(),
+          campaignTitle, campaignSlug, amount,
+          payMethodKey: payMethod, payMethodLabel: payLabels[payMethod] || payMethod,
+          donorName, demo: true,
+          apiError: data.message || data.code || 'API error',
+        }));
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+      sessionStorage.setItem('ips_payment_pending', JSON.stringify({
+        txId: 'IPS-2025-' + Math.random().toString(36).substring(2,8).toUpperCase(),
+        campaignTitle, campaignSlug, amount,
+        payMethodKey: payMethod, payMethodLabel: payLabels[payMethod] || payMethod,
+        donorName, demo: true,
+      }));
+    }
+
+    btn.disabled = false;
+    btn.querySelector('span').textContent = lang === 'en' ? 'Pay Now' : 'Bayar Sekarang';
+    window.location.href = '/donate/payment';
   });
 
-  // Close overlay on backdrop click
-  document.getElementById('success-overlay').addEventListener('click', function(e) {
+  // Close overlay on backdrop click (fallback if overlay still exists)
+  document.getElementById('success-overlay')?.addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('show');
   });
 

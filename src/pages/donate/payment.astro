@@ -1,0 +1,693 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Instruksi Pembayaran — Indonesia Peduli Sesama"
+  description="Selesaikan pembayaran donasi Anda dengan mengikuti instruksi berikut."
+>
+
+<style>
+  .payment-page {
+    padding-top: calc(var(--navbar-h) + 2rem);
+    padding-bottom: 4rem;
+    background: var(--color-gray-50);
+    min-height: 100vh;
+  }
+
+  .payment-container {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--color-gray-500);
+    margin-bottom: 1.25rem;
+    transition: color var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--color-primary); }
+
+  .payment-card {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    animation: slideUp .4s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header */
+  .payment-header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    padding: 1.75rem 2rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .payment-header-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,.15);
+    border-radius: var(--radius-lg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .payment-header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: .2rem;
+  }
+  .payment-header p {
+    font-size: .85rem;
+    opacity: .85;
+  }
+
+  /* Timer */
+  .timer-bar {
+    background: #fef3c7;
+    border-bottom: 1px solid #fde68a;
+    padding: .75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .85rem;
+    color: #92400e;
+    font-weight: 600;
+  }
+  .timer-bar .countdown {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 800;
+    color: #b45309;
+  }
+
+  .payment-body { padding: 2rem; }
+
+  /* Summary Strip */
+  .summary-strip {
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+  .summary-strip-label {
+    font-size: .85rem;
+    color: var(--color-gray-500);
+  }
+  .summary-strip-value {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--color-primary);
+  }
+
+  /* QRIS Section */
+  .qris-section { text-align: center; }
+  .qris-frame {
+    display: inline-block;
+    padding: 1.5rem;
+    background: #fff;
+    border: 3px solid var(--color-gray-200);
+    border-radius: var(--radius-xl);
+    margin-bottom: 1rem;
+  }
+  .qris-placeholder {
+    width: 240px; height: 240px;
+    background: #f9fafb;
+    border: 2px dashed var(--color-gray-300);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    color: var(--color-gray-400);
+    font-size: .85rem;
+  }
+  .qris-placeholder .qr-icon { font-size: 3rem; }
+  .qris-note {
+    font-size: .82rem;
+    color: var(--color-gray-500);
+    line-height: 1.5;
+  }
+
+  /* VA Section */
+  .va-section {}
+  .va-bank-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1rem;
+  }
+  .va-bank-logo {
+    width: 52px; height: 52px;
+    background: #e3f2fd;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 800;
+    color: #0d47a1;
+    font-family: var(--font-heading);
+    flex-shrink: 0;
+  }
+  .va-bank-name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: .95rem;
+    color: var(--color-gray-900);
+  }
+  .va-bank-type {
+    font-size: .8rem;
+    color: var(--color-gray-500);
+  }
+  .va-number-box {
+    background: #f0f9ff;
+    border: 2px solid #7dd3fc;
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .va-number-label {
+    font-size: .8rem;
+    color: var(--color-gray-500);
+    margin-bottom: .4rem;
+    font-weight: 600;
+  }
+  .va-number {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #0369a1;
+    letter-spacing: .08em;
+  }
+  .btn-copy-va {
+    margin-top: .6rem;
+    padding: .4rem .8rem;
+    border: 2px solid #7dd3fc;
+    border-radius: var(--radius-md);
+    background: #fff;
+    color: #0369a1;
+    font-weight: 600;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  .btn-copy-va:hover { background: #0369a1; color: #fff; }
+
+  /* E-wallet section */
+  .ewallet-section { text-align: center; }
+  .ewallet-icon {
+    font-size: 3rem;
+    margin-bottom: .75rem;
+  }
+  .ewallet-text {
+    font-size: .9rem;
+    color: var(--color-gray-600);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .ewallet-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: .9rem;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all .25s;
+    font-family: var(--font-heading);
+  }
+  .ewallet-link:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(22,163,74,.3); }
+
+  /* Steps */
+  .payment-steps {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-gray-100);
+  }
+  .payment-steps h3 {
+    font-family: var(--font-heading);
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--color-gray-800);
+    margin-bottom: 1rem;
+  }
+  .step-item {
+    display: flex;
+    gap: .75rem;
+    margin-bottom: .75rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 26px; height: 26px;
+    background: var(--color-primary-pale);
+    color: var(--color-primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 800;
+    font-family: var(--font-heading);
+    flex-shrink: 0;
+  }
+  .step-text {
+    font-size: .85rem;
+    color: var(--color-gray-600);
+    line-height: 1.5;
+    padding-top: .15rem;
+  }
+
+  /* Footer actions */
+  .payment-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--color-gray-100);
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+  .btn-paid {
+    width: 100%;
+    padding: 1rem;
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.05rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light, #22c55e));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all .25s;
+    box-shadow: 0 6px 20px rgba(22,163,74,.3);
+  }
+  .btn-paid:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(22,163,74,.4); }
+  .btn-cancel {
+    width: 100%;
+    padding: .75rem;
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: .9rem;
+    background: transparent;
+    color: var(--color-gray-500);
+    border: 2px solid var(--color-gray-200);
+    cursor: pointer;
+    transition: all .25s;
+  }
+  .btn-cancel:hover { border-color: #ef4444; color: #ef4444; }
+  .secure-note {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--color-gray-400);
+    padding-top: .5rem;
+  }
+
+  @media (max-width: 520px) {
+    .payment-header { padding: 1.5rem 1.25rem; }
+    .payment-body { padding: 1.5rem 1.25rem; }
+    .payment-footer { padding: 1.25rem; }
+    .va-number { font-size: 1.2rem; }
+    .qris-placeholder { width: 200px; height: 200px; }
+  }
+</style>
+
+<div class="payment-page">
+  <div class="payment-container">
+    <a class="back-link" id="back-link">← <span id="back-label">Kembali</span></a>
+
+    <div class="payment-card">
+
+      <!-- Header -->
+      <div class="payment-header" id="payment-header">
+        <div class="payment-header-icon" id="header-icon">💳</div>
+        <div>
+          <h1 id="header-title">Instruksi Pembayaran</h1>
+          <p id="header-subtitle">Selesaikan pembayaran Anda</p>
+        </div>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-bar">
+        <span>⏰</span>
+        <span id="timer-text">Selesaikan pembayaran dalam</span>
+        <span class="countdown" id="countdown">23:59:59</span>
+      </div>
+
+      <div class="payment-body">
+
+        <!-- Amount summary -->
+        <div class="summary-strip">
+          <div>
+            <div class="summary-strip-label" id="amount-label">Total Pembayaran</div>
+          </div>
+          <div class="summary-strip-value" id="amount-value">Rp 0</div>
+        </div>
+
+        <!-- QRIS Content -->
+        <div id="content-qris" class="qris-section" style="display:none;">
+          <div class="qris-frame">
+            <div class="qris-placeholder" id="qris-display">
+              <div class="qr-icon">📱</div>
+              <div id="qris-text">QR Code akan muncul<br>setelah integrasi API</div>
+            </div>
+            <canvas id="qris-canvas" style="display:none;width:240px;height:240px;"></canvas>
+          </div>
+          <p class="qris-note" id="qris-note">
+            Scan QR Code di atas menggunakan aplikasi e-wallet atau mobile banking Anda.
+            QR Code berlaku untuk semua aplikasi yang mendukung QRIS.
+          </p>
+
+          <div class="payment-steps">
+            <h3 id="qris-steps-title">📝 Cara Pembayaran QRIS</h3>
+            <div class="step-item"><div class="step-num">1</div><div class="step-text" id="qris-step-1">Buka aplikasi e-wallet atau mobile banking Anda</div></div>
+            <div class="step-item"><div class="step-num">2</div><div class="step-text" id="qris-step-2">Pilih menu Scan QR / QRIS / Bayar</div></div>
+            <div class="step-item"><div class="step-num">3</div><div class="step-text" id="qris-step-3">Arahkan kamera ke QR Code di atas</div></div>
+            <div class="step-item"><div class="step-num">4</div><div class="step-text" id="qris-step-4">Konfirmasi pembayaran dan masukkan PIN Anda</div></div>
+          </div>
+        </div>
+
+        <!-- VA Content -->
+        <div id="content-va" class="va-section" style="display:none;">
+          <div class="va-bank-info">
+            <div class="va-bank-logo" id="va-bank-logo">BCA</div>
+            <div>
+              <div class="va-bank-name" id="va-bank-name">Bank BCA</div>
+              <div class="va-bank-type">Virtual Account</div>
+            </div>
+          </div>
+
+          <div class="va-number-box">
+            <div class="va-number-label" id="va-number-label">Nomor Virtual Account</div>
+            <div class="va-number" id="va-number">8077 0812 3456 7890</div>
+            <button class="btn-copy-va" id="btn-copy-va">📋 Salin Nomor</button>
+          </div>
+
+          <div class="payment-steps">
+            <h3 id="va-steps-title">📝 Cara Pembayaran VA</h3>
+            <div class="step-item"><div class="step-num">1</div><div class="step-text" id="va-step-1">Buka mobile banking atau ATM bank Anda</div></div>
+            <div class="step-item"><div class="step-num">2</div><div class="step-text" id="va-step-2">Pilih menu Transfer → Virtual Account</div></div>
+            <div class="step-item"><div class="step-num">3</div><div class="step-text" id="va-step-3">Masukkan nomor VA di atas dan jumlah pembayaran</div></div>
+            <div class="step-item"><div class="step-num">4</div><div class="step-text" id="va-step-4">Konfirmasi transfer dan simpan bukti bayar</div></div>
+          </div>
+        </div>
+
+        <!-- E-Wallet Content (ShopeePay, GoPay, OVO) -->
+        <div id="content-ewallet" class="ewallet-section" style="display:none;">
+          <div class="ewallet-icon" id="ewallet-icon">📲</div>
+          <p class="ewallet-text" id="ewallet-text">
+            Notifikasi pembayaran akan dikirim ke aplikasi Anda.
+            Buka aplikasi dan selesaikan pembayaran.
+          </p>
+          <button class="ewallet-link" id="btn-open-app">📲 Buka Aplikasi</button>
+
+          <div class="payment-steps">
+            <h3 id="ewallet-steps-title">📝 Cara Pembayaran</h3>
+            <div class="step-item"><div class="step-num">1</div><div class="step-text" id="ew-step-1">Buka aplikasi e-wallet Anda</div></div>
+            <div class="step-item"><div class="step-num">2</div><div class="step-text" id="ew-step-2">Cek notifikasi pembayaran yang masuk</div></div>
+            <div class="step-item"><div class="step-num">3</div><div class="step-text" id="ew-step-3">Konfirmasi pembayaran dan masukkan PIN</div></div>
+          </div>
+        </div>
+
+        <!-- Bank Transfer Content -->
+        <div id="content-transfer" class="va-section" style="display:none;">
+          <div class="va-bank-info">
+            <div class="va-bank-logo" style="background:#fce4ec;color:#880e4f;">💳</div>
+            <div>
+              <div class="va-bank-name">Bank Transfer Manual</div>
+              <div class="va-bank-type">Transfer antar bank</div>
+            </div>
+          </div>
+
+          <div class="va-number-box" style="border-color: #f9a8d4; background: #fdf2f8;">
+            <div class="va-number-label">Nomor Rekening Tujuan</div>
+            <div class="va-number" style="color:#be185d;" id="transfer-account">7810 2468 135</div>
+            <div style="font-size:.8rem;color:var(--color-gray-500);margin-top:.3rem;">a.n. <strong>Yayasan Indonesia Peduli Sesama</strong></div>
+            <div style="font-size:.78rem;color:var(--color-gray-400);margin-top:.2rem;">Bank BCA - KCP Jakarta Selatan</div>
+            <button class="btn-copy-va" id="btn-copy-transfer" style="border-color:#f9a8d4;color:#be185d;">📋 Salin Nomor</button>
+          </div>
+
+          <div class="payment-steps">
+            <h3>📝 Cara Transfer Bank</h3>
+            <div class="step-item"><div class="step-num">1</div><div class="step-text">Transfer ke nomor rekening di atas sesuai nominal</div></div>
+            <div class="step-item"><div class="step-num">2</div><div class="step-text">Tulis berita transfer: <strong id="transfer-berita">IPS-DONASI</strong></div></div>
+            <div class="step-item"><div class="step-num">3</div><div class="step-text">Simpan bukti transfer sebagai konfirmasi</div></div>
+            <div class="step-item"><div class="step-num">4</div><div class="step-text">Klik "Saya Sudah Bayar" di bawah</div></div>
+          </div>
+        </div>
+
+      </div><!-- /.payment-body -->
+
+      <!-- Footer Actions -->
+      <div class="payment-footer">
+        <button class="btn-paid" id="btn-paid">✅ Saya Sudah Bayar</button>
+        <button class="btn-cancel" id="btn-cancel">Batalkan Pembayaran</button>
+        <p class="secure-note">🔒 Pembayaran aman via Xenith Pay · Enkripsi SSL 256-bit</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</Layout>
+
+<script>
+  // Read payment data from sessionStorage
+  const data = JSON.parse(sessionStorage.getItem('ips_payment_pending') || '{}');
+  const fmtRp = (n: number) => n > 0 ? `Rp ${n.toLocaleString('id-ID')}` : 'Rp 0';
+
+  // Set amount
+  const amountEl = document.getElementById('amount-value');
+  if (amountEl) amountEl.textContent = fmtRp(data.amount || 0);
+
+  // Back link
+  const backLink = document.getElementById('back-link') as HTMLAnchorElement;
+  if (backLink && data.campaignSlug) {
+    backLink.href = `/donate/${data.campaignSlug}`;
+  }
+
+  // Payment method config
+  const methodConfig: Record<string, { icon: string; title: string; subtitle: string; section: string; headerBg: string }> = {
+    qris:      { icon: '⬛', title: 'Pembayaran QRIS',       subtitle: 'Scan & bayar dengan semua e-wallet', section: 'content-qris',     headerBg: 'linear-gradient(135deg, #065f46, #10b981)' },
+    va:        { icon: '🏦', title: 'Virtual Account',       subtitle: 'Transfer via mobile banking / ATM',  section: 'content-va',       headerBg: 'linear-gradient(135deg, #1e3a5f, #3b82f6)' },
+    shopeepay: { icon: '🛒', title: 'ShopeePay',             subtitle: 'Bayar via ShopeePay',                section: 'content-ewallet',  headerBg: 'linear-gradient(135deg, #c2410c, #f97316)' },
+    gopay:     { icon: '🟢', title: 'GoPay',                 subtitle: 'Bayar via GoPay / Tokopedia',        section: 'content-ewallet',  headerBg: 'linear-gradient(135deg, #14532d, #22c55e)' },
+    ovo:       { icon: '🟣', title: 'OVO',                   subtitle: 'Bayar via OVO Cash',                 section: 'content-ewallet',  headerBg: 'linear-gradient(135deg, #3b0764, #8b5cf6)' },
+    transfer:  { icon: '💳', title: 'Bank Transfer',         subtitle: 'Transfer manual antar bank',         section: 'content-transfer', headerBg: 'linear-gradient(135deg, #881337, #e11d48)' },
+  };
+
+  const method = data.payMethodKey || 'qris';
+  const config = methodConfig[method] || methodConfig.qris;
+
+  // Set header
+  const headerEl = document.getElementById('payment-header') as HTMLElement;
+  if (headerEl) headerEl.style.background = config.headerBg;
+  const iconEl = document.getElementById('header-icon');
+  if (iconEl) iconEl.textContent = config.icon;
+  const titleEl = document.getElementById('header-title');
+  if (titleEl) titleEl.textContent = config.title;
+  const subEl = document.getElementById('header-subtitle');
+  if (subEl) subEl.textContent = config.subtitle;
+
+  // Show correct section
+  const sectionEl = document.getElementById(config.section);
+  if (sectionEl) sectionEl.style.display = 'block';
+
+  // E-wallet specific
+  if (['shopeepay', 'gopay', 'ovo'].includes(method)) {
+    const eIcon = document.getElementById('ewallet-icon');
+    if (eIcon) {
+      const icons: Record<string,string> = { shopeepay: '🛒', gopay: '🟢', ovo: '🟣' };
+      eIcon.textContent = icons[method] || '📲';
+    }
+    const eText = document.getElementById('ewallet-text');
+    if (eText) {
+      const names: Record<string,string> = { shopeepay: 'ShopeePay', gopay: 'GoPay', ovo: 'OVO' };
+      eText.textContent = `Notifikasi pembayaran akan dikirim ke aplikasi ${names[method]} Anda. Buka aplikasi dan selesaikan pembayaran.`;
+    }
+  }
+
+  // Generate fake VA number for demo
+  if (method === 'va' && (!data.xenith || data.demo)) {
+    const vaNum = '8077 ' + Math.floor(1000 + Math.random() * 9000) + ' ' + Math.floor(1000 + Math.random() * 9000) + ' ' + Math.floor(1000 + Math.random() * 9000);
+    const vaEl = document.getElementById('va-number');
+    if (vaEl) vaEl.textContent = vaNum;
+  }
+
+  // Transfer berita
+  const beritaEl = document.getElementById('transfer-berita');
+  if (beritaEl && data.txId) beritaEl.textContent = data.txId;
+
+  // Copy VA number
+  document.getElementById('btn-copy-va')?.addEventListener('click', () => {
+    const num = document.getElementById('va-number')?.textContent || '';
+    navigator.clipboard.writeText(num.replace(/\s/g, '')).then(() => {
+      const btn = document.getElementById('btn-copy-va');
+      if (btn) { btn.textContent = '✅ Tersalin!'; setTimeout(() => { btn.textContent = '📋 Salin Nomor'; }, 2000); }
+    });
+  });
+
+  // Copy transfer number
+  document.getElementById('btn-copy-transfer')?.addEventListener('click', () => {
+    const num = document.getElementById('transfer-account')?.textContent || '';
+    navigator.clipboard.writeText(num.replace(/\s/g, '')).then(() => {
+      const btn = document.getElementById('btn-copy-transfer');
+      if (btn) { btn.textContent = '✅ Tersalin!'; setTimeout(() => { btn.textContent = '📋 Salin Nomor'; }, 2000); }
+    });
+  });
+
+  // Countdown timer
+  let remaining = 24 * 60 * 60; // 24 hours default
+  const countdownEl = document.getElementById('countdown');
+  const tick = () => {
+    if (remaining <= 0) {
+      if (countdownEl) countdownEl.textContent = '00:00:00';
+      return;
+    }
+    remaining--;
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+    if (countdownEl) countdownEl.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  };
+  setInterval(tick, 1000);
+
+  // ═══════════════════════════════════════════════
+  // XENITH REAL DATA INTEGRATION
+  // ═══════════════════════════════════════════════
+  if (data.xenith && !data.demo) {
+    const xd = data.xenith;
+
+    // QRIS: paymentCodeType is QR_TEXT → render as real QR code
+    if (xd.paymentCodeType === 'QR_TEXT' && xd.paymentCode) {
+      const qrisDisplay = document.getElementById('qris-display');
+      const qrisText = document.getElementById('qris-text');
+      if (qrisDisplay && qrisText) {
+        qrisText.innerHTML = 'Memuat QR Code...';
+        // Load QR library and render
+        const qrScript = document.createElement('script');
+        qrScript.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+        qrScript.onload = () => {
+          const canvas = document.getElementById('qris-canvas') as HTMLCanvasElement;
+          if (canvas && (window as any).QRCode) {
+            (window as any).QRCode.toCanvas(canvas, xd.paymentCode, { width: 240, margin: 2 }, (err: any) => {
+              if (!err) {
+                canvas.style.display = 'block';
+                qrisDisplay.style.display = 'none';
+              }
+            });
+          }
+        };
+        document.head.appendChild(qrScript);
+      }
+    }
+
+    // VA: paymentCodeType is ACCOUNT_NUMBER → show real VA number
+    if (xd.paymentCodeType === 'ACCOUNT_NUMBER' && xd.paymentCode) {
+      const vaEl = document.getElementById('va-number');
+      if (vaEl) {
+        const formatted = xd.paymentCode.replace(/(\d{4})/g, '$1 ').trim();
+        vaEl.textContent = formatted;
+      }
+      const bankNames: Record<string,string> = {
+        'BCA.VA': 'Bank BCA', 'BRI.VA': 'Bank BRI', 'BNI.VA': 'Bank BNI',
+        'MDR.VA': 'Bank Mandiri', 'CIMBN.VA': 'CIMB Niaga', 'PTB.VA': 'Bank Permata',
+        'BSS.VA': 'Bank Sahabat Sampoerna', 'BDMN.VA': 'Bank Danamon',
+      };
+      const bankNameEl = document.getElementById('va-bank-name');
+      const bankLogoEl = document.getElementById('va-bank-logo');
+      if (bankNameEl && xd.paymentChannel) bankNameEl.textContent = bankNames[xd.paymentChannel] || xd.paymentChannel;
+      if (bankLogoEl && xd.paymentChannel) bankLogoEl.textContent = xd.paymentChannel.split('.')[0];
+    }
+
+    // Use real expiration time from Xenith
+    if (xd.expirationTime) {
+      const expiry = new Date(xd.expirationTime).getTime();
+      const now = Date.now();
+      remaining = Math.max(0, Math.floor((expiry - now) / 1000));
+    }
+  }
+
+  // Show API error banner
+  if (data.apiError) {
+    const bodyEl = document.querySelector('.payment-body');
+    if (bodyEl) {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = 'background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#991b1b;line-height:1.5;';
+      errorDiv.innerHTML = '⚠️ <strong>Koneksi ke Xenith gagal:</strong> ' + data.apiError + '<br><span style="font-size:.8rem;color:#b91c1c;">Pastikan API Key & Secret Key sudah benar di <a href="/admin/dashboard" style="color:#2563eb;text-decoration:underline;">Admin → Pengaturan</a> dan proxy server sudah berjalan (<code>npm run proxy</code>).</span>';
+      bodyEl.insertBefore(errorDiv, bodyEl.firstChild);
+    }
+  }
+
+  // Demo mode indicator (no keys configured + no fetch error)
+  if (data.demo && !data.apiError) {
+    const bodyEl = document.querySelector('.payment-body');
+    if (bodyEl) {
+      const demoDiv = document.createElement('div');
+      demoDiv.style.cssText = 'background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#92400e;line-height:1.6;';
+      demoDiv.innerHTML = `🔧 <strong>Mode Demo</strong> — API Key Xenith belum dikonfigurasi.<br>
+        <span style="font-size:.8rem;">
+          1. Buka <a href="/admin/dashboard" style="color:#2563eb;text-decoration:underline;">Admin Settings</a> → <strong>Payment Gateway → Xenith</strong><br>
+          2. Enable Xenith, masukkan <strong>API Key</strong> & <strong>Secret Key</strong>, lalu klik Simpan<br>
+          3. Jalankan proxy server di terminal: <code style="background:#fef3c7;padding:1px 4px;border-radius:3px;">npm run proxy</code>
+        </span>`;
+      bodyEl.insertBefore(demoDiv, bodyEl.firstChild);
+    }
+  }
+
+  // "Saya Sudah Bayar" → go to success
+  document.getElementById('btn-paid')?.addEventListener('click', () => {
+    // Move data to success storage
+    sessionStorage.setItem('ips_donation_success', JSON.stringify({
+      txId: data.txId || 'IPS-' + Math.random().toString(36).substring(2,8).toUpperCase(),
+      campaignTitle: data.campaignTitle || '',
+      campaignSlug: data.campaignSlug || '',
+      amount: data.amount || 0,
+      payMethod: data.payMethodLabel || '',
+      donorName: data.donorName || 'Anonim',
+    }));
+    window.location.href = '/donate/success';
+  });
+
+  // Cancel
+  document.getElementById('btn-cancel')?.addEventListener('click', () => {
+    if (confirm('Apakah Anda yakin ingin membatalkan pembayaran?')) {
+      const slug = data.campaignSlug;
+      if (slug) {
+        window.location.href = `/donate/${slug}`;
+      } else {
+        window.location.href = '/campaigns';
+      }
+    }
+  });
+
+  // Open app deeplink (placeholder)
+  document.getElementById('btn-open-app')?.addEventListener('click', () => {
+    alert('Fitur ini akan tersedia setelah integrasi Xenith Pay API aktif.');
+  });
+</script>

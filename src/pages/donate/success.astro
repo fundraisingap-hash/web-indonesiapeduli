@@ -1,0 +1,465 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { campaigns, formatRupiahFull } from '../../data/campaigns';
+---
+
+<Layout
+  title="Donasi Berhasil — Indonesia Peduli Sesama"
+  description="Terima kasih atas donasi Anda. Donasi sedang diproses."
+>
+
+<style>
+  .success-page {
+    padding-top: calc(var(--navbar-h) + 3rem);
+    padding-bottom: 4rem;
+    background: var(--color-gray-50);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .success-container {
+    max-width: 580px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .success-card {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    text-align: center;
+    animation: slideUp .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .success-header {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    padding: 2.5rem 2rem 2rem;
+    color: #fff;
+  }
+
+  .success-checkmark {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 2.5rem;
+    animation: popIn .4s .3s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  .success-header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: .5rem;
+  }
+
+  .success-header p {
+    font-size: .95rem;
+    opacity: .9;
+    line-height: 1.5;
+  }
+
+  .success-body {
+    padding: 2rem;
+  }
+
+  .detail-card {
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .6rem 0;
+    border-bottom: 1px dashed var(--color-gray-200);
+    font-size: .9rem;
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+
+  .detail-label {
+    color: var(--color-gray-500);
+    font-weight: 500;
+  }
+
+  .detail-value {
+    color: var(--color-gray-900);
+    font-weight: 700;
+    font-family: var(--font-heading);
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+  }
+
+  .txid-box {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 2px solid #86efac;
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+  }
+
+  .txid-label {
+    font-size: .8rem;
+    color: var(--color-gray-500);
+    margin-bottom: .2rem;
+  }
+
+  .txid-code {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #16a34a;
+    letter-spacing: .03em;
+  }
+
+  .btn-copy-txid {
+    padding: .5rem .9rem;
+    border: 2px solid #86efac;
+    border-radius: var(--radius-md);
+    background: #fff;
+    color: #16a34a;
+    font-weight: 600;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: all .25s;
+    white-space: nowrap;
+  }
+
+  .btn-copy-txid:hover {
+    background: #16a34a;
+    color: #fff;
+  }
+
+  .info-note {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-size: .85rem;
+    color: #92400e;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+
+  .info-note strong {
+    color: #78350f;
+  }
+
+  .success-actions {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .success-actions .btn {
+    padding: .8rem 1.5rem;
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: .9rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .25s;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: none;
+  }
+
+  .btn-home {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark, #15803d));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(22,163,74,.3);
+  }
+
+  .btn-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(22,163,74,.4);
+  }
+
+  .btn-campaigns {
+    background: #fff;
+    color: var(--color-gray-700);
+    border: 2px solid var(--color-gray-200) !important;
+  }
+
+  .btn-campaigns:hover {
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary);
+  }
+
+  .btn-share-success {
+    background: #25d366;
+    color: #fff;
+  }
+
+  .btn-share-success:hover {
+    background: #128c7e;
+  }
+
+  .share-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-gray-100);
+  }
+
+  .share-section p {
+    font-size: .85rem;
+    color: var(--color-gray-500);
+    margin-bottom: .75rem;
+    font-weight: 600;
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: .5rem;
+    justify-content: center;
+  }
+
+  .share-btn-sm {
+    padding: .5rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid;
+    background: transparent;
+    transition: all .25s;
+  }
+
+  .share-btn-wa { border-color: #25d366; color: #25d366; }
+  .share-btn-wa:hover { background: #25d366; color: #fff; }
+  .share-btn-fb { border-color: #1877f2; color: #1877f2; }
+  .share-btn-fb:hover { background: #1877f2; color: #fff; }
+  .share-btn-copy { border-color: var(--color-gray-300); color: var(--color-gray-600); }
+  .share-btn-copy:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+  @media (max-width: 520px) {
+    .success-header { padding: 2rem 1.25rem 1.5rem; }
+    .success-header h1 { font-size: 1.4rem; }
+    .success-body { padding: 1.5rem 1.25rem; }
+    .success-actions { flex-direction: column; }
+    .success-actions .btn { width: 100%; justify-content: center; }
+  }
+</style>
+
+<div class="success-page">
+  <div class="success-container">
+    <div class="success-card">
+
+      <!-- Green Header -->
+      <div class="success-header">
+        <div class="success-checkmark">✅</div>
+        <h1 id="success-title">Terima Kasih!</h1>
+        <p id="success-subtitle">Donasi Anda sedang diproses. Konfirmasi akan dikirim ke email Anda.</p>
+      </div>
+
+      <div class="success-body">
+
+        <!-- Transaction ID -->
+        <div class="txid-box">
+          <div>
+            <div class="txid-label" id="txid-label">No. Transaksi</div>
+            <div class="txid-code" id="txid-code">—</div>
+          </div>
+          <button class="btn-copy-txid" id="btn-copy-txid">📋 Salin</button>
+        </div>
+
+        <!-- Detail Card -->
+        <div class="detail-card">
+          <div class="detail-row">
+            <span class="detail-label" id="dl-campaign">Kampanye</span>
+            <span class="detail-value" id="dv-campaign">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" id="dl-amount">Nominal</span>
+            <span class="detail-value" id="dv-amount" style="color: var(--color-primary);">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" id="dl-method">Metode</span>
+            <span class="detail-value" id="dv-method">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" id="dl-donor">Donatur</span>
+            <span class="detail-value" id="dv-donor">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" id="dl-date">Tanggal</span>
+            <span class="detail-value" id="dv-date">—</span>
+          </div>
+        </div>
+
+        <!-- Info Note -->
+        <div class="info-note" id="info-note">
+          ⏳ <strong>Penting:</strong> Jika Anda memilih pembayaran Virtual Account atau Bank Transfer, silakan selesaikan pembayaran dalam <strong>24 jam</strong>. Konfirmasi otomatis akan dikirim setelah pembayaran diterima.
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="success-actions">
+          <a href="/campaigns" class="btn btn-campaigns" id="btn-more-campaigns">← Kampanye Lain</a>
+          <a href="/" class="btn btn-home" id="btn-back-home">🏠 Beranda</a>
+        </div>
+
+        <!-- Share Section -->
+        <div class="share-section">
+          <p id="share-label">Ajak yang lain turut berdonasi 💚</p>
+          <div class="share-buttons">
+            <button class="share-btn-sm share-btn-wa" id="btn-share-wa">WhatsApp</button>
+            <button class="share-btn-sm share-btn-fb" id="btn-share-fb">Facebook</button>
+            <button class="share-btn-sm share-btn-copy" id="btn-share-copy">Salin Link</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</Layout>
+
+<script>
+  // Read donation data from sessionStorage
+  const data = JSON.parse(sessionStorage.getItem('ips_donation_success') || '{}');
+  
+  const fmtRp = (n: number) => n > 0 ? `Rp ${n.toLocaleString('id-ID')}` : 'Rp 0';
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  // Populate detail
+  const txCode = document.getElementById('txid-code');
+  if (txCode) txCode.textContent = data.txId || 'IPS-' + Math.random().toString(36).substring(2,8).toUpperCase();
+
+  const dvCampaign = document.getElementById('dv-campaign');
+  if (dvCampaign) dvCampaign.textContent = data.campaignTitle || '-';
+
+  const dvAmount = document.getElementById('dv-amount');
+  if (dvAmount) dvAmount.textContent = fmtRp(data.amount || 0);
+
+  const dvMethod = document.getElementById('dv-method');
+  if (dvMethod) dvMethod.textContent = data.payMethod || '-';
+
+  const dvDonor = document.getElementById('dv-donor');
+  if (dvDonor) dvDonor.textContent = data.donorName || 'Anonim';
+
+  const dvDate = document.getElementById('dv-date');
+  if (dvDate) dvDate.textContent = dateStr;
+
+  // Copy TxID
+  document.getElementById('btn-copy-txid')?.addEventListener('click', () => {
+    const code = document.getElementById('txid-code')?.textContent || '';
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById('btn-copy-txid');
+      if (btn) {
+        btn.textContent = '✅ Tersalin!';
+        setTimeout(() => { btn.textContent = '📋 Salin'; }, 2000);
+      }
+    });
+  });
+
+  // Share
+  const campaignSlug = data.campaignSlug || '';
+  const shareUrl = campaignSlug ? `${window.location.origin}/campaigns/${campaignSlug}` : window.location.origin;
+
+  document.getElementById('btn-share-wa')?.addEventListener('click', () => {
+    const text = encodeURIComponent(`Yuk bantu kampanye ini: ${data.campaignTitle || 'Indonesia Peduli Sesama'}\n${shareUrl}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  });
+
+  document.getElementById('btn-share-fb')?.addEventListener('click', () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+  });
+
+  document.getElementById('btn-share-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      const btn = document.getElementById('btn-share-copy');
+      if (btn) {
+        btn.textContent = '✅ Tersalin!';
+        setTimeout(() => { btn.textContent = 'Salin Link'; }, 2000);
+      }
+    });
+  });
+
+  // i18n
+  const applyLang = (lang: string) => {
+    const ui: Record<string, Record<string,string>> = {
+      id: {
+        'success-title': 'Terima Kasih!',
+        'success-subtitle': 'Donasi Anda sedang diproses. Konfirmasi akan dikirim ke email Anda.',
+        'txid-label': 'No. Transaksi',
+        'dl-campaign': 'Kampanye',
+        'dl-amount': 'Nominal',
+        'dl-method': 'Metode',
+        'dl-donor': 'Donatur',
+        'dl-date': 'Tanggal',
+        'btn-more-campaigns': '← Kampanye Lain',
+        'btn-back-home': '🏠 Beranda',
+        'share-label': 'Ajak yang lain turut berdonasi 💚',
+      },
+      en: {
+        'success-title': 'Thank You!',
+        'success-subtitle': 'Your donation is being processed. A confirmation will be sent to your email.',
+        'txid-label': 'Transaction No.',
+        'dl-campaign': 'Campaign',
+        'dl-amount': 'Amount',
+        'dl-method': 'Method',
+        'dl-donor': 'Donor',
+        'dl-date': 'Date',
+        'btn-more-campaigns': '← More Campaigns',
+        'btn-back-home': '🏠 Home',
+        'share-label': 'Invite others to donate 💚',
+      },
+    };
+    Object.entries(ui[lang] || {}).forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    });
+
+    // Update info note
+    const infoNote = document.getElementById('info-note');
+    if (infoNote) {
+      infoNote.innerHTML = lang === 'en'
+        ? '⏳ <strong>Important:</strong> If you chose Virtual Account or Bank Transfer, please complete your payment within <strong>24 hours</strong>. An automatic confirmation will be sent once payment is received.'
+        : '⏳ <strong>Penting:</strong> Jika Anda memilih pembayaran Virtual Account atau Bank Transfer, silakan selesaikan pembayaran dalam <strong>24 jam</strong>. Konfirmasi otomatis akan dikirim setelah pembayaran diterima.';
+    }
+
+    // Update date format
+    if (dvDate) {
+      dvDate.textContent = now.toLocaleDateString(lang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+  };
+
+  const saved = localStorage.getItem('lang') || 'id';
+  applyLang(saved);
+  document.addEventListener('langchange', (e) => applyLang((e as CustomEvent).detail));
+</script>

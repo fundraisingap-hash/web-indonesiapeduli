@@ -9,10 +9,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "proxy": "node proxy-server.js"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
+    "@astrojs/node": "^11.1.5",
     "astro": "^7.2.4"
   }
 }
