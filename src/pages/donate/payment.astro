@@ -638,8 +638,13 @@ import Layout from '../../layouts/Layout.astro';
     const bodyEl = document.querySelector('.payment-body');
     if (bodyEl) {
       const errorDiv = document.createElement('div');
-      errorDiv.style.cssText = 'background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#991b1b;line-height:1.5;';
-      errorDiv.innerHTML = '⚠️ <strong>Koneksi ke Xenith gagal:</strong> ' + data.apiError + '<br><span style="font-size:.8rem;color:#b91c1c;">Pastikan API Key & Secret Key sudah benar di <a href="/admin/dashboard" style="color:#2563eb;text-decoration:underline;">Admin → Pengaturan</a> dan proxy server sudah berjalan (<code>npm run proxy</code>).</span>';
+      errorDiv.style.cssText = 'background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#991b1b;line-height:1.6;';
+      const isIpError = data.apiError.toLowerCase().includes('ip') || data.apiError.toLowerCase().includes('unauthorized');
+      if (isIpError) {
+        errorDiv.innerHTML = '⚠️ <strong>IP belum terdaftar di Xenith</strong><br><span style="font-size:.8rem;color:#b91c1c;">Buka <a href="https://dashboard.xenith.id" target="_blank" style="color:#2563eb;text-decoration:underline;">dashboard.xenith.id</a> → <strong>Developer → IP Whitelist</strong> → Add IP → masukkan IP server Anda, lalu coba lagi.</span>';
+      } else {
+        errorDiv.innerHTML = '⚠️ <strong>Koneksi ke Xenith gagal:</strong> ' + data.apiError + '<br><span style="font-size:.8rem;color:#b91c1c;">Cek Access Key &amp; Secret Key di <a href="/admin/dashboard" style="color:#2563eb;text-decoration:underline;">Admin → Pengaturan</a> dan pastikan proxy server berjalan (<code>npm run proxy</code>).</span>';
+      }
       bodyEl.insertBefore(errorDiv, bodyEl.firstChild);
     }
   }
