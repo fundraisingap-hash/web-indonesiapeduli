@@ -2082,6 +2082,14 @@
             </div>
             <label class="toggle"><input type="checkbox" id="pg-xenith" /><span class="toggle-slider"></span></label>
           </div>
+          <!-- Sandbox/Live toggle -->
+          <div class="toggle-row" style="margin-top:.75rem;padding:.6rem .75rem;background:#fef3c7;border-radius:8px;border:1px solid #fde68a;">
+            <div>
+              <div style="font-size:.82rem;font-weight:600;color:#92400e;">🧪 Mode Sandbox</div>
+              <div style="font-size:.75rem;color:#b45309;">Aktifkan untuk testing · Nonaktifkan untuk Live/Production</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="xenith-sandbox" checked /><span class="toggle-slider"></span></label>
+          </div>
           <div class="form-group" style="margin-top:.75rem;">
             <label class="form-label">Access Key <span style="font-size:.68rem;color:#9ca3af;">(diawali ak-...)</span></label>
             <input type="password" class="form-input" id="cfg-xenith-key" placeholder="ak-9a7a30e1baebf189bb9b01e..." />
@@ -3796,6 +3804,7 @@ function saveSettings() {
     },
     // Payment Gateways
     xenithEnabled:    document.getElementById('pg-xenith').checked,
+    xenithSandbox:    document.getElementById('xenith-sandbox').checked,
     xenithApiKey:     document.getElementById('cfg-xenith-key').value,
     xenithSecretKey:  document.getElementById('cfg-xenith-secret').value,
   };
@@ -3885,6 +3894,7 @@ function init() {
   if (saved.xenithApiKey)    document.getElementById('cfg-xenith-key').value    = saved.xenithApiKey;
   if (saved.xenithSecretKey) document.getElementById('cfg-xenith-secret').value = saved.xenithSecretKey;
   if (saved.xenithEnabled !== undefined) document.getElementById('pg-xenith').checked = saved.xenithEnabled;
+  if (saved.xenithSandbox !== undefined) document.getElementById('xenith-sandbox').checked = saved.xenithSandbox;
 
   renderDashboard();
   renderCampaigns();

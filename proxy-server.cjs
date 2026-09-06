@@ -4,6 +4,13 @@ const http = require('http');
 const https = require('https');
 const PORT = 3456;
 
+function getXenithHost(apiKey, sandbox) {
+  // Sandbox jika: flag sandbox aktif, atau key diawali 'ak-' dan ada hint sandbox
+  if (sandbox) return 'api.sandbox.xenithpay.com';
+  // Default production
+  return 'api.xenithpay.com';
+}
+
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -16,16 +23,18 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const payload = JSON.parse(body);
-        const { apiKey, secretKey, payinData } = payload;
+        const { apiKey, secretKey, payinData, sandbox } = payload;
         if (!apiKey || !secretKey) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: true, message: 'API Key & Secret Key wajib diisi di Pengaturan Admin.' }));
+          res.end(JSON.stringify({ error: true, message: 'Access Key & Secret Key wajib diisi di Pengaturan Admin.' }));
           return;
         }
+        const xenithHost = getXenithHost(apiKey, sandbox);
         const basicAuth = Buffer.from(apiKey + ':' + secretKey).toString('base64');
         const postData = JSON.stringify(payinData);
+        console.log('[Xenith] Mode:', sandbox ? 'SANDBOX' : 'LIVE', '| Host:', xenithHost);
         const options = {
-          hostname: 'api.xenith.id',
+          hostname: xenithHost,
           path: '/v1/payin',
           method: 'POST',
           headers: {
@@ -38,11 +47,13 @@ const server = http.createServer((req, res) => {
           let data = '';
           xenithRes.on('data', chunk => { data += chunk; });
           xenithRes.on('end', () => {
+            console.log('[Xenith] Response:', xenithRes.statusCode, data.slice(0, 200));
             res.writeHead(xenithRes.statusCode, { 'Content-Type': 'application/json' });
             res.end(data);
           });
         });
         xenithReq.on('error', (err) => {
+          console.error('[Xenith] Error:', err.message);
           res.writeHead(500, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: true, message: 'Gagal terhubung ke Xenith: ' + err.message }));
         });
@@ -50,7 +61,7 @@ const server = http.createServer((req, res) => {
         xenithReq.end();
       } catch (e) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: true, message: 'Invalid request' }));
+        res.end(JSON.stringify({ error: true, message: 'Invalid request: ' + e.message }));
       }
     });
     return;
@@ -58,7 +69,7 @@ const server = http.createServer((req, res) => {
 
   if (req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok', port: PORT }));
+    res.end(JSON.stringify({ status: 'ok', service: 'Xenith Pay Proxy', port: PORT }));
     return;
   }
   res.writeHead(404); res.end('Not found');

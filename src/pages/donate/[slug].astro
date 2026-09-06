@@ -799,10 +799,11 @@ const urlAmount = Astro.url.searchParams.get('amount') || '';
     const donorEmail = document.getElementById('f-email')?.value?.trim() || '';
     const referenceCode = crypto.randomUUID();
 
-    // Get Xenith keys from localStorage or use defaults (proxy has built-in fallback)
+    // Get Xenith keys from localStorage
     const ipsSettings = JSON.parse(localStorage.getItem('ips_settings') || localStorage.getItem('adcraft_settings') || '{}');
     const xenithApiKey = ipsSettings.xenithApiKey || '';
     const xenithSecretKey = ipsSettings.xenithSecretKey || '';
+    const xenithSandbox = ipsSettings.xenithSandbox !== false; // default sandbox=true jika belum diset
 
     // Call Xenith API via proxy server
     try {
@@ -812,6 +813,7 @@ const urlAmount = Astro.url.searchParams.get('amount') || '';
         body: JSON.stringify({
           apiKey: xenithApiKey,
           secretKey: xenithSecretKey,
+          sandbox: xenithSandbox,
           payinData: {
             initiatedAmount: amount,
             currency: 'IDR',
